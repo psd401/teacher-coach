@@ -541,18 +541,18 @@
 		};
 /* End XCRemoteSwiftPackageReference section */
 
-/* Begin XCSwiftPackageProductReference section */
+/* Begin XCSwiftPackageProductDependency section */
 		3001 /* WhisperKit */ = {
-			isa = XCSwiftPackageProductReference;
+			isa = XCSwiftPackageProductDependency;
 			package = 9001 /* XCRemoteSwiftPackageReference "WhisperKit" */;
 			productName = WhisperKit;
 		};
 		3002 /* GoogleSignIn */ = {
-			isa = XCSwiftPackageProductReference;
+			isa = XCSwiftPackageProductDependency;
 			package = 9002 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignIn;
 		};
-/* End XCSwiftPackageProductReference section */
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8001 /* Project object */;
 }
