@@ -1,0 +1,338 @@
+import SwiftUI
+import SwiftData
+
+struct SettingsView: View {
+    @EnvironmentObject private var appState: AppState
+    @Environment(\.serviceContainer) private var services
+    @Environment(\.modelContext) private var modelContext
+
+    @State private var settings: UserSettings?
+    @State private var autoStartTranscription = true
+    @State private var autoStartAnalysis = false
+    @State private var showTimestamps = true
+    @State private var enabledTechniqueIds: Set<String> = []
+
+    var body: some View {
+        TabView {
+            GeneralSettingsTab(
+                autoStartTranscription: $autoStartTranscription,
+                autoStartAnalysis: $autoStartAnalysis,
+                showTimestamps: $showTimestamps
+            )
+            .tabItem {
+                Label("General", systemImage: "gear")
+            }
+
+            TechniquesSettingsTab(
+                enabledTechniqueIds: $enabledTechniqueIds,
+                techniques: services.techniqueService.getBuiltInTechniques()
+            )
+            .tabItem {
+                Label("Techniques", systemImage: "list.bullet.clipboard")
+            }
+
+            AccountSettingsTab()
+            .tabItem {
+                Label("Account", systemImage: "person.circle")
+            }
+
+            AboutTab()
+            .tabItem {
+                Label("About", systemImage: "info.circle")
+            }
+        }
+        .frame(width: 500, height: 400)
+        .onAppear {
+            loadSettings()
+        }
+        .onChange(of: autoStartTranscription) { _, _ in saveSettings() }
+        .onChange(of: autoStartAnalysis) { _, _ in saveSettings() }
+        .onChange(of: showTimestamps) { _, _ in saveSettings() }
+        .onChange(of: enabledTechniqueIds) { _, _ in saveSettings() }
+    }
+
+    private func loadSettings() {
+        guard let email = appState.currentUser?.email else { return }
+
+        let descriptor = FetchDescriptor<UserSettings>(
+            predicate: #Predicate { $0.userEmail == email }
+        )
+
+        if let existingSettings = try? modelContext.fetch(descriptor).first {
+            settings = existingSettings
+            autoStartTranscription = existingSettings.autoStartTranscription
+            autoStartAnalysis = existingSettings.autoStartAnalysis
+            showTimestamps = existingSettings.showTimestamps
+            enabledTechniqueIds = Set(existingSettings.enabledTechniqueIds)
+        } else {
+            // Create default settings
+            let newSettings = UserSettings(userEmail: email)
+            modelContext.insert(newSettings)
+            settings = newSettings
+            enabledTechniqueIds = Set(services.techniqueService.getDefaultEnabledIds())
+        }
+    }
+
+    private func saveSettings() {
+        guard let settings = settings else { return }
+
+        settings.autoStartTranscription = autoStartTranscription
+        settings.autoStartAnalysis = autoStartAnalysis
+        settings.showTimestamps = showTimestamps
+        settings.enabledTechniqueIds = Array(enabledTechniqueIds)
+
+        try? modelContext.save()
+    }
+}
+
+// MARK: - General Settings Tab
+
+struct GeneralSettingsTab: View {
+    @Binding var autoStartTranscription: Bool
+    @Binding var autoStartAnalysis: Bool
+    @Binding var showTimestamps: Bool
+
+    var body: some View {
+        Form {
+            Section("Processing") {
+                Toggle("Auto-start transcription after recording", isOn: $autoStartTranscription)
+                Toggle("Auto-start analysis after transcription", isOn: $autoStartAnalysis)
+                    .disabled(!autoStartTranscription)
+            }
+
+            Section("Display") {
+                Toggle("Show timestamps in transcript", isOn: $showTimestamps)
+            }
+
+            Section("Storage") {
+                LabeledContent("Recordings Location") {
+                    Text("~/Library/Application Support/com.peninsula.teachercoach/")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Button("Open Recordings Folder") {
+                    openRecordingsFolder()
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .padding()
+    }
+
+    private func openRecordingsFolder() {
+        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        let recordingsDir = appSupport
+            .appendingPathComponent("com.peninsula.teachercoach")
+            .appendingPathComponent("Recordings")
+
+        NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: recordingsDir.path)
+    }
+}
+
+// MARK: - Techniques Settings Tab
+
+struct TechniquesSettingsTab: View {
+    @Binding var enabledTechniqueIds: Set<String>
+    let techniques: [Technique]
+
+    @Environment(\.serviceContainer) private var services
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Select techniques to include in analysis")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            List {
+                ForEach(services.techniqueService.getTechniquesByCategory(), id: \.category) { group in
+                    Section(group.category.rawValue) {
+                        ForEach(group.techniques) { technique in
+                            TechniqueToggleRow(
+                                technique: technique,
+                                isEnabled: enabledTechniqueIds.contains(technique.id),
+                                onToggle: {
+                                    if enabledTechniqueIds.contains(technique.id) {
+                                        enabledTechniqueIds.remove(technique.id)
+                                    } else {
+                                        enabledTechniqueIds.insert(technique.id)
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
+            HStack {
+                Button("Select All") {
+                    enabledTechniqueIds = Set(techniques.map { $0.id })
+                }
+
+                Button("Deselect All") {
+                    enabledTechniqueIds = []
+                }
+            }
+            .padding(.horizontal)
+        }
+        .padding()
+    }
+}
+
+struct TechniqueToggleRow: View {
+    let technique: Technique
+    let isEnabled: Bool
+    let onToggle: () -> Void
+
+    @State private var showingDetail = false
+
+    var body: some View {
+        HStack {
+            Toggle(isOn: Binding(
+                get: { isEnabled },
+                set: { _ in onToggle() }
+            )) {
+                VStack(alignment: .leading) {
+                    Text(technique.name)
+                        .font(.body)
+
+                    Text(technique.descriptionText)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+                }
+            }
+
+            Button {
+                showingDetail = true
+            } label: {
+                Image(systemName: "info.circle")
+            }
+            .buttonStyle(.plain)
+            .popover(isPresented: $showingDetail) {
+                TechniqueDetailPopover(technique: technique)
+            }
+        }
+    }
+}
+
+struct TechniqueDetailPopover: View {
+    let technique: Technique
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(technique.name)
+                .font(.headline)
+
+            Text(technique.descriptionText)
+                .font(.body)
+
+            if !technique.lookFors.isEmpty {
+                Text("Look-fors:")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+
+                ForEach(technique.lookFors, id: \.self) { item in
+                    Text("• \(item)")
+                        .font(.caption)
+                }
+            }
+
+            if !technique.exemplarPhrases.isEmpty {
+                Text("Example phrases:")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+
+                ForEach(technique.exemplarPhrases.prefix(3), id: \.self) { phrase in
+                    Text("\"\(phrase)\"")
+                        .font(.caption)
+                        .italic()
+                }
+            }
+        }
+        .padding()
+        .frame(width: 300)
+    }
+}
+
+// MARK: - Account Settings Tab
+
+struct AccountSettingsTab: View {
+    @EnvironmentObject private var appState: AppState
+
+    var body: some View {
+        Form {
+            Section("Signed In As") {
+                if let user = appState.currentUser {
+                    LabeledContent("Name") {
+                        Text(user.displayName)
+                    }
+
+                    LabeledContent("Email") {
+                        Text(user.email)
+                    }
+                }
+            }
+
+            Section {
+                Button("Sign Out", role: .destructive) {
+                    appState.signOut()
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .padding()
+    }
+}
+
+// MARK: - About Tab
+
+struct AboutTab: View {
+    var body: some View {
+        VStack(spacing: 24) {
+            Image(systemName: "waveform.circle.fill")
+                .font(.system(size: 64))
+                .foregroundStyle(.tint)
+
+            VStack(spacing: 4) {
+                Text("Teacher Coach")
+                    .font(.title)
+                    .fontWeight(.bold)
+
+                Text("Version 1.0.0")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+
+            Text("AI-powered feedback for teaching techniques")
+                .font(.body)
+                .foregroundStyle(.secondary)
+
+            Divider()
+                .frame(width: 200)
+
+            VStack(spacing: 8) {
+                Text("Peninsula School District")
+                    .font(.headline)
+
+                Text("Research & Assessment")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            Text("Powered by WhisperKit and Claude")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+#Preview {
+    SettingsView()
+        .environmentObject(AppState())
+        .environment(ServiceContainer.shared)
+}

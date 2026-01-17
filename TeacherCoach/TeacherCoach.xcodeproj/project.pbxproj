@@ -1,0 +1,558 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0001 /* TeacherCoachApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1001; };
+		0002 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1002; };
+		0003 /* ServiceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1003; };
+		0004 /* Recording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1004; };
+		0005 /* Transcript.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1005; };
+		0006 /* Analysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1006; };
+		0007 /* TechniqueEvaluation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1007; };
+		0008 /* Technique.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1008; };
+		0009 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1009; };
+		0010 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1010; };
+		0011 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1011; };
+		0012 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1012; };
+		0013 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1013; };
+		0014 /* RecordingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1014; };
+		0015 /* NewRecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1015; };
+		0016 /* RecordingDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1016; };
+		0017 /* TranscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1017; };
+		0018 /* AnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1018; };
+		0019 /* AnalysisFeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1019; };
+		0020 /* TechniqueService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1020; };
+		0021 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1021; };
+		0022 /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3001; };
+		0023 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 3002; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1001 /* TeacherCoachApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherCoachApp.swift; sourceTree = "<group>"; };
+		1002 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		1003 /* ServiceContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceContainer.swift; sourceTree = "<group>"; };
+		1004 /* Recording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recording.swift; sourceTree = "<group>"; };
+		1005 /* Transcript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transcript.swift; sourceTree = "<group>"; };
+		1006 /* Analysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analysis.swift; sourceTree = "<group>"; };
+		1007 /* TechniqueEvaluation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TechniqueEvaluation.swift; sourceTree = "<group>"; };
+		1008 /* Technique.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Technique.swift; sourceTree = "<group>"; };
+		1009 /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
+		1010 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		1011 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		1012 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		1013 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		1014 /* RecordingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingService.swift; sourceTree = "<group>"; };
+		1015 /* NewRecordingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewRecordingView.swift; sourceTree = "<group>"; };
+		1016 /* RecordingDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingDetailView.swift; sourceTree = "<group>"; };
+		1017 /* TranscriptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionService.swift; sourceTree = "<group>"; };
+		1018 /* AnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisService.swift; sourceTree = "<group>"; };
+		1019 /* AnalysisFeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisFeedbackView.swift; sourceTree = "<group>"; };
+		1020 /* TechniqueService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TechniqueService.swift; sourceTree = "<group>"; };
+		1021 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		1022 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1023 /* TeacherCoach.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TeacherCoach.entitlements; sourceTree = "<group>"; };
+		2001 /* TeacherCoach.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeacherCoach.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0022 /* WhisperKit in Frameworks */,
+				0023 /* GoogleSignIn in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5001 = {
+			isa = PBXGroup;
+			children = (
+				5002 /* TeacherCoach */,
+				5003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5002 /* TeacherCoach */ = {
+			isa = PBXGroup;
+			children = (
+				5004 /* App */,
+				5005 /* Features */,
+				5006 /* Core */,
+				5007 /* Resources */,
+			);
+			path = TeacherCoach;
+			sourceTree = "<group>";
+		};
+		5003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2001 /* TeacherCoach.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5004 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				1001 /* TeacherCoachApp.swift */,
+				1002 /* AppState.swift */,
+				1003 /* ServiceContainer.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		5005 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				5008 /* Authentication */,
+				5009 /* Recording */,
+				5010 /* Transcription */,
+				5011 /* Analysis */,
+				5012 /* Techniques */,
+				5013 /* Settings */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		5006 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				5014 /* Models */,
+				5015 /* Views */,
+				5016 /* Services */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		5007 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1022 /* Info.plist */,
+				1023 /* TeacherCoach.entitlements */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		5008 /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				1012 /* AuthService.swift */,
+				1013 /* LoginView.swift */,
+			);
+			path = Authentication;
+			sourceTree = "<group>";
+		};
+		5009 /* Recording */ = {
+			isa = PBXGroup;
+			children = (
+				1014 /* RecordingService.swift */,
+				1015 /* NewRecordingView.swift */,
+				1016 /* RecordingDetailView.swift */,
+			);
+			path = Recording;
+			sourceTree = "<group>";
+		};
+		5010 /* Transcription */ = {
+			isa = PBXGroup;
+			children = (
+				1017 /* TranscriptionService.swift */,
+			);
+			path = Transcription;
+			sourceTree = "<group>";
+		};
+		5011 /* Analysis */ = {
+			isa = PBXGroup;
+			children = (
+				1018 /* AnalysisService.swift */,
+				1019 /* AnalysisFeedbackView.swift */,
+			);
+			path = Analysis;
+			sourceTree = "<group>";
+		};
+		5012 /* Techniques */ = {
+			isa = PBXGroup;
+			children = (
+				1020 /* TechniqueService.swift */,
+			);
+			path = Techniques;
+			sourceTree = "<group>";
+		};
+		5013 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				1021 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		5014 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				1004 /* Recording.swift */,
+				1005 /* Transcript.swift */,
+				1006 /* Analysis.swift */,
+				1007 /* TechniqueEvaluation.swift */,
+				1008 /* Technique.swift */,
+				1009 /* UserSettings.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		5015 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1011 /* ContentView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		5016 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				1010 /* KeychainService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6001 /* TeacherCoach */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7001;
+			buildPhases = (
+				6002 /* Sources */,
+				4001 /* Frameworks */,
+				6003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TeacherCoach;
+			packageProductDependencies = (
+				3001 /* WhisperKit */,
+				3002 /* GoogleSignIn */,
+			);
+			productName = TeacherCoach;
+			productReference = 2001 /* TeacherCoach.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1520;
+				LastUpgradeCheck = 1520;
+				TargetAttributes = {
+					6001 = {
+						CreatedOnToolsVersion = 15.2;
+					};
+				};
+			};
+			buildConfigurationList = 7002;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5001;
+			packageReferences = (
+				9001 /* XCRemoteSwiftPackageReference "WhisperKit" */,
+				9002 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
+			productRefGroup = 5003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6001 /* TeacherCoach */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0001 /* TeacherCoachApp.swift in Sources */,
+				0002 /* AppState.swift in Sources */,
+				0003 /* ServiceContainer.swift in Sources */,
+				0004 /* Recording.swift in Sources */,
+				0005 /* Transcript.swift in Sources */,
+				0006 /* Analysis.swift in Sources */,
+				0007 /* TechniqueEvaluation.swift in Sources */,
+				0008 /* Technique.swift in Sources */,
+				0009 /* UserSettings.swift in Sources */,
+				0010 /* KeychainService.swift in Sources */,
+				0011 /* ContentView.swift in Sources */,
+				0012 /* AuthService.swift in Sources */,
+				0013 /* LoginView.swift in Sources */,
+				0014 /* RecordingService.swift in Sources */,
+				0015 /* NewRecordingView.swift in Sources */,
+				0016 /* RecordingDetailView.swift in Sources */,
+				0017 /* TranscriptionService.swift in Sources */,
+				0018 /* AnalysisService.swift in Sources */,
+				0019 /* AnalysisFeedbackView.swift in Sources */,
+				0020 /* TechniqueService.swift in Sources */,
+				0021 /* SettingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		8002 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		8003 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		8004 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = TeacherCoach/Resources/TeacherCoach.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TeacherCoach/Resources/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Peninsula School District. All rights reserved.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Teacher Coach needs access to your microphone to record teaching sessions for feedback analysis.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.peninsula.teachercoach;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		8005 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = TeacherCoach/Resources/TeacherCoach.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TeacherCoach/Resources/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Peninsula School District. All rights reserved.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Teacher Coach needs access to your microphone to record teaching sessions for feedback analysis.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.peninsula.teachercoach;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7001 /* Build configuration list for PBXNativeTarget "TeacherCoach" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8004 /* Debug */,
+				8005 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7002 /* Build configuration list for PBXProject "TeacherCoach" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8002 /* Debug */,
+				8003 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9001 /* XCRemoteSwiftPackageReference "WhisperKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/argmaxinc/WhisperKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.0;
+			};
+		};
+		9002 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductReference section */
+		3001 /* WhisperKit */ = {
+			isa = XCSwiftPackageProductReference;
+			package = 9001 /* XCRemoteSwiftPackageReference "WhisperKit" */;
+			productName = WhisperKit;
+		};
+		3002 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductReference;
+			package = 9002 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+/* End XCSwiftPackageProductReference section */
+	};
+	rootObject = 8001 /* Project object */;
+}
