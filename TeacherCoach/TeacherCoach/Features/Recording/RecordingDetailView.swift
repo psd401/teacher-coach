@@ -195,7 +195,11 @@ struct RecordingHeaderView: View {
 
             HStack(spacing: 16) {
                 Label(recording.formattedDuration, systemImage: "clock")
-                Label(recording.createdAt, format: .dateTime.month().day().year())
+                Label {
+                    Text(recording.createdAt, format: .dateTime.month().day().year())
+                } icon: {
+                    Image(systemName: "calendar")
+                }
             }
             .font(.subheadline)
             .foregroundStyle(.secondary)

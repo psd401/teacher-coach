@@ -2,6 +2,7 @@ import SwiftUI
 import Observation
 
 /// Dependency injection container for all services
+@MainActor
 @Observable
 final class ServiceContainer {
     static let shared = ServiceContainer()

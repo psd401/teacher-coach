@@ -143,10 +143,10 @@ final class TranscriptionService: ObservableObject {
             // Update progress on main thread
             Task { @MainActor in
                 // Estimate progress based on transcription info
-                if let currentTime = progressInfo.timings?.fullPipeline,
-                   let totalTime = progressInfo.timings?.audioLoading {
-                    self.progress = min(currentTime / max(totalTime, 1), 0.99)
-                }
+                let timings = progressInfo.timings
+                let currentTime = timings.fullPipeline
+                let totalTime = timings.audioLoading
+                self.progress = min(currentTime / max(totalTime, 1), 0.99)
             }
             return true  // Continue transcription
         }
@@ -158,15 +158,15 @@ final class TranscriptionService: ObservableObject {
         let segments = result.flatMap { transcriptionResult -> [TranscriptSegment] in
             transcriptionResult.segments.map { segment in
                 TranscriptSegment(
-                    startTime: segment.start,
-                    endTime: segment.end,
+                    startTime: TimeInterval(segment.start),
+                    endTime: TimeInterval(segment.end),
                     text: segment.text,
-                    confidence: segment.avgLogprob.map { Float(exp($0)) }  // Convert log prob to probability
+                    confidence: Float(exp(segment.avgLogprob))  // Convert log prob to probability
                 )
             }
         }
 
-        let fullText = result.map { $0.text }.joined(separator: " ").trimmingCharacters(in: .whitespacesAndNewlines)
+        let fullText = result.map { $0.text }.joined(separator: " ").trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
 
         return Transcript(
             fullText: fullText,

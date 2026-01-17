@@ -7,7 +7,6 @@ import Combine
 final class RecordingService: NSObject, ObservableObject {
     private let config: AppConfiguration
     private var audioRecorder: AVAudioRecorder?
-    private var audioSession: AVAudioSession?
     private var levelTimer: Timer?
 
     @Published var isRecording = false
