@@ -64,13 +64,13 @@ final class RecordingService: NSObject, ObservableObject {
         // macOS doesn't use AVAudioSession the same way
         #endif
 
-        // Audio recording settings optimized for WhisperKit
+        // Audio recording settings - using standard sample rate for AAC compatibility
         let settings: [String: Any] = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-            AVSampleRateKey: 16000.0,  // WhisperKit optimal
+            AVSampleRateKey: 44100.0,  // Standard rate - WhisperKit handles resampling
             AVNumberOfChannelsKey: 1,   // Mono
             AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue,
-            AVEncoderBitRateKey: 64000
+            AVEncoderBitRateKey: 128000  // Higher bitrate for 44.1kHz
         ]
 
         do {
