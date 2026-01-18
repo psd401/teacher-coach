@@ -39,6 +39,7 @@ struct AppConfiguration: Codable {
     let maxRecordingDuration: TimeInterval
     let whisperModel: String
     let rateLimitPerHour: Int
+    let devBypassAuth: Bool
 
     static func load() -> AppConfiguration {
         // Default configuration - can be overridden by config file
@@ -49,7 +50,8 @@ struct AppConfiguration: Codable {
             minRecordingDuration: 5 * 60,  // 5 minutes
             maxRecordingDuration: 50 * 60, // 50 minutes
             whisperModel: "openai_whisper-large-v3",
-            rateLimitPerHour: 20
+            rateLimitPerHour: 20,
+            devBypassAuth: ProcessInfo.processInfo.environment["DEV_BYPASS_AUTH"] == "1"
         )
     }
 }

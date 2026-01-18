@@ -23,6 +23,26 @@ final class AuthService: ObservableObject {
 
         defer { isAuthenticating = false }
 
+        // Development bypass - skip OAuth when DEV_BYPASS_AUTH=1
+        if config.devBypassAuth {
+            let mockUser = User(
+                id: "dev-user",
+                email: "developer@psd401.net",
+                displayName: "Dev User",
+                photoURL: nil
+            )
+            let mockSession = SessionToken(
+                accessToken: "dev-token",
+                refreshToken: nil,
+                expiresAt: Date().addingTimeInterval(86400 * 365), // 1 year
+                user: mockUser
+            )
+            if let sessionData = try? JSONEncoder().encode(mockSession) {
+                _ = keychain.store(key: KeychainKeys.sessionToken, data: sessionData)
+            }
+            return mockSession
+        }
+
         do {
             // Get Google ID token via ASWebAuthenticationSession
             let idToken = try await performGoogleSignIn()
