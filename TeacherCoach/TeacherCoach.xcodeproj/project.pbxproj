@@ -3,33 +3,34 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0001 /* TeacherCoachApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1001; };
-		0002 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1002; };
-		0003 /* ServiceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1003; };
-		0004 /* Recording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1004; };
-		0005 /* Transcript.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1005; };
-		0006 /* Analysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1006; };
-		0007 /* TechniqueEvaluation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1007; };
-		0008 /* Technique.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1008; };
-		0009 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1009; };
-		0010 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1010; };
-		0011 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1011; };
-		0012 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1012; };
-		0013 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1013; };
-		0014 /* RecordingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1014; };
-		0015 /* NewRecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1015; };
-		0016 /* RecordingDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1016; };
-		0017 /* TranscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1017; };
-		0018 /* AnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1018; };
-		0019 /* AnalysisFeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1019; };
-		0020 /* TechniqueService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1020; };
-		0021 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1021; };
-		0022 /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3001; };
-		0023 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 3002; };
+		0001 /* TeacherCoachApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1001 /* TeacherCoachApp.swift */; };
+		0002 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1002 /* AppState.swift */; };
+		0003 /* ServiceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1003 /* ServiceContainer.swift */; };
+		0004 /* Recording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1004 /* Recording.swift */; };
+		0005 /* Transcript.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1005 /* Transcript.swift */; };
+		0006 /* Analysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1006 /* Analysis.swift */; };
+		0007 /* TechniqueEvaluation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1007 /* TechniqueEvaluation.swift */; };
+		0008 /* Technique.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1008 /* Technique.swift */; };
+		0009 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1009 /* UserSettings.swift */; };
+		0010 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1010 /* KeychainService.swift */; };
+		0011 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1011 /* ContentView.swift */; };
+		0012 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1012 /* AuthService.swift */; };
+		0013 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1013 /* LoginView.swift */; };
+		0014 /* RecordingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1014 /* RecordingService.swift */; };
+		0015 /* NewRecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1015 /* NewRecordingView.swift */; };
+		0016 /* RecordingDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1016 /* RecordingDetailView.swift */; };
+		0017 /* TranscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1017 /* TranscriptionService.swift */; };
+		0018 /* AnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1018 /* AnalysisService.swift */; };
+		0019 /* AnalysisFeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1019 /* AnalysisFeedbackView.swift */; };
+		0020 /* TechniqueService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1020 /* TechniqueService.swift */; };
+		0021 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1021 /* SettingsView.swift */; };
+		0022 /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3001 /* WhisperKit */; };
+		0023 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 3002 /* GoogleSignIn */; };
+		0024 /* Models in Resources */ = {isa = PBXBuildFile; fileRef = 29C274B02F1C7E6D00B3F6F3 /* Models */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +59,10 @@
 		1023 /* TeacherCoach.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TeacherCoach.entitlements; sourceTree = "<group>"; };
 		2001 /* TeacherCoach.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeacherCoach.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		29C274B02F1C7E6D00B3F6F3 /* Models */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Models; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		4001 /* Frameworks */ = {
@@ -135,6 +140,7 @@
 		5007 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				29C274B02F1C7E6D00B3F6F3 /* Models */,
 				1022 /* Info.plist */,
 				1023 /* TeacherCoach.entitlements */,
 			);
@@ -227,7 +233,7 @@
 /* Begin PBXNativeTarget section */
 		6001 /* TeacherCoach */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 7001;
+			buildConfigurationList = 7001 /* Build configuration list for PBXNativeTarget "TeacherCoach" */;
 			buildPhases = (
 				6002 /* Sources */,
 				4001 /* Frameworks */,
@@ -236,6 +242,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				29C274B02F1C7E6D00B3F6F3 /* Models */,
 			);
 			name = TeacherCoach;
 			packageProductDependencies = (
@@ -261,7 +270,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 7002;
+			buildConfigurationList = 7002 /* Build configuration list for PBXProject "TeacherCoach" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -288,6 +297,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0024 /* Models in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
