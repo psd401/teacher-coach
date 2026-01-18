@@ -1,5 +1,6 @@
 import Foundation
-import AuthenticationServices
+import GoogleSignIn
+import AppKit
 
 /// Service for handling Google SSO authentication
 @MainActor
@@ -12,6 +13,18 @@ final class AuthService: ObservableObject {
 
     init(config: AppConfiguration) {
         self.config = config
+        configureGoogleSignIn()
+    }
+
+    private func configureGoogleSignIn() {
+        guard !config.googleClientID.isEmpty else { return }
+        let gidConfig = GIDConfiguration(
+            clientID: config.googleClientID,
+            serverClientID: nil,
+            hostedDomain: config.allowedDomain,
+            openIDRealm: nil
+        )
+        GIDSignIn.sharedInstance.configuration = gidConfig
     }
 
     // MARK: - Public Methods
@@ -68,6 +81,7 @@ final class AuthService: ObservableObject {
 
     /// Signs out the current user
     func signOut() {
+        GIDSignIn.sharedInstance.signOut()
         keychain.delete(key: KeychainKeys.sessionToken)
         keychain.delete(key: KeychainKeys.refreshToken)
     }
@@ -100,82 +114,44 @@ final class AuthService: ObservableObject {
     // MARK: - Private Methods
 
     private func performGoogleSignIn() async throws -> String {
-        // Build OAuth URL for Google
-        let clientID = config.googleClientID
-
-        // Validate Client ID is configured
-        guard !clientID.isEmpty else {
+        guard !config.googleClientID.isEmpty else {
             throw AuthError.missingClientID
         }
 
-        let redirectURI = "com.peninsula.teachercoach:/oauth2callback"
-        let scope = "openid email profile"
-
-        var components = URLComponents(string: "https://accounts.google.com/o/oauth2/v2/auth")!
-        components.queryItems = [
-            URLQueryItem(name: "client_id", value: clientID),
-            URLQueryItem(name: "redirect_uri", value: redirectURI),
-            URLQueryItem(name: "response_type", value: "id_token"),
-            URLQueryItem(name: "scope", value: scope),
-            URLQueryItem(name: "nonce", value: UUID().uuidString),
-            URLQueryItem(name: "hd", value: config.allowedDomain),  // Hint for domain
-            URLQueryItem(name: "prompt", value: "select_account")
-        ]
-
-        guard let authURL = components.url else {
-            throw AuthError.unknown(NSError(domain: "AuthService", code: -1))
+        guard let window = NSApplication.shared.keyWindow ?? NSApplication.shared.windows.first else {
+            throw AuthError.unknown(NSError(
+                domain: "AuthService",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "No window available for sign-in"]
+            ))
         }
 
-        return try await withCheckedThrowingContinuation { continuation in
-            let session = ASWebAuthenticationSession(
-                url: authURL,
-                callbackURLScheme: "com.peninsula.teachercoach"
-            ) { callbackURL, error in
-                if let error = error {
-                    if (error as NSError).code == ASWebAuthenticationSessionError.canceledLogin.rawValue {
-                        continuation.resume(throwing: AuthError.cancelled)
-                    } else {
-                        continuation.resume(throwing: AuthError.networkError(error))
-                    }
-                    return
-                }
+        do {
+            let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: window)
 
-                guard let callbackURL = callbackURL,
-                      let fragment = callbackURL.fragment,
-                      let idToken = self.extractIDToken(from: fragment) else {
-                    continuation.resume(throwing: AuthError.unknown(
-                        NSError(domain: "AuthService", code: -2, userInfo: [
-                            NSLocalizedDescriptionKey: "Failed to extract ID token"
-                        ])
-                    ))
-                    return
-                }
-
-                continuation.resume(returning: idToken)
-            }
-
-            session.presentationContextProvider = AuthPresentationContext.shared
-            session.prefersEphemeralWebBrowserSession = false
-
-            if !session.start() {
-                continuation.resume(throwing: AuthError.unknown(
-                    NSError(domain: "AuthService", code: -3, userInfo: [
-                        NSLocalizedDescriptionKey: "Failed to start authentication session"
-                    ])
+            guard let idToken = result.user.idToken?.tokenString else {
+                throw AuthError.unknown(NSError(
+                    domain: "AuthService",
+                    code: -2,
+                    userInfo: [NSLocalizedDescriptionKey: "No ID token in sign-in result"]
                 ))
             }
-        }
-    }
 
-    private func extractIDToken(from fragment: String) -> String? {
-        let params = fragment.split(separator: "&")
-        for param in params {
-            let keyValue = param.split(separator: "=", maxSplits: 1)
-            if keyValue.count == 2 && keyValue[0] == "id_token" {
-                return String(keyValue[1])
+            return idToken
+        } catch let error as GIDSignInError {
+            switch error.code {
+            case .canceled:
+                throw AuthError.cancelled
+            default:
+                throw AuthError.unknown(NSError(
+                    domain: "GoogleSignIn",
+                    code: error.code.rawValue,
+                    userInfo: [NSLocalizedDescriptionKey: "Google Sign-In error: \(error.localizedDescription)"]
+                ))
             }
+        } catch {
+            throw AuthError.unknown(error)
         }
-        return nil
     }
 
     private func validateWithBackend(idToken: String) async throws -> SessionToken {
@@ -270,12 +246,3 @@ private struct AuthResponse: Codable {
     }
 }
 
-// MARK: - Presentation Context
-
-private class AuthPresentationContext: NSObject, ASWebAuthenticationPresentationContextProviding {
-    static let shared = AuthPresentationContext()
-
-    func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-        NSApplication.shared.keyWindow ?? NSApplication.shared.windows.first!
-    }
-}

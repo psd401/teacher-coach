@@ -52,13 +52,13 @@
       </BuildableProductRunnable>
       <EnvironmentVariables>
          <EnvironmentVariable
-            key = "DEV_BYPASS_AUTH"
+            key = "DEV_USE_BUNDLED_MODEL"
             value = "1"
             isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable
-            key = "DEV_USE_BUNDLED_MODEL"
-            value = "1"
+            key = "GOOGLE_CLIENT_ID"
+            value = "546683883956-kie2d3tfu7rci1tad5dkkura6tveochp.apps.googleusercontent.com"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>

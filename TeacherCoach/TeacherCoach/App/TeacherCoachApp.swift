@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import GoogleSignIn
 
 @main
 struct TeacherCoachApp: App {
@@ -32,6 +33,9 @@ struct TeacherCoachApp: App {
             ContentView()
                 .environmentObject(appState)
                 .environment(ServiceContainer.shared)
+                .onOpenURL { url in
+                    GIDSignIn.sharedInstance.handle(url)
+                }
         }
         .modelContainer(sharedModelContainer)
         .commands {
