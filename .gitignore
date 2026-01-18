@@ -77,3 +77,6 @@ playground.xcworkspace
 
 # Claude
 .claude/
+
+# WhisperKit Models (large files, downloaded on demand)
+TeacherCoach/TeacherCoach/Resources/Models/

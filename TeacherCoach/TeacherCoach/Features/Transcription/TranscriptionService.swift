@@ -14,6 +14,7 @@ final class TranscriptionService: ObservableObject {
     @Published var error: TranscriptionError?
 
     private var isModelLoaded = false
+    private var loadedModelName: String = ""
 
     init(config: AppConfiguration) {
         self.config = config
@@ -29,15 +30,36 @@ final class TranscriptionService: ObservableObject {
         error = nil
 
         do {
-            // Initialize WhisperKit with the bundled model
-            whisperKit = try await WhisperKit(
-                model: config.whisperModel,
-                computeOptions: .init(
-                    melCompute: .cpuAndGPU,
-                    audioEncoderCompute: .cpuAndGPU,
-                    textDecoderCompute: .cpuAndGPU
+            let whisperConfig: WhisperKitConfig
+
+            if config.devUseBundledModel,
+               let bundledModelPath = Bundle.main.path(forResource: "openai_whisper-base", ofType: nil, inDirectory: "Models") {
+                // Use bundled model for development
+                loadedModelName = "openai_whisper-base"
+                whisperConfig = WhisperKitConfig(
+                    model: loadedModelName,
+                    modelFolder: bundledModelPath,
+                    computeOptions: .init(
+                        melCompute: .cpuAndGPU,
+                        audioEncoderCompute: .cpuAndGPU,
+                        textDecoderCompute: .cpuAndGPU
+                    ),
+                    download: false  // Don't attempt network download
                 )
-            )
+            } else {
+                // Production: download model on demand
+                loadedModelName = config.whisperModel
+                whisperConfig = WhisperKitConfig(
+                    model: loadedModelName,
+                    computeOptions: .init(
+                        melCompute: .cpuAndGPU,
+                        audioEncoderCompute: .cpuAndGPU,
+                        textDecoderCompute: .cpuAndGPU
+                    )
+                )
+            }
+
+            whisperKit = try await WhisperKit(whisperConfig)
             isModelLoaded = true
             isLoading = false
         } catch {
@@ -94,7 +116,7 @@ final class TranscriptionService: ObservableObject {
                 id: transcript.id,
                 fullText: transcript.fullText,
                 createdAt: transcript.createdAt,
-                modelUsed: config.whisperModel,
+                modelUsed: loadedModelName,
                 processingTime: processingTime,
                 segments: transcript.segments
             )
@@ -171,7 +193,7 @@ final class TranscriptionService: ObservableObject {
         return Transcript(
             fullText: fullText,
             createdAt: Date(),
-            modelUsed: config.whisperModel,
+            modelUsed: loadedModelName,
             processingTime: 0,  // Will be updated by caller
             segments: segments
         )

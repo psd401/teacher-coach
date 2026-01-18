@@ -40,6 +40,7 @@ struct AppConfiguration: Codable {
     let whisperModel: String
     let rateLimitPerHour: Int
     let devBypassAuth: Bool
+    let devUseBundledModel: Bool
 
     static func load() -> AppConfiguration {
         // Default configuration - can be overridden by config file
@@ -51,7 +52,8 @@ struct AppConfiguration: Codable {
             maxRecordingDuration: 50 * 60, // 50 minutes
             whisperModel: "large-v3",
             rateLimitPerHour: 20,
-            devBypassAuth: ProcessInfo.processInfo.environment["DEV_BYPASS_AUTH"] == "1"
+            devBypassAuth: ProcessInfo.processInfo.environment["DEV_BYPASS_AUTH"] == "1",
+            devUseBundledModel: ProcessInfo.processInfo.environment["DEV_USE_BUNDLED_MODEL"] == "1"
         )
     }
 }
