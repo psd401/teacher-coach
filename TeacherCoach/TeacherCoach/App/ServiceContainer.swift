@@ -50,7 +50,7 @@ struct AppConfiguration: Codable {
             allowedDomain: "psd401.net",
             minRecordingDuration: 5 * 60,  // 5 minutes
             maxRecordingDuration: 50 * 60, // 50 minutes
-            whisperModel: "large-v3",
+            whisperModel: "openai_whisper-large-v3",
             rateLimitPerHour: 20,
             devBypassAuth: ProcessInfo.processInfo.environment["DEV_BYPASS_AUTH"] == "1",
             devUseBundledModel: ProcessInfo.processInfo.environment["DEV_USE_BUNDLED_MODEL"] == "1"

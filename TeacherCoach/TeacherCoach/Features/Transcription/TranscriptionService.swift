@@ -30,6 +30,12 @@ final class TranscriptionService: ObservableObject {
         error = nil
 
         do {
+            // Diagnostic logging for model loading
+            let bundledPath = findBundledModelPath()
+            print("[TranscriptionService] devUseBundledModel: \(config.devUseBundledModel)")
+            print("[TranscriptionService] bundledModelPath: \(bundledPath ?? "nil")")
+            print("[TranscriptionService] Using mode: \(config.devUseBundledModel && bundledPath != nil ? "bundled" : "production")")
+
             let whisperConfig: WhisperKitConfig
 
             if config.devUseBundledModel,
@@ -44,7 +50,7 @@ final class TranscriptionService: ObservableObject {
                         audioEncoderCompute: .cpuAndGPU,
                         textDecoderCompute: .cpuAndGPU
                     ),
-                    download: false  // Don't attempt network download
+                    download: true  // Allow downloading tokenizer files (CoreML models are bundled)
                 )
             } else {
                 // Production: download model on demand
@@ -227,17 +233,26 @@ final class TranscriptionService: ObservableObject {
         return availableMemory > 3 * 1024 * 1024 * 1024
     }
 
-    /// Finds or creates the bundled model path
+    /// Finds the bundled model path
+    /// Returns the folder containing the mlmodelc files directly
     private func findBundledModelPath() -> String? {
-        // Try: Models/openai_whisper-base (folder reference with full structure)
-        if let path = Bundle.main.path(forResource: "openai_whisper-base", ofType: nil, inDirectory: "Models") {
-            return path
+        // Try: Models/openai_whisper-base - return full path to model folder
+        if let modelPath = Bundle.main.path(forResource: "openai_whisper-base", ofType: nil, inDirectory: "Models") {
+            print("[TranscriptionService] Found bundled model at: \(modelPath)")
+            // Verify expected files exist
+            let fm = FileManager.default
+            let melPath = (modelPath as NSString).appendingPathComponent("MelSpectrogram.mlmodelc")
+            print("[TranscriptionService] MelSpectrogram exists: \(fm.fileExists(atPath: melPath)) at \(melPath)")
+            return modelPath
         }
 
-        // Try: openai_whisper-base at root of Resources (folder reference)
-        if let path = Bundle.main.path(forResource: "openai_whisper-base", ofType: nil) {
-            return path
+        // Try: openai_whisper-base at root of Resources
+        if let modelPath = Bundle.main.path(forResource: "openai_whisper-base", ofType: nil) {
+            print("[TranscriptionService] Found model at root: \(modelPath)")
+            return modelPath
         }
+
+        print("[TranscriptionService] No bundled model found. Bundle path: \(Bundle.main.bundlePath)")
 
         // Fallback: Model files directly in Resources - copy to temp folder with correct structure
         guard let resourcePath = Bundle.main.resourcePath else { return nil }
