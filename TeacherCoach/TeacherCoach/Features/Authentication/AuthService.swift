@@ -82,6 +82,12 @@ final class AuthService: ObservableObject {
     private func performGoogleSignIn() async throws -> String {
         // Build OAuth URL for Google
         let clientID = config.googleClientID
+
+        // Validate Client ID is configured
+        guard !clientID.isEmpty else {
+            throw AuthError.missingClientID
+        }
+
         let redirectURI = "com.peninsula.teachercoach:/oauth2callback"
         let scope = "openid email profile"
 

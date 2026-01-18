@@ -45,7 +45,7 @@ struct AppConfiguration: Codable {
         AppConfiguration(
             backendURL: URL(string: "https://teacher-coach-api.peninsula.workers.dev")!,
             googleClientID: ProcessInfo.processInfo.environment["GOOGLE_CLIENT_ID"] ?? "",
-            allowedDomain: "peninsula.wednet.edu",
+            allowedDomain: "psd401.net",
             minRecordingDuration: 5 * 60,  // 5 minutes
             maxRecordingDuration: 50 * 60, // 50 minutes
             whisperModel: "openai_whisper-large-v3",

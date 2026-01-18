@@ -21,7 +21,7 @@ final class AppState: ObservableObject {
     @Published var analysisProgress: Double = 0
 
     // MARK: - Navigation State
-    @Published var selectedRecordingID: Recording.ID?
+    @Published var selectedRecordingID: UUID?
     @Published var showingSettings: Bool = false
 
     // MARK: - Error State
@@ -81,6 +81,7 @@ struct SessionToken: Codable {
 
 enum AuthError: Error, LocalizedError {
     case invalidDomain
+    case missingClientID
     case networkError(Error)
     case tokenExpired
     case cancelled
@@ -89,7 +90,9 @@ enum AuthError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidDomain:
-            return "Only @peninsula.wednet.edu accounts are allowed"
+            return "Only @psd401.net accounts are allowed"
+        case .missingClientID:
+            return "Google Client ID not configured. Set GOOGLE_CLIENT_ID environment variable in Xcode scheme."
         case .networkError(let error):
             return "Network error: \(error.localizedDescription)"
         case .tokenExpired:

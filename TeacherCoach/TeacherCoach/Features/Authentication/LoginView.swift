@@ -29,7 +29,7 @@ struct LoginView: View {
                 Text("Peninsula School District")
                     .font(.headline)
 
-                Text("Sign in with your @peninsula.wednet.edu account")
+                Text("Sign in with your @psd401.net account")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
