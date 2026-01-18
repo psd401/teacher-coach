@@ -33,7 +33,7 @@ final class TranscriptionService: ObservableObject {
             let whisperConfig: WhisperKitConfig
 
             if config.devUseBundledModel,
-               let bundledModelPath = Bundle.main.path(forResource: "openai_whisper-base", ofType: nil, inDirectory: "Models") {
+               let bundledModelPath = findBundledModelPath() {
                 // Use bundled model for development
                 loadedModelName = "openai_whisper-base"
                 whisperConfig = WhisperKitConfig(
@@ -225,5 +225,56 @@ final class TranscriptionService: ObservableObject {
 
         // Require at least 3GB available
         return availableMemory > 3 * 1024 * 1024 * 1024
+    }
+
+    /// Finds or creates the bundled model path
+    private func findBundledModelPath() -> String? {
+        // Try: Models/openai_whisper-base (folder reference with full structure)
+        if let path = Bundle.main.path(forResource: "openai_whisper-base", ofType: nil, inDirectory: "Models") {
+            return path
+        }
+
+        // Try: openai_whisper-base at root of Resources (folder reference)
+        if let path = Bundle.main.path(forResource: "openai_whisper-base", ofType: nil) {
+            return path
+        }
+
+        // Fallback: Model files directly in Resources - copy to temp folder with correct structure
+        guard let resourcePath = Bundle.main.resourcePath else { return nil }
+
+        let requiredFiles = ["AudioEncoder.mlmodelc", "TextDecoder.mlmodelc", "MelSpectrogram.mlmodelc", "config.json"]
+        let allFilesExist = requiredFiles.allSatisfy { file in
+            FileManager.default.fileExists(atPath: (resourcePath as NSString).appendingPathComponent(file))
+        }
+
+        guard allFilesExist else { return nil }
+
+        // Create model folder in app support directory
+        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        let modelFolder = appSupport.appendingPathComponent("WhisperModels/openai_whisper-base")
+
+        // If already set up, return it
+        if FileManager.default.fileExists(atPath: modelFolder.appendingPathComponent("config.json").path) {
+            return modelFolder.path
+        }
+
+        // Create and populate model folder
+        do {
+            try FileManager.default.createDirectory(at: modelFolder, withIntermediateDirectories: true)
+
+            let filesToCopy = requiredFiles + ["generation_config.json"]
+            for file in filesToCopy {
+                let source = (resourcePath as NSString).appendingPathComponent(file)
+                let dest = modelFolder.appendingPathComponent(file)
+                if FileManager.default.fileExists(atPath: source) {
+                    try? FileManager.default.removeItem(at: dest)
+                    try FileManager.default.copyItem(atPath: source, toPath: dest.path)
+                }
+            }
+            return modelFolder.path
+        } catch {
+            print("Failed to set up model folder: \(error)")
+            return nil
+        }
     }
 }
