@@ -111,6 +111,7 @@ enum AppError: Error, LocalizedError {
     case analysis(AnalysisError)
     case network(NetworkError)
     case storage(StorageError)
+    case importError(ImportError)
 
     var errorDescription: String? {
         switch self {
@@ -119,6 +120,33 @@ enum AppError: Error, LocalizedError {
         case .analysis(let error): return error.localizedDescription
         case .network(let error): return error.localizedDescription
         case .storage(let error): return error.localizedDescription
+        case .importError(let error): return error.localizedDescription
+        }
+    }
+}
+
+enum ImportError: Error, LocalizedError {
+    case fileNotReadable
+    case invalidAudioFormat
+    case durationTooShort
+    case durationTooLong
+    case durationUnavailable
+    case copyFailed(Error)
+
+    var errorDescription: String? {
+        switch self {
+        case .fileNotReadable:
+            return "Cannot read the selected file"
+        case .invalidAudioFormat:
+            return "Invalid audio format. Supported formats: m4a, mp3, wav, aiff, caf"
+        case .durationTooShort:
+            return "Audio must be at least 5 minutes"
+        case .durationTooLong:
+            return "Audio cannot exceed 50 minutes"
+        case .durationUnavailable:
+            return "Unable to determine audio duration"
+        case .copyFailed(let error):
+            return "Failed to import file: \(error.localizedDescription)"
         }
     }
 }

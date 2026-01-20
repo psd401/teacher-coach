@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UniformTypeIdentifiers
 
 struct ContentView: View {
     @EnvironmentObject private var appState: AppState
@@ -34,11 +35,13 @@ struct ContentView: View {
 
 struct MainView: View {
     @EnvironmentObject private var appState: AppState
+    @Environment(\.serviceContainer) private var services
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Recording.createdAt, order: .reverse) private var recordings: [Recording]
 
     @State private var selectedRecording: Recording?
     @State private var showingNewRecording = false
+    @State private var showingFileImporter = false
 
     var body: some View {
         NavigationSplitView {
@@ -59,19 +62,59 @@ struct MainView: View {
                     }
                 )
             } else {
-                WelcomeView(showingNewRecording: $showingNewRecording)
+                WelcomeView(showingNewRecording: $showingNewRecording) { recording in
+                    selectedRecording = recording
+                }
             }
         }
         .frame(minWidth: 900, minHeight: 600)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button {
-                    showingNewRecording = true
-                    selectedRecording = nil
+                Menu {
+                    Button {
+                        showingNewRecording = true
+                        selectedRecording = nil
+                    } label: {
+                        Label("New Recording", systemImage: "record.circle")
+                    }
+
+                    Button {
+                        showingFileImporter = true
+                    } label: {
+                        Label("Import Audio", systemImage: "square.and.arrow.down")
+                    }
                 } label: {
-                    Label("New Recording", systemImage: "plus")
+                    Label("Add", systemImage: "plus")
                 }
             }
+        }
+        .fileImporter(
+            isPresented: $showingFileImporter,
+            allowedContentTypes: AudioImportService.supportedTypes,
+            allowsMultipleSelection: false
+        ) { result in
+            handleFileImport(result)
+        }
+    }
+
+    private func handleFileImport(_ result: Result<[URL], Error>) {
+        switch result {
+        case .success(let urls):
+            guard let url = urls.first else { return }
+            Task {
+                do {
+                    let recording = try await services.audioImportService.importAudioFile(from: url)
+                    modelContext.insert(recording)
+                    selectedRecording = recording
+                    showingNewRecording = false
+                } catch let error as ImportError {
+                    appState.handleError(.importError(error))
+                } catch {
+                    appState.handleError(.importError(.copyFailed(error)))
+                }
+            }
+        case .failure(let error):
+            appState.handleError(.importError(.copyFailed(error)))
         }
     }
 }
@@ -131,10 +174,29 @@ struct RecordingRowView: View {
 
                 Spacer()
 
+                if recording.isImported {
+                    ImportedBadge()
+                }
+
                 StatusBadge(status: recording.status)
             }
         }
         .padding(.vertical, 4)
+    }
+}
+
+// MARK: - Imported Badge
+
+struct ImportedBadge: View {
+    var body: some View {
+        Text("Imported")
+            .font(.caption2)
+            .fontWeight(.medium)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(Color.gray.opacity(0.2))
+            .foregroundStyle(.gray)
+            .clipShape(Capsule())
     }
 }
 
@@ -181,7 +243,12 @@ struct StatusBadge: View {
 
 struct WelcomeView: View {
     @Binding var showingNewRecording: Bool
+    var onImportComplete: ((Recording) -> Void)?
     @EnvironmentObject private var appState: AppState
+    @Environment(\.serviceContainer) private var services
+    @Environment(\.modelContext) private var modelContext
+
+    @State private var showingFileImporter = false
 
     var body: some View {
         VStack(spacing: 24) {
@@ -199,17 +266,55 @@ struct WelcomeView: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 500)
 
-            Button {
-                showingNewRecording = true
-            } label: {
-                Label("Start New Session", systemImage: "plus.circle.fill")
-                    .font(.title3)
+            VStack(spacing: 12) {
+                Button {
+                    showingNewRecording = true
+                } label: {
+                    Label("Start New Session", systemImage: "plus.circle.fill")
+                        .font(.title3)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+
+                Button {
+                    showingFileImporter = true
+                } label: {
+                    Label("Import Voice Memo", systemImage: "square.and.arrow.down")
+                        .font(.body)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.regular)
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding()
+        .fileImporter(
+            isPresented: $showingFileImporter,
+            allowedContentTypes: AudioImportService.supportedTypes,
+            allowsMultipleSelection: false
+        ) { result in
+            handleFileImport(result)
+        }
+    }
+
+    private func handleFileImport(_ result: Result<[URL], Error>) {
+        switch result {
+        case .success(let urls):
+            guard let url = urls.first else { return }
+            Task {
+                do {
+                    let recording = try await services.audioImportService.importAudioFile(from: url)
+                    modelContext.insert(recording)
+                    onImportComplete?(recording)
+                } catch let error as ImportError {
+                    appState.handleError(.importError(error))
+                } catch {
+                    appState.handleError(.importError(.copyFailed(error)))
+                }
+            }
+        case .failure(let error):
+            appState.handleError(.importError(.copyFailed(error)))
+        }
     }
 }
 

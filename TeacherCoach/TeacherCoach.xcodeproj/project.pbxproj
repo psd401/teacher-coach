@@ -28,6 +28,7 @@
 		0019 /* AnalysisFeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1019 /* AnalysisFeedbackView.swift */; };
 		0020 /* TechniqueService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1020 /* TechniqueService.swift */; };
 		0021 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1021 /* SettingsView.swift */; };
+		0025 /* AudioImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1024 /* AudioImportService.swift */; };
 		0022 /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3001 /* WhisperKit */; };
 		0023 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 3002 /* GoogleSignIn */; };
 		0024 /* Models in Resources */ = {isa = PBXBuildFile; fileRef = 29C274B02F1C7E6D00B3F6F3 /* Models */; };
@@ -55,6 +56,7 @@
 		1019 /* AnalysisFeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisFeedbackView.swift; sourceTree = "<group>"; };
 		1020 /* TechniqueService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TechniqueService.swift; sourceTree = "<group>"; };
 		1021 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		1024 /* AudioImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioImportService.swift; sourceTree = "<group>"; };
 		1022 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1023 /* TeacherCoach.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TeacherCoach.entitlements; sourceTree = "<group>"; };
 		2001 /* TeacherCoach.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeacherCoach.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -160,6 +162,7 @@
 			isa = PBXGroup;
 			children = (
 				1014 /* RecordingService.swift */,
+				1024 /* AudioImportService.swift */,
 				1015 /* NewRecordingView.swift */,
 				1016 /* RecordingDetailView.swift */,
 			);
@@ -329,6 +332,7 @@
 				0019 /* AnalysisFeedbackView.swift in Sources */,
 				0020 /* TechniqueService.swift in Sources */,
 				0021 /* SettingsView.swift in Sources */,
+				0025 /* AudioImportService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

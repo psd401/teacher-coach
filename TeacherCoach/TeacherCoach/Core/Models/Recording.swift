@@ -11,6 +11,7 @@ final class Recording {
     var duration: TimeInterval
     var audioFilePath: String  // Relative path within app's Documents
     var status: RecordingStatus
+    var isImported: Bool = false
 
     // MARK: - Relationships
     @Relationship(deleteRule: .cascade, inverse: \Transcript.recording)
@@ -59,7 +60,8 @@ final class Recording {
         createdAt: Date = Date(),
         duration: TimeInterval = 0,
         audioFilePath: String,
-        status: RecordingStatus = .recording
+        status: RecordingStatus = .recording,
+        isImported: Bool = false
     ) {
         self.id = id
         self.title = title
@@ -67,6 +69,7 @@ final class Recording {
         self.duration = duration
         self.audioFilePath = audioFilePath
         self.status = status
+        self.isImported = isImported
     }
 }
 

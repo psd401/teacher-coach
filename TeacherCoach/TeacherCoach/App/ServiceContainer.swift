@@ -10,6 +10,7 @@ final class ServiceContainer {
     // MARK: - Services
     let authService: AuthService
     let recordingService: RecordingService
+    let audioImportService: AudioImportService
     let transcriptionService: TranscriptionService
     let analysisService: AnalysisService
     let techniqueService: TechniqueService
@@ -23,6 +24,7 @@ final class ServiceContainer {
         // Initialize services
         self.authService = AuthService(config: config)
         self.recordingService = RecordingService(config: config)
+        self.audioImportService = AudioImportService(config: config)
         self.transcriptionService = TranscriptionService(config: config)
         self.analysisService = AnalysisService(config: config)
         self.techniqueService = TechniqueService()
