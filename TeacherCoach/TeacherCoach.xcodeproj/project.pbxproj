@@ -29,6 +29,13 @@
 		0020 /* TechniqueService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1020 /* TechniqueService.swift */; };
 		0021 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1021 /* SettingsView.swift */; };
 		0025 /* AudioImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1024 /* AudioImportService.swift */; };
+		0026 /* TeachingFramework.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1025 /* TeachingFramework.swift */; };
+		0027 /* FrameworkRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1026 /* FrameworkRegistry.swift */; };
+		0028 /* TLACTechniques.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1027 /* TLACTechniques.swift */; };
+		0029 /* DanielsonTechniques.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1028 /* DanielsonTechniques.swift */; };
+		0030 /* FrameworkSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1029 /* FrameworkSelectionView.swift */; };
+		0031 /* TechniqueChecklistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1030 /* TechniqueChecklistView.swift */; };
+		0032 /* AnalysisConfigurationSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1031 /* AnalysisConfigurationSheet.swift */; };
 		0022 /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3001 /* WhisperKit */; };
 		0023 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 3002 /* GoogleSignIn */; };
 		0024 /* Models in Resources */ = {isa = PBXBuildFile; fileRef = 29C274B02F1C7E6D00B3F6F3 /* Models */; };
@@ -59,6 +66,13 @@
 		1024 /* AudioImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioImportService.swift; sourceTree = "<group>"; };
 		1022 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1023 /* TeacherCoach.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TeacherCoach.entitlements; sourceTree = "<group>"; };
+		1025 /* TeachingFramework.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeachingFramework.swift; sourceTree = "<group>"; };
+		1026 /* FrameworkRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameworkRegistry.swift; sourceTree = "<group>"; };
+		1027 /* TLACTechniques.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLACTechniques.swift; sourceTree = "<group>"; };
+		1028 /* DanielsonTechniques.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DanielsonTechniques.swift; sourceTree = "<group>"; };
+		1029 /* FrameworkSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameworkSelectionView.swift; sourceTree = "<group>"; };
+		1030 /* TechniqueChecklistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TechniqueChecklistView.swift; sourceTree = "<group>"; };
+		1031 /* AnalysisConfigurationSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisConfigurationSheet.swift; sourceTree = "<group>"; };
 		2001 /* TeacherCoach.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeacherCoach.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -182,6 +196,7 @@
 			children = (
 				1018 /* AnalysisService.swift */,
 				1019 /* AnalysisFeedbackView.swift */,
+				1031 /* AnalysisConfigurationSheet.swift */,
 			);
 			path = Analysis;
 			sourceTree = "<group>";
@@ -190,8 +205,29 @@
 			isa = PBXGroup;
 			children = (
 				1020 /* TechniqueService.swift */,
+				1026 /* FrameworkRegistry.swift */,
+				5017 /* Frameworks */,
+				5018 /* Views */,
 			);
 			path = Techniques;
+			sourceTree = "<group>";
+		};
+		5017 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1027 /* TLACTechniques.swift */,
+				1028 /* DanielsonTechniques.swift */,
+			);
+			path = Frameworks;
+			sourceTree = "<group>";
+		};
+		5018 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1029 /* FrameworkSelectionView.swift */,
+				1030 /* TechniqueChecklistView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		5013 /* Settings */ = {
@@ -211,6 +247,7 @@
 				1007 /* TechniqueEvaluation.swift */,
 				1008 /* Technique.swift */,
 				1009 /* UserSettings.swift */,
+				1025 /* TeachingFramework.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -333,6 +370,13 @@
 				0020 /* TechniqueService.swift in Sources */,
 				0021 /* SettingsView.swift in Sources */,
 				0025 /* AudioImportService.swift in Sources */,
+				0026 /* TeachingFramework.swift in Sources */,
+				0027 /* FrameworkRegistry.swift in Sources */,
+				0028 /* TLACTechniques.swift in Sources */,
+				0029 /* DanielsonTechniques.swift in Sources */,
+				0030 /* FrameworkSelectionView.swift in Sources */,
+				0031 /* TechniqueChecklistView.swift in Sources */,
+				0032 /* AnalysisConfigurationSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,6 +10,7 @@ struct SettingsView: View {
     @State private var autoStartTranscription = true
     @State private var autoStartAnalysis = false
     @State private var showTimestamps = true
+    @State private var selectedFramework: TeachingFramework = .tlac
     @State private var enabledTechniqueIds: Set<String> = []
 
     var body: some View {
@@ -24,8 +25,8 @@ struct SettingsView: View {
             }
 
             TechniquesSettingsTab(
-                enabledTechniqueIds: $enabledTechniqueIds,
-                techniques: services.techniqueService.getBuiltInTechniques()
+                selectedFramework: $selectedFramework,
+                enabledTechniqueIds: $enabledTechniqueIds
             )
             .tabItem {
                 Label("Techniques", systemImage: "list.bullet.clipboard")
@@ -48,6 +49,15 @@ struct SettingsView: View {
         .onChange(of: autoStartTranscription) { _, _ in saveSettings() }
         .onChange(of: autoStartAnalysis) { _, _ in saveSettings() }
         .onChange(of: showTimestamps) { _, _ in saveSettings() }
+        .onChange(of: selectedFramework) { oldValue, newValue in
+            // Load technique IDs for new framework
+            if let settings = settings {
+                enabledTechniqueIds = Set(settings.enabledTechniqueIds(for: newValue))
+            } else {
+                enabledTechniqueIds = Set(FrameworkRegistry.defaultEnabledIds(for: newValue))
+            }
+            saveSettings()
+        }
         .onChange(of: enabledTechniqueIds) { _, _ in saveSettings() }
     }
 
@@ -63,13 +73,15 @@ struct SettingsView: View {
             autoStartTranscription = existingSettings.autoStartTranscription
             autoStartAnalysis = existingSettings.autoStartAnalysis
             showTimestamps = existingSettings.showTimestamps
-            enabledTechniqueIds = Set(existingSettings.enabledTechniqueIds)
+            selectedFramework = existingSettings.selectedFramework
+            enabledTechniqueIds = Set(existingSettings.enabledTechniqueIds(for: selectedFramework))
         } else {
             // Create default settings
             let newSettings = UserSettings(userEmail: email)
             modelContext.insert(newSettings)
             settings = newSettings
-            enabledTechniqueIds = Set(services.techniqueService.getDefaultEnabledIds())
+            selectedFramework = .tlac
+            enabledTechniqueIds = Set(services.techniqueService.getDefaultEnabledIds(for: .tlac))
         }
     }
 
@@ -79,7 +91,8 @@ struct SettingsView: View {
         settings.autoStartTranscription = autoStartTranscription
         settings.autoStartAnalysis = autoStartAnalysis
         settings.showTimestamps = showTimestamps
-        settings.enabledTechniqueIds = Array(enabledTechniqueIds)
+        settings.selectedFramework = selectedFramework
+        settings.setEnabledTechniqueIds(Array(enabledTechniqueIds), for: selectedFramework)
 
         try? modelContext.save()
     }
@@ -133,19 +146,41 @@ struct GeneralSettingsTab: View {
 // MARK: - Techniques Settings Tab
 
 struct TechniquesSettingsTab: View {
+    @Binding var selectedFramework: TeachingFramework
     @Binding var enabledTechniqueIds: Set<String>
-    let techniques: [Technique]
 
     @Environment(\.serviceContainer) private var services
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
+            // Framework selection
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Teaching Framework")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                Picker("Framework", selection: $selectedFramework) {
+                    ForEach(TeachingFramework.allCases) { framework in
+                        Text(framework.displayName).tag(framework)
+                    }
+                }
+                .pickerStyle(.segmented)
+
+                Text(selectedFramework.description)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal)
+
+            Divider()
+
             Text("Select techniques to include in analysis")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+                .padding(.horizontal)
 
             List {
-                ForEach(services.techniqueService.getTechniquesByCategory(), id: \.category) { group in
+                ForEach(services.techniqueService.getTechniquesByCategory(for: selectedFramework), id: \.category) { group in
                     Section(group.category.rawValue) {
                         ForEach(group.techniques) { technique in
                             TechniqueToggleRow(
@@ -166,7 +201,8 @@ struct TechniquesSettingsTab: View {
 
             HStack {
                 Button("Select All") {
-                    enabledTechniqueIds = Set(techniques.map { $0.id })
+                    let allIds = services.techniqueService.getTechniques(for: selectedFramework).map { $0.id }
+                    enabledTechniqueIds = Set(allIds)
                 }
 
                 Button("Deselect All") {
@@ -175,7 +211,7 @@ struct TechniquesSettingsTab: View {
             }
             .padding(.horizontal)
         }
-        .padding()
+        .padding(.vertical)
     }
 }
 

@@ -3,29 +3,56 @@ import SwiftData
 
 /// Service for managing teaching techniques
 final class TechniqueService {
-    private var cachedTechniques: [Technique]?
+    private var cachedTechniques: [TeachingFramework: [Technique]] = [:]
 
     init() {}
 
-    // MARK: - Public Methods
+    // MARK: - Framework-Aware Methods
 
-    /// Returns all built-in techniques
-    func getBuiltInTechniques() -> [Technique] {
-        if let cached = cachedTechniques {
+    /// Returns all techniques for a specific framework
+    func getTechniques(for framework: TeachingFramework) -> [Technique] {
+        if let cached = cachedTechniques[framework] {
             return cached
         }
 
-        let techniques = Technique.createBuiltInTechniques()
-        cachedTechniques = techniques
+        let techniques = FrameworkRegistry.techniques(for: framework)
+        cachedTechniques[framework] = techniques
         return techniques
     }
 
-    /// Returns techniques filtered by enabled IDs
+    /// Returns techniques filtered by enabled IDs for a specific framework
+    func getEnabledTechniques(for framework: TeachingFramework, enabledIds: [String]) -> [Technique] {
+        getTechniques(for: framework).filter { enabledIds.contains($0.id) }
+    }
+
+    /// Returns techniques grouped by category for a specific framework
+    func getTechniquesByCategory(for framework: TeachingFramework) -> [(category: TechniqueCategory, techniques: [Technique])] {
+        FrameworkRegistry.techniquesByCategory(for: framework)
+    }
+
+    /// Returns a technique by ID within a specific framework
+    func getTechnique(byId id: String, in framework: TeachingFramework) -> Technique? {
+        getTechniques(for: framework).first { $0.id == id }
+    }
+
+    /// Returns default enabled IDs for a framework
+    func getDefaultEnabledIds(for framework: TeachingFramework) -> [String] {
+        FrameworkRegistry.defaultEnabledIds(for: framework)
+    }
+
+    // MARK: - Legacy Methods (backwards compatibility)
+
+    /// Returns all built-in techniques from all frameworks
+    func getBuiltInTechniques() -> [Technique] {
+        FrameworkRegistry.allTechniques()
+    }
+
+    /// Returns techniques filtered by enabled IDs (searches all frameworks)
     func getEnabledTechniques(enabledIds: [String]) -> [Technique] {
         getBuiltInTechniques().filter { enabledIds.contains($0.id) }
     }
 
-    /// Returns techniques grouped by category
+    /// Returns techniques grouped by category (from all frameworks)
     func getTechniquesByCategory() -> [(category: TechniqueCategory, techniques: [Technique])] {
         let techniques = getBuiltInTechniques()
         var grouped: [TechniqueCategory: [Technique]] = [:]
@@ -40,9 +67,9 @@ final class TechniqueService {
         }
     }
 
-    /// Returns a technique by ID
+    /// Returns a technique by ID (searches all frameworks)
     func getTechnique(byId id: String) -> Technique? {
-        getBuiltInTechniques().first { $0.id == id }
+        FrameworkRegistry.technique(byId: id)
     }
 
     /// Initializes techniques in SwiftData if not already present

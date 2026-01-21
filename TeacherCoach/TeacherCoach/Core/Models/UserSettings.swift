@@ -13,7 +13,11 @@ final class UserSettings {
     var autoStartTranscription: Bool
     var autoStartAnalysis: Bool
 
-    // Technique preferences (stored as JSON array of technique IDs)
+    // Framework and technique preferences
+    var selectedFrameworkId: String = "tlac"  // Default for migration
+    var frameworkTechniqueSelectionsData: Data?  // JSON: {"tlac": [...], "danielson": [...]}
+
+    // Legacy: kept for migration, now stored per-framework
     var enabledTechniquesData: Data?
 
     // Display preferences
@@ -24,18 +28,65 @@ final class UserSettings {
     var updatedAt: Date
 
     // MARK: - Computed Properties
-    var enabledTechniqueIds: [String] {
+
+    /// The currently selected teaching framework
+    var selectedFramework: TeachingFramework {
         get {
-            guard let data = enabledTechniquesData else {
-                // Default: all techniques enabled
-                return Technique.createBuiltInTechniques().map { $0.id }
-            }
-            return (try? JSONDecoder().decode([String].self, from: data)) ?? []
+            TeachingFramework(rawValue: selectedFrameworkId) ?? .tlac
         }
         set {
-            enabledTechniquesData = try? JSONEncoder().encode(newValue)
+            selectedFrameworkId = newValue.rawValue
             updatedAt = Date()
         }
+    }
+
+    /// Per-framework technique selections
+    private var frameworkTechniqueSelections: [String: [String]] {
+        get {
+            guard let data = frameworkTechniqueSelectionsData else {
+                return [:]
+            }
+            return (try? JSONDecoder().decode([String: [String]].self, from: data)) ?? [:]
+        }
+        set {
+            frameworkTechniqueSelectionsData = try? JSONEncoder().encode(newValue)
+            updatedAt = Date()
+        }
+    }
+
+    /// Legacy: enabled technique IDs (for backwards compatibility)
+    /// Now returns IDs for the selected framework
+    var enabledTechniqueIds: [String] {
+        get {
+            enabledTechniqueIds(for: selectedFramework)
+        }
+        set {
+            setEnabledTechniqueIds(newValue, for: selectedFramework)
+        }
+    }
+
+    /// Returns enabled technique IDs for a specific framework
+    func enabledTechniqueIds(for framework: TeachingFramework) -> [String] {
+        // Check per-framework storage first
+        if let ids = frameworkTechniqueSelections[framework.rawValue], !ids.isEmpty {
+            return ids
+        }
+
+        // Fall back to legacy storage for TLAC (migration path)
+        if framework == .tlac, let data = enabledTechniquesData,
+           let ids = try? JSONDecoder().decode([String].self, from: data), !ids.isEmpty {
+            return ids
+        }
+
+        // Default: all techniques for the framework
+        return FrameworkRegistry.defaultEnabledIds(for: framework)
+    }
+
+    /// Sets enabled technique IDs for a specific framework
+    func setEnabledTechniqueIds(_ ids: [String], for framework: TeachingFramework) {
+        var selections = frameworkTechniqueSelections
+        selections[framework.rawValue] = ids
+        frameworkTechniqueSelections = selections
     }
 
     // MARK: - Initialization
@@ -45,6 +96,7 @@ final class UserSettings {
         defaultRecordingTitle: String = "Teaching Session",
         autoStartTranscription: Bool = true,
         autoStartAnalysis: Bool = false,
+        selectedFramework: TeachingFramework = .tlac,
         showTimestamps: Bool = true,
         compactFeedbackView: Bool = false
     ) {
@@ -53,6 +105,7 @@ final class UserSettings {
         self.defaultRecordingTitle = defaultRecordingTitle
         self.autoStartTranscription = autoStartTranscription
         self.autoStartAnalysis = autoStartAnalysis
+        self.selectedFrameworkId = selectedFramework.rawValue
         self.showTimestamps = showTimestamps
         self.compactFeedbackView = compactFeedbackView
         self.createdAt = Date()
@@ -60,17 +113,30 @@ final class UserSettings {
     }
 
     // MARK: - Methods
+
+    /// Checks if a technique is enabled for the current framework
     func isTechniqueEnabled(_ techniqueId: String) -> Bool {
         enabledTechniqueIds.contains(techniqueId)
     }
 
+    /// Checks if a technique is enabled for a specific framework
+    func isTechniqueEnabled(_ techniqueId: String, for framework: TeachingFramework) -> Bool {
+        enabledTechniqueIds(for: framework).contains(techniqueId)
+    }
+
+    /// Toggles a technique for the current framework
     func toggleTechnique(_ techniqueId: String) {
-        var ids = enabledTechniqueIds
+        toggleTechnique(techniqueId, for: selectedFramework)
+    }
+
+    /// Toggles a technique for a specific framework
+    func toggleTechnique(_ techniqueId: String, for framework: TeachingFramework) {
+        var ids = enabledTechniqueIds(for: framework)
         if ids.contains(techniqueId) {
             ids.removeAll { $0 == techniqueId }
         } else {
             ids.append(techniqueId)
         }
-        enabledTechniqueIds = ids
+        setEnabledTechniqueIds(ids, for: framework)
     }
 }

@@ -9,6 +9,7 @@ struct RecordingDetailView: View {
     @EnvironmentObject private var appState: AppState
 
     @State private var showingDeleteConfirmation = false
+    @State private var showingAnalysisConfig = false
     @State private var isProcessing = false
     @State private var processingMessage = ""
 
@@ -44,9 +45,9 @@ struct RecordingDetailView: View {
                         ActionPromptView(
                             title: "Ready for Analysis",
                             description: "Analyze this transcript for teaching technique feedback.",
-                            buttonTitle: "Start Analysis",
+                            buttonTitle: "Configure & Analyze",
                             isLoading: isProcessing,
-                            action: startAnalysis
+                            action: { showingAnalysisConfig = true }
                         )
                     }
 
@@ -105,6 +106,11 @@ struct RecordingDetailView: View {
         } message: {
             Text("This will permanently delete the recording and all associated data.")
         }
+        .sheet(isPresented: $showingAnalysisConfig) {
+            AnalysisConfigurationSheet { framework, techniqueIds in
+                startAnalysis(framework: framework, techniqueIds: techniqueIds)
+            }
+        }
     }
 
     // MARK: - Actions
@@ -133,7 +139,7 @@ struct RecordingDetailView: View {
         }
     }
 
-    private func startAnalysis() {
+    private func startAnalysis(framework: TeachingFramework, techniqueIds: [String]) {
         guard let transcript = recording.transcript,
               let session = services.authService.getCurrentSession() else {
             return
@@ -146,8 +152,11 @@ struct RecordingDetailView: View {
             do {
                 try modelContext.save()
 
-                // Get enabled techniques
-                let techniques = try services.techniqueService.fetchEnabledTechniques(context: modelContext)
+                // Get enabled techniques for the selected framework
+                let techniques = services.techniqueService.getEnabledTechniques(
+                    for: framework,
+                    enabledIds: techniqueIds
+                )
 
                 let analysis = try await services.analysisService.analyze(
                     transcript: transcript,
@@ -166,6 +175,25 @@ struct RecordingDetailView: View {
             }
 
             isProcessing = false
+        }
+    }
+
+    /// Legacy method for re-analysis from toolbar
+    private func startAnalysis() {
+        // Load the saved framework and technique preferences
+        guard let email = appState.currentUser?.email else { return }
+
+        let descriptor = FetchDescriptor<UserSettings>(
+            predicate: #Predicate { $0.userEmail == email }
+        )
+
+        if let settings = try? modelContext.fetch(descriptor).first {
+            let framework = settings.selectedFramework
+            let techniqueIds = settings.enabledTechniqueIds(for: framework)
+            startAnalysis(framework: framework, techniqueIds: techniqueIds)
+        } else {
+            // Default to TLAC with all techniques
+            startAnalysis(framework: .tlac, techniqueIds: FrameworkRegistry.defaultEnabledIds(for: .tlac))
         }
     }
 
