@@ -36,6 +36,10 @@
 		0030 /* FrameworkSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1029 /* FrameworkSelectionView.swift */; };
 		0031 /* TechniqueChecklistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1030 /* TechniqueChecklistView.swift */; };
 		0032 /* AnalysisConfigurationSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1031 /* AnalysisConfigurationSheet.swift */; };
+		0033 /* ExportConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1032 /* ExportConfiguration.swift */; };
+		0034 /* ExportConfigurationSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1033 /* ExportConfigurationSheet.swift */; };
+		0035 /* ExportableAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1034 /* ExportableAnalysisView.swift */; };
+		0036 /* ExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1035 /* ExportService.swift */; };
 		0022 /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3001 /* WhisperKit */; };
 		0023 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 3002 /* GoogleSignIn */; };
 		0024 /* Models in Resources */ = {isa = PBXBuildFile; fileRef = 29C274B02F1C7E6D00B3F6F3 /* Models */; };
@@ -73,6 +77,10 @@
 		1029 /* FrameworkSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameworkSelectionView.swift; sourceTree = "<group>"; };
 		1030 /* TechniqueChecklistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TechniqueChecklistView.swift; sourceTree = "<group>"; };
 		1031 /* AnalysisConfigurationSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisConfigurationSheet.swift; sourceTree = "<group>"; };
+		1032 /* ExportConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportConfiguration.swift; sourceTree = "<group>"; };
+		1033 /* ExportConfigurationSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportConfigurationSheet.swift; sourceTree = "<group>"; };
+		1034 /* ExportableAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportableAnalysisView.swift; sourceTree = "<group>"; };
+		1035 /* ExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportService.swift; sourceTree = "<group>"; };
 		2001 /* TeacherCoach.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeacherCoach.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -139,6 +147,7 @@
 				5011 /* Analysis */,
 				5012 /* Techniques */,
 				5013 /* Settings */,
+				5019 /* Export */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -236,6 +245,17 @@
 				1021 /* SettingsView.swift */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		5019 /* Export */ = {
+			isa = PBXGroup;
+			children = (
+				1032 /* ExportConfiguration.swift */,
+				1033 /* ExportConfigurationSheet.swift */,
+				1034 /* ExportableAnalysisView.swift */,
+				1035 /* ExportService.swift */,
+			);
+			path = Export;
 			sourceTree = "<group>";
 		};
 		5014 /* Models */ = {
@@ -377,6 +397,10 @@
 				0030 /* FrameworkSelectionView.swift in Sources */,
 				0031 /* TechniqueChecklistView.swift in Sources */,
 				0032 /* AnalysisConfigurationSheet.swift in Sources */,
+				0033 /* ExportConfiguration.swift in Sources */,
+				0034 /* ExportConfigurationSheet.swift in Sources */,
+				0035 /* ExportableAnalysisView.swift in Sources */,
+				0036 /* ExportService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

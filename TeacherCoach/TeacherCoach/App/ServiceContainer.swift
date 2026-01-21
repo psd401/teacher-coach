@@ -14,6 +14,7 @@ final class ServiceContainer {
     let transcriptionService: TranscriptionService
     let analysisService: AnalysisService
     let techniqueService: TechniqueService
+    let exportService: ExportService
 
     // MARK: - Configuration
     let config: AppConfiguration
@@ -28,6 +29,7 @@ final class ServiceContainer {
         self.transcriptionService = TranscriptionService(config: config)
         self.analysisService = AnalysisService(config: config)
         self.techniqueService = TechniqueService()
+        self.exportService = ExportService()
     }
 }
 

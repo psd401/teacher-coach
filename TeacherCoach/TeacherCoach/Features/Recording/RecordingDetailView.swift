@@ -10,6 +10,7 @@ struct RecordingDetailView: View {
 
     @State private var showingDeleteConfirmation = false
     @State private var showingAnalysisConfig = false
+    @State private var showingExportConfig = false
     @State private var isProcessing = false
     @State private var processingMessage = ""
 
@@ -81,6 +82,15 @@ struct RecordingDetailView: View {
         .navigationTitle(recording.title)
         .toolbar {
             ToolbarItemGroup {
+                if recording.status == .complete {
+                    Button {
+                        showingExportConfig = true
+                    } label: {
+                        Label("Export", systemImage: "square.and.arrow.up")
+                    }
+                    .disabled(isProcessing)
+                }
+
                 if recording.status == .transcribed || recording.status == .complete {
                     Button {
                         // Re-analyze
@@ -109,6 +119,16 @@ struct RecordingDetailView: View {
         .sheet(isPresented: $showingAnalysisConfig) {
             AnalysisConfigurationSheet { framework, techniqueIds, includeRatings in
                 startAnalysis(framework: framework, techniqueIds: techniqueIds, includeRatings: includeRatings)
+            }
+        }
+        .sheet(isPresented: $showingExportConfig) {
+            if let analysis = recording.analysis {
+                ExportConfigurationSheet(
+                    analysis: analysis,
+                    recording: recording
+                ) { configuration in
+                    exportAnalysis(configuration: configuration)
+                }
             }
         }
     }
@@ -203,6 +223,25 @@ struct RecordingDetailView: View {
         services.recordingService.deleteAudioFile(for: recording)
         modelContext.delete(recording)
         try? modelContext.save()
+    }
+
+    private func exportAnalysis(configuration: ExportConfiguration) {
+        guard let analysis = recording.analysis else { return }
+
+        Task {
+            do {
+                let url = try await services.exportService.export(
+                    analysis: analysis,
+                    recording: recording,
+                    configuration: configuration
+                )
+                print("Exported to: \(url)")
+            } catch ExportService.ExportError.saveCancelled {
+                // User cancelled, no error to show
+            } catch {
+                print("Export error: \(error.localizedDescription)")
+            }
+        }
     }
 }
 
