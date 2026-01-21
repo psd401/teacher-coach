@@ -16,7 +16,7 @@ struct AnalysisFeedbackView: View {
 
             // Technique Evaluations
             if let evaluations = analysis.techniqueEvaluations, !evaluations.isEmpty {
-                TechniqueEvaluationsSection(evaluations: evaluations)
+                TechniqueEvaluationsSection(evaluations: evaluations, showRatings: analysis.ratingsIncluded)
             }
 
             // Actionable Next Steps
@@ -107,6 +107,7 @@ struct GrowthAreasSection: View {
 
 struct TechniqueEvaluationsSection: View {
     let evaluations: [TechniqueEvaluation]
+    var showRatings: Bool = true
 
     @State private var expandedIds: Set<UUID> = []
 
@@ -119,6 +120,7 @@ struct TechniqueEvaluationsSection: View {
                 TechniqueEvaluationCard(
                     evaluation: evaluation,
                     isExpanded: expandedIds.contains(evaluation.id),
+                    showRatings: showRatings,
                     onToggle: {
                         withAnimation {
                             if expandedIds.contains(evaluation.id) {
@@ -139,6 +141,7 @@ struct TechniqueEvaluationsSection: View {
 struct TechniqueEvaluationCard: View {
     let evaluation: TechniqueEvaluation
     let isExpanded: Bool
+    var showRatings: Bool = true
     let onToggle: () -> Void
 
     var body: some View {
@@ -161,7 +164,7 @@ struct TechniqueEvaluationCard: View {
 
                     Spacer()
 
-                    if let rating = evaluation.rating {
+                    if showRatings, let rating = evaluation.rating {
                         RatingBadge(rating: rating)
                     }
 

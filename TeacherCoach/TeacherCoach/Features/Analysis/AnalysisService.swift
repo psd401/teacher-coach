@@ -20,7 +20,8 @@ final class AnalysisService: ObservableObject {
     func analyze(
         transcript: Transcript,
         techniques: [Technique],
-        sessionToken: String
+        sessionToken: String,
+        includeRatings: Bool = true
     ) async throws -> Analysis {
         isAnalyzing = true
         progress = 0
@@ -31,7 +32,8 @@ final class AnalysisService: ObservableObject {
                 try await performAnalysis(
                     transcript: transcript,
                     techniques: techniques,
-                    sessionToken: sessionToken
+                    sessionToken: sessionToken,
+                    includeRatings: includeRatings
                 )
             }
 
@@ -68,7 +70,8 @@ final class AnalysisService: ObservableObject {
     private func performAnalysis(
         transcript: Transcript,
         techniques: [Technique],
-        sessionToken: String
+        sessionToken: String,
+        includeRatings: Bool = true
     ) async throws -> Analysis {
         let url = config.backendURL.appendingPathComponent("analyze")
 
@@ -81,7 +84,8 @@ final class AnalysisService: ObservableObject {
         // Build request body
         let requestBody = AnalysisRequest(
             transcript: transcript.fullText,
-            techniques: techniques.map { TechniqueDefinition(from: $0) }
+            techniques: techniques.map { TechniqueDefinition(from: $0) },
+            includeRatings: includeRatings
         )
         request.httpBody = try JSONEncoder().encode(requestBody)
 
@@ -97,7 +101,7 @@ final class AnalysisService: ObservableObject {
         switch httpResponse.statusCode {
         case 200:
             progress = 0.9
-            return try parseAnalysisResponse(data: data, techniques: techniques)
+            return try parseAnalysisResponse(data: data, techniques: techniques, ratingsIncluded: includeRatings)
         case 429:
             throw AnalysisError.rateLimited
         case 401, 403:
@@ -108,7 +112,7 @@ final class AnalysisService: ObservableObject {
         }
     }
 
-    private func parseAnalysisResponse(data: Data, techniques: [Technique]) throws -> Analysis {
+    private func parseAnalysisResponse(data: Data, techniques: [Technique], ratingsIncluded: Bool) throws -> Analysis {
         let response = try JSONDecoder().decode(AnalysisResponse.self, from: data)
 
         let analysis = Analysis(
@@ -116,7 +120,8 @@ final class AnalysisService: ObservableObject {
             modelUsed: response.modelUsed,
             strengths: response.strengths,
             growthAreas: response.growthAreas,
-            actionableNextSteps: response.actionableNextSteps
+            actionableNextSteps: response.actionableNextSteps,
+            ratingsIncluded: ratingsIncluded
         )
 
         // Create technique evaluations
@@ -216,6 +221,7 @@ final class AnalysisService: ObservableObject {
 private struct AnalysisRequest: Codable {
     let transcript: String
     let techniques: [TechniqueDefinition]
+    let includeRatings: Bool
 }
 
 private struct TechniqueDefinition: Codable {

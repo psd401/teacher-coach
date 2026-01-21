@@ -24,6 +24,9 @@ final class UserSettings {
     var showTimestamps: Bool
     var compactFeedbackView: Bool
 
+    // Analysis preferences
+    var includeRatingsInAnalysis: Bool = true
+
     var createdAt: Date
     var updatedAt: Date
 
@@ -98,7 +101,8 @@ final class UserSettings {
         autoStartAnalysis: Bool = false,
         selectedFramework: TeachingFramework = .tlac,
         showTimestamps: Bool = true,
-        compactFeedbackView: Bool = false
+        compactFeedbackView: Bool = false,
+        includeRatingsInAnalysis: Bool = true
     ) {
         self.id = id
         self.userEmail = userEmail
@@ -108,6 +112,7 @@ final class UserSettings {
         self.selectedFrameworkId = selectedFramework.rawValue
         self.showTimestamps = showTimestamps
         self.compactFeedbackView = compactFeedbackView
+        self.includeRatingsInAnalysis = includeRatingsInAnalysis
         self.createdAt = Date()
         self.updatedAt = Date()
     }

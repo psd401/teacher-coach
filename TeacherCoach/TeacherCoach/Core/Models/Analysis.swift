@@ -9,6 +9,7 @@ final class Analysis {
     var overallSummary: String
     var createdAt: Date
     var modelUsed: String  // e.g., "claude-opus-4-5-20251101"
+    var ratingsIncluded: Bool = true  // Whether star ratings were included in this analysis
 
     // MARK: - JSON-stored arrays
     var strengthsData: Data?
@@ -67,12 +68,14 @@ final class Analysis {
         modelUsed: String,
         strengths: [String] = [],
         growthAreas: [String] = [],
-        actionableNextSteps: [String] = []
+        actionableNextSteps: [String] = [],
+        ratingsIncluded: Bool = true
     ) {
         self.id = id
         self.overallSummary = overallSummary
         self.createdAt = createdAt
         self.modelUsed = modelUsed
+        self.ratingsIncluded = ratingsIncluded
         self.strengthsData = try? JSONEncoder().encode(strengths)
         self.growthAreasData = try? JSONEncoder().encode(growthAreas)
         self.actionableNextStepsData = try? JSONEncoder().encode(actionableNextSteps)

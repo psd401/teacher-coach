@@ -107,8 +107,8 @@ struct RecordingDetailView: View {
             Text("This will permanently delete the recording and all associated data.")
         }
         .sheet(isPresented: $showingAnalysisConfig) {
-            AnalysisConfigurationSheet { framework, techniqueIds in
-                startAnalysis(framework: framework, techniqueIds: techniqueIds)
+            AnalysisConfigurationSheet { framework, techniqueIds, includeRatings in
+                startAnalysis(framework: framework, techniqueIds: techniqueIds, includeRatings: includeRatings)
             }
         }
     }
@@ -139,7 +139,7 @@ struct RecordingDetailView: View {
         }
     }
 
-    private func startAnalysis(framework: TeachingFramework, techniqueIds: [String]) {
+    private func startAnalysis(framework: TeachingFramework, techniqueIds: [String], includeRatings: Bool = true) {
         guard let transcript = recording.transcript,
               let session = services.authService.getCurrentSession() else {
             return
@@ -161,7 +161,8 @@ struct RecordingDetailView: View {
                 let analysis = try await services.analysisService.analyze(
                     transcript: transcript,
                     techniques: techniques,
-                    sessionToken: session.accessToken
+                    sessionToken: session.accessToken,
+                    includeRatings: includeRatings
                 )
 
                 // Save analysis
@@ -190,10 +191,11 @@ struct RecordingDetailView: View {
         if let settings = try? modelContext.fetch(descriptor).first {
             let framework = settings.selectedFramework
             let techniqueIds = settings.enabledTechniqueIds(for: framework)
-            startAnalysis(framework: framework, techniqueIds: techniqueIds)
+            let includeRatings = settings.includeRatingsInAnalysis
+            startAnalysis(framework: framework, techniqueIds: techniqueIds, includeRatings: includeRatings)
         } else {
-            // Default to TLAC with all techniques
-            startAnalysis(framework: .tlac, techniqueIds: FrameworkRegistry.defaultEnabledIds(for: .tlac))
+            // Default to TLAC with all techniques and ratings enabled
+            startAnalysis(framework: .tlac, techniqueIds: FrameworkRegistry.defaultEnabledIds(for: .tlac), includeRatings: true)
         }
     }
 

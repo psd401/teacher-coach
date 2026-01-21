@@ -15,6 +15,7 @@ interface TechniqueDefinition {
 interface AnalyzeRequest {
   transcript: string;
   techniques: TechniqueDefinition[];
+  includeRatings?: boolean;
 }
 
 interface ClaudeMessage {
@@ -72,14 +73,14 @@ analyzeRoutes.post('/', async (c) => {
     return c.json({ error: 'Invalid JSON body' }, 400);
   }
 
-  const { transcript, techniques } = body;
+  const { transcript, techniques, includeRatings = true } = body;
 
   if (!transcript || !techniques || techniques.length === 0) {
     return c.json({ error: 'Missing transcript or techniques' }, 400);
   }
 
   // Build the analysis prompt
-  const prompt = buildAnalysisPrompt(transcript, techniques);
+  const prompt = buildAnalysisPrompt(transcript, techniques, includeRatings);
 
   // Call Claude API
   try {
@@ -200,7 +201,7 @@ analyzeRoutes.get('/rate-limit', async (c) => {
 /**
  * Builds the analysis prompt for Claude
  */
-function buildAnalysisPrompt(transcript: string, techniques: TechniqueDefinition[]): string {
+function buildAnalysisPrompt(transcript: string, techniques: TechniqueDefinition[], includeRatings: boolean): string {
   let prompt = `You are an expert instructional coach analyzing a teaching session transcript. Your task is to evaluate the teacher's use of specific teaching techniques and provide constructive feedback.
 
 ## Teaching Session Transcript
@@ -227,6 +228,24 @@ ${technique.exemplarPhrases.map(p => `- "${p}"`).join('\n')}
 `;
   }
 
+  // Build technique evaluation schema based on whether ratings are included
+  const techniqueEvalSchema = includeRatings
+    ? `{
+            "techniqueId": "technique-id",
+            "wasObserved": true/false,
+            "rating": 1-5 (null if not observed),
+            "evidence": ["specific quote or behavior from transcript"],
+            "feedback": "Detailed feedback about technique usage",
+            "suggestions": ["specific improvement suggestion"]
+        }`
+    : `{
+            "techniqueId": "technique-id",
+            "wasObserved": true/false,
+            "evidence": ["specific quote or behavior from transcript"],
+            "feedback": "Detailed feedback about technique usage",
+            "suggestions": ["specific improvement suggestion"]
+        }`;
+
   prompt += `
 ## Response Format
 Provide your analysis as a JSON object with the following structure:
@@ -236,29 +255,34 @@ Provide your analysis as a JSON object with the following structure:
     "growthAreas": ["growth area 1", "growth area 2"],
     "actionableNextSteps": ["specific action 1", "specific action 2", "specific action 3"],
     "techniqueEvaluations": [
-        {
-            "techniqueId": "technique-id",
-            "wasObserved": true/false,
-            "rating": 1-5 (null if not observed),
-            "evidence": ["specific quote or behavior from transcript"],
-            "feedback": "Detailed feedback about technique usage",
-            "suggestions": ["specific improvement suggestion"]
-        }
+        ${techniqueEvalSchema}
     ]
 }
+`;
 
+  // Only include rating scale if ratings are enabled
+  if (includeRatings) {
+    prompt += `
 ## Rating Scale
 1 - Developing: Technique not observed or needs significant development
 2 - Emerging: Beginning to implement technique with inconsistent results
 3 - Proficient: Solid implementation of technique with room for refinement
 4 - Accomplished: Effective and consistent use of technique
 5 - Exemplary: Masterful implementation that could serve as a model
+`;
+  }
 
+  // Build guidelines based on whether ratings are included
+  const ratingGuideline = includeRatings
+    ? '- If a technique was not observed, set wasObserved to false and rating to null'
+    : '- If a technique was not observed, set wasObserved to false';
+
+  prompt += `
 ## Guidelines
 - Be specific and cite evidence from the transcript
 - Provide actionable, growth-oriented feedback
 - Balance recognition of strengths with constructive suggestions
-- If a technique was not observed, set wasObserved to false and rating to null
+${ratingGuideline}
 - Focus on patterns rather than isolated instances
 
 Respond ONLY with the JSON object, no additional text.`;

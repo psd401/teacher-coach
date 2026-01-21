@@ -8,11 +8,12 @@ struct AnalysisConfigurationSheet: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var appState: AppState
 
-    /// Callback when user confirms analysis
-    let onStartAnalysis: (TeachingFramework, [String]) -> Void
+    /// Callback when user confirms analysis (framework, techniqueIds, includeRatings)
+    let onStartAnalysis: (TeachingFramework, [String], Bool) -> Void
 
     @State private var selectedFramework: TeachingFramework = .tlac
     @State private var enabledTechniqueIds: Set<String> = []
+    @State private var includeRatings = true
     @State private var isLoading = true
 
     private var canStartAnalysis: Bool {
@@ -45,6 +46,17 @@ struct AnalysisConfigurationSheet: View {
                         selectedFramework: $selectedFramework,
                         enabledTechniqueIds: $enabledTechniqueIds
                     )
+
+                    // Ratings toggle
+                    VStack(alignment: .leading, spacing: 8) {
+                        Toggle("Include Star Ratings", isOn: $includeRatings)
+                        Text("When enabled, each technique receives a 1-5 star rating.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding()
+                    .background(.regularMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .padding()
             }
@@ -63,7 +75,7 @@ struct AnalysisConfigurationSheet: View {
 
                 Button("Start Analysis") {
                     savePreferences()
-                    onStartAnalysis(selectedFramework, Array(enabledTechniqueIds))
+                    onStartAnalysis(selectedFramework, Array(enabledTechniqueIds), includeRatings)
                     dismiss()
                 }
                 .buttonStyle(.borderedProminent)
@@ -97,6 +109,7 @@ struct AnalysisConfigurationSheet: View {
         if let settings = try? modelContext.fetch(descriptor).first {
             selectedFramework = settings.selectedFramework
             enabledTechniqueIds = Set(settings.enabledTechniqueIds(for: selectedFramework))
+            includeRatings = settings.includeRatingsInAnalysis
         } else {
             setDefaults()
         }
@@ -123,6 +136,7 @@ struct AnalysisConfigurationSheet: View {
     private func setDefaults() {
         selectedFramework = .tlac
         enabledTechniqueIds = Set(FrameworkRegistry.defaultEnabledIds(for: .tlac))
+        includeRatings = true
     }
 
     private func savePreferences() {
@@ -142,14 +156,15 @@ struct AnalysisConfigurationSheet: View {
 
         settings.selectedFramework = selectedFramework
         settings.setEnabledTechniqueIds(Array(enabledTechniqueIds), for: selectedFramework)
+        settings.includeRatingsInAnalysis = includeRatings
 
         try? modelContext.save()
     }
 }
 
 #Preview {
-    AnalysisConfigurationSheet { framework, techniqueIds in
-        print("Start analysis with \(framework.displayName) and \(techniqueIds.count) techniques")
+    AnalysisConfigurationSheet { framework, techniqueIds, includeRatings in
+        print("Start analysis with \(framework.displayName), \(techniqueIds.count) techniques, ratings: \(includeRatings)")
     }
     .environmentObject(AppState())
     .environment(ServiceContainer.shared)
