@@ -44,39 +44,54 @@ final class ExportService {
         recording: Recording,
         configuration: ExportConfiguration
     ) async throws -> URL {
-        // Create the exportable view wrapped in a ScrollView for proper sizing
-        let exportView = ExportableAnalysisView(
+        // Build content blocks from configuration
+        let blocks = buildContentBlocks(
             analysis: analysis,
             recording: recording,
             configuration: configuration
         )
 
-        // Use ImageRenderer to get CGImage first
-        let renderer = ImageRenderer(content: exportView)
-        renderer.scale = 1.0  // Use 1.0 for standard PDF resolution
-        renderer.proposedSize = ProposedViewSize(
-            width: ExportableAnalysisView.pageWidth,
-            height: nil  // Let height be determined by content
-        )
+        // Pack blocks into pages
+        let pageContents = PDFPagePacker.packIntoPages(blocks: blocks)
+        let totalPages = max(pageContents.count, 1)
 
-        // Get the CGImage
-        guard let cgImage = renderer.cgImage else {
-            throw ExportError.pdfGenerationFailed
-        }
-
-        // Create PDF from image
+        // Create PDF context
         let pdfData = NSMutableData()
-        let imageRect = CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height)
+        let pageRect = CGRect(
+            x: 0,
+            y: 0,
+            width: PDFLayout.pageWidth,
+            height: PDFLayout.pageHeight
+        )
 
         guard let consumer = CGDataConsumer(data: pdfData as CFMutableData),
               let pdfContext = CGContext(consumer: consumer, mediaBox: nil, nil) else {
             throw ExportError.pdfGenerationFailed
         }
 
-        var mediaBox = imageRect
-        pdfContext.beginPDFPage([kCGPDFContextMediaBox as String: NSValue(rect: mediaBox)] as CFDictionary)
-        pdfContext.draw(cgImage, in: imageRect)
-        pdfContext.endPDFPage()
+        // Render each page
+        for (index, pageBlocks) in pageContents.enumerated() {
+            let pageView = PDFPageView(
+                blocks: pageBlocks,
+                pageNumber: index + 1,
+                totalPages: totalPages,
+                recordingDate: recording.createdAt
+            )
+
+            let renderer = ImageRenderer(content: pageView)
+            renderer.scale = PDFLayout.rendererScale
+
+            guard let cgImage = renderer.cgImage else {
+                throw ExportError.pdfGenerationFailed
+            }
+
+            // Scale image to fit page dimensions
+            var mediaBox = pageRect
+            pdfContext.beginPDFPage([kCGPDFContextMediaBox as String: NSValue(rect: mediaBox)] as CFDictionary)
+            pdfContext.draw(cgImage, in: pageRect)
+            pdfContext.endPDFPage()
+        }
+
         pdfContext.closePDF()
 
         // Present save panel
@@ -90,6 +105,66 @@ final class ExportService {
         } catch {
             throw ExportError.fileWriteFailed(error)
         }
+    }
+
+    /// Build content blocks from analysis and configuration
+    private func buildContentBlocks(
+        analysis: Analysis,
+        recording: Recording,
+        configuration: ExportConfiguration
+    ) -> [PDFContentBlock] {
+        var blocks: [PDFContentBlock] = []
+
+        // Document header (always first)
+        blocks.append(.documentHeader(
+            title: recording.title,
+            duration: recording.formattedDuration,
+            date: recording.createdAt
+        ))
+
+        // Summary
+        if configuration.includeSummary {
+            blocks.append(.summary(text: analysis.overallSummary))
+        }
+
+        // Strengths and Growth Areas
+        if configuration.includeStrengths || configuration.includeGrowthAreas {
+            let strengths = configuration.includeStrengths ? analysis.strengths : []
+            let growthAreas = configuration.includeGrowthAreas ? analysis.growthAreas : []
+
+            // Measure side-by-side vs stacked to determine layout
+            let sideBySideBlock = PDFContentBlock.strengthsAndGrowth(
+                strengths: strengths,
+                growthAreas: growthAreas,
+                stacked: false
+            )
+            let sideBySideHeight = PDFBlockMeasurer.measureHeight(of: sideBySideBlock)
+
+            // Use stacked layout if side-by-side would be too tall
+            let useStacked = sideBySideHeight > PDFLayout.contentHeight * 0.4
+
+            blocks.append(.strengthsAndGrowth(
+                strengths: strengths,
+                growthAreas: growthAreas,
+                stacked: useStacked
+            ))
+        }
+
+        // Technique cards (each as separate block)
+        let selectedTechniques = (analysis.techniqueEvaluations ?? [])
+            .filter { configuration.includedTechniqueIds.contains($0.id) }
+
+        for technique in selectedTechniques {
+            let data = TechniqueCardData(from: technique, ratingsIncluded: analysis.ratingsIncluded)
+            blocks.append(.techniqueCard(data))
+        }
+
+        // Next steps
+        if configuration.includeNextSteps && !analysis.actionableNextSteps.isEmpty {
+            blocks.append(.nextSteps(analysis.actionableNextSteps))
+        }
+
+        return blocks
     }
 
     // MARK: - Markdown Export

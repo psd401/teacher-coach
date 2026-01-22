@@ -40,6 +40,12 @@
 		0034 /* ExportConfigurationSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1033 /* ExportConfigurationSheet.swift */; };
 		0035 /* ExportableAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1034 /* ExportableAnalysisView.swift */; };
 		0036 /* ExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1035 /* ExportService.swift */; };
+		8166 /* PDFLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6351 /* PDFLayout.swift */; };
+		6333 /* PDFContentBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6745 /* PDFContentBlock.swift */; };
+		8105 /* PDFBlockViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7815 /* PDFBlockViews.swift */; };
+		6024 /* PDFBlockMeasurer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9252 /* PDFBlockMeasurer.swift */; };
+		6834 /* PDFPagePacker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8581 /* PDFPagePacker.swift */; };
+		8630 /* PDFPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8657 /* PDFPageView.swift */; };
 		0022 /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3001 /* WhisperKit */; };
 		0023 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 3002 /* GoogleSignIn */; };
 		0024 /* Models in Resources */ = {isa = PBXBuildFile; fileRef = 29C274B02F1C7E6D00B3F6F3 /* Models */; };
@@ -81,6 +87,12 @@
 		1033 /* ExportConfigurationSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportConfigurationSheet.swift; sourceTree = "<group>"; };
 		1034 /* ExportableAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportableAnalysisView.swift; sourceTree = "<group>"; };
 		1035 /* ExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportService.swift; sourceTree = "<group>"; };
+		6351 /* PDFLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFLayout.swift; sourceTree = "<group>"; };
+		6745 /* PDFContentBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFContentBlock.swift; sourceTree = "<group>"; };
+		7815 /* PDFBlockViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFBlockViews.swift; sourceTree = "<group>"; };
+		9252 /* PDFBlockMeasurer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFBlockMeasurer.swift; sourceTree = "<group>"; };
+		8581 /* PDFPagePacker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFPagePacker.swift; sourceTree = "<group>"; };
+		8657 /* PDFPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFPageView.swift; sourceTree = "<group>"; };
 		2001 /* TeacherCoach.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeacherCoach.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -254,10 +266,25 @@
 				1033 /* ExportConfigurationSheet.swift */,
 				1034 /* ExportableAnalysisView.swift */,
 				1035 /* ExportService.swift */,
+				7472 /* PDF */,
 			);
 			path = Export;
 			sourceTree = "<group>";
 		};
+		7472 /* PDF */ = {
+			isa = PBXGroup;
+			children = (
+				6351 /* PDFLayout.swift */,
+				6745 /* PDFContentBlock.swift */,
+				7815 /* PDFBlockViews.swift */,
+				9252 /* PDFBlockMeasurer.swift */,
+				8581 /* PDFPagePacker.swift */,
+				8657 /* PDFPageView.swift */,
+			);
+			path = PDF;
+			sourceTree = "<group>";
+		};
+
 		5014 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -401,6 +428,12 @@
 				0034 /* ExportConfigurationSheet.swift in Sources */,
 				0035 /* ExportableAnalysisView.swift in Sources */,
 				0036 /* ExportService.swift in Sources */,
+				8166 /* PDFLayout.swift in Sources */,
+				6333 /* PDFContentBlock.swift in Sources */,
+				8105 /* PDFBlockViews.swift in Sources */,
+				6024 /* PDFBlockMeasurer.swift in Sources */,
+				6834 /* PDFPagePacker.swift in Sources */,
+				8630 /* PDFPageView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
