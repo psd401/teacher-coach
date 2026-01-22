@@ -127,6 +127,10 @@ struct SidebarView: View {
     @Binding var showingNewRecording: Bool
 
     @EnvironmentObject private var appState: AppState
+    @Environment(\.modelContext) private var modelContext
+
+    @State private var recordingToRename: Recording?
+    @State private var renameText = ""
 
     var body: some View {
         List(selection: $selectedRecording) {
@@ -134,6 +138,14 @@ struct SidebarView: View {
                 ForEach(recordings) { recording in
                     RecordingRowView(recording: recording)
                         .tag(recording)
+                        .contextMenu {
+                            Button {
+                                renameText = recording.title
+                                recordingToRename = recording
+                            } label: {
+                                Label("Rename", systemImage: "pencil")
+                            }
+                        }
                 }
             }
         }
@@ -154,6 +166,24 @@ struct SidebarView: View {
             }
         }
         .navigationTitle("Teacher Coach")
+        .alert("Rename Session", isPresented: .init(
+            get: { recordingToRename != nil },
+            set: { if !$0 { recordingToRename = nil } }
+        )) {
+            TextField("Session name", text: $renameText)
+            Button("Cancel", role: .cancel) {
+                recordingToRename = nil
+            }
+            Button("Rename") {
+                if let recording = recordingToRename, !renameText.trimmingCharacters(in: .whitespaces).isEmpty {
+                    recording.title = renameText.trimmingCharacters(in: .whitespaces)
+                    try? modelContext.save()
+                }
+                recordingToRename = nil
+            }
+        } message: {
+            Text("Enter a new name for this session.")
+        }
     }
 }
 
