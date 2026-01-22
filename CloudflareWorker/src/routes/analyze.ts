@@ -12,10 +12,29 @@ interface TechniqueDefinition {
   exemplarPhrases: string[];
 }
 
+interface PauseInfo {
+  startTime: number;
+  endTime: number;
+  duration: number;
+  precedingText: string;
+  followingText: string;
+}
+
+interface PauseData {
+  pauses: PauseInfo[];
+  summary: {
+    count: number;
+    averageDuration: number;
+    maxDuration: number;
+    totalPauseTime: number;
+  };
+}
+
 interface AnalyzeRequest {
   transcript: string;
   techniques: TechniqueDefinition[];
   includeRatings?: boolean;
+  pauseData?: PauseData;
 }
 
 interface ClaudeMessage {
@@ -73,14 +92,14 @@ analyzeRoutes.post('/', async (c) => {
     return c.json({ error: 'Invalid JSON body' }, 400);
   }
 
-  const { transcript, techniques, includeRatings = true } = body;
+  const { transcript, techniques, includeRatings = true, pauseData } = body;
 
   if (!transcript || !techniques || techniques.length === 0) {
     return c.json({ error: 'Missing transcript or techniques' }, 400);
   }
 
   // Build the analysis prompt
-  const prompt = buildAnalysisPrompt(transcript, techniques, includeRatings);
+  const prompt = buildAnalysisPrompt(transcript, techniques, includeRatings, pauseData);
 
   // Call Claude API
   try {
@@ -201,7 +220,7 @@ analyzeRoutes.get('/rate-limit', async (c) => {
 /**
  * Builds the analysis prompt for Claude
  */
-function buildAnalysisPrompt(transcript: string, techniques: TechniqueDefinition[], includeRatings: boolean): string {
+function buildAnalysisPrompt(transcript: string, techniques: TechniqueDefinition[], includeRatings: boolean, pauseData?: PauseData): string {
   let prompt = `You are an expert instructional coach analyzing a teaching session transcript. Your task is to evaluate the teacher's use of specific teaching techniques and provide constructive feedback.
 
 ## Teaching Session Transcript
@@ -209,7 +228,30 @@ function buildAnalysisPrompt(transcript: string, techniques: TechniqueDefinition
 ${transcript}
 \`\`\`
 
-## Techniques to Evaluate
+`;
+
+  // Add pause data section if provided and wait-time technique is selected
+  if (pauseData && techniques.some(t => t.id === 'wait-time')) {
+    prompt += `## Wait Time Data (Detected Pauses >= 3 seconds)
+This data shows pauses detected in the recording that may indicate wait time after questions.
+
+**Summary:**
+- Total pauses: ${pauseData.summary.count}
+- Average duration: ${pauseData.summary.averageDuration.toFixed(1)}s
+- Longest pause: ${pauseData.summary.maxDuration.toFixed(1)}s
+- Total pause time: ${pauseData.summary.totalPauseTime.toFixed(1)}s
+
+**Pause Details:**
+${pauseData.pauses.map((p, i) =>
+  `${i + 1}. ${p.duration.toFixed(1)}s pause after "${p.precedingText}" → before "${p.followingText}"`
+).join('\n')}
+
+Use this quantitative data to provide specific feedback on wait time usage. Consider whether pauses occur after questions and if the duration is adequate (research suggests 3+ seconds is optimal).
+
+`;
+  }
+
+  prompt += `## Techniques to Evaluate
 Analyze the transcript for evidence of the following teaching techniques:
 
 `;

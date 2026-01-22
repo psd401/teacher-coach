@@ -350,6 +350,7 @@ struct TranscriptSection: View {
     var collapsed: Bool = false
 
     @State private var isExpanded = true
+    @State private var showPauses = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -375,12 +376,13 @@ struct TranscriptSection: View {
             .buttonStyle(.plain)
 
             if isExpanded && !collapsed {
-                Text(transcript.fullText)
-                    .font(.body)
-                    .padding()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(.background)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                // Pause Summary (if pauses exist)
+                if !transcript.pauses.isEmpty {
+                    PauseSummaryView(pauses: transcript.pauses, recordingDuration: transcript.recording?.duration ?? 0)
+                }
+
+                // Transcript content with inline pause markers
+                TranscriptContentView(transcript: transcript, showPauses: showPauses)
             }
         }
         .padding()
@@ -388,6 +390,244 @@ struct TranscriptSection: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .onAppear {
             isExpanded = !collapsed
+        }
+    }
+}
+
+// MARK: - Transcript Content View
+
+struct TranscriptContentView: View {
+    let transcript: Transcript
+    let showPauses: Bool
+
+    var body: some View {
+        let items = buildTranscriptItems()
+
+        FlowLayout(alignment: .leading, spacing: 4) {
+            ForEach(items) { item in
+                switch item.type {
+                case .text(let text):
+                    Text(text)
+                        .font(.body)
+                case .pause(let pause):
+                    PauseMarkerView(pause: pause)
+                }
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.background)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+
+    private func buildTranscriptItems() -> [TranscriptItem] {
+        guard showPauses, !transcript.pauses.isEmpty else {
+            // No pauses to show, return full text as single item
+            return [TranscriptItem(type: .text(transcript.fullText))]
+        }
+
+        var items: [TranscriptItem] = []
+        let segments = transcript.segments.sorted { $0.startTime < $1.startTime }
+        let pauses = transcript.pauses.sorted { $0.startTime < $1.startTime }
+
+        var pauseIndex = 0
+
+        for segment in segments {
+            // Add segment text
+            items.append(TranscriptItem(type: .text(segment.text)))
+
+            // Check if there's a pause after this segment
+            if pauseIndex < pauses.count {
+                let pause = pauses[pauseIndex]
+                // Pause starts at segment's end time (with small tolerance)
+                if abs(pause.startTime - segment.endTime) < 0.5 {
+                    items.append(TranscriptItem(type: .pause(pause)))
+                    pauseIndex += 1
+                }
+            }
+        }
+
+        return items
+    }
+}
+
+struct TranscriptItem: Identifiable {
+    let id = UUID()
+    let type: TranscriptItemType
+}
+
+enum TranscriptItemType {
+    case text(String)
+    case pause(TranscriptPause)
+}
+
+// MARK: - Pause Marker View
+
+struct PauseMarkerView: View {
+    let pause: TranscriptPause
+
+    var body: some View {
+        Text("[\(pause.formattedDuration) pause]")
+            .font(.caption)
+            .fontWeight(.medium)
+            .foregroundStyle(.orange)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(.orange.opacity(0.15))
+            .clipShape(RoundedRectangle(cornerRadius: 4))
+    }
+}
+
+// MARK: - Pause Summary View
+
+struct PauseSummaryView: View {
+    let pauses: [TranscriptPause]
+    let recordingDuration: TimeInterval
+
+    private var totalPauseTime: TimeInterval {
+        pauses.reduce(0) { $0 + $1.duration }
+    }
+
+    private var averageDuration: TimeInterval {
+        guard !pauses.isEmpty else { return 0 }
+        return totalPauseTime / Double(pauses.count)
+    }
+
+    private var maxDuration: TimeInterval {
+        pauses.map(\.duration).max() ?? 0
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Label("Wait Time Pauses", systemImage: "pause.circle")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+
+                Spacer()
+
+                Text("\(pauses.count) detected")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            HStack(spacing: 16) {
+                PauseStatView(label: "Average", value: String(format: "%.1fs", averageDuration))
+                PauseStatView(label: "Longest", value: String(format: "%.1fs", maxDuration))
+                PauseStatView(label: "Total", value: String(format: "%.1fs", totalPauseTime))
+            }
+
+            // Timeline visualization
+            if recordingDuration > 0 {
+                PauseTimelineView(pauses: pauses, duration: recordingDuration)
+            }
+        }
+        .padding(10)
+        .background(.orange.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+struct PauseStatView: View {
+    let label: String
+    let value: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            Text(value)
+                .font(.caption)
+                .fontWeight(.semibold)
+        }
+    }
+}
+
+// MARK: - Pause Timeline View
+
+struct PauseTimelineView: View {
+    let pauses: [TranscriptPause]
+    let duration: TimeInterval
+
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .leading) {
+                // Background track
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(.secondary.opacity(0.2))
+                    .frame(height: 8)
+
+                // Pause markers
+                ForEach(pauses) { pause in
+                    let startPosition = (pause.startTime / duration) * geometry.size.width
+                    let pauseWidth = max(4, (pause.duration / duration) * geometry.size.width)
+
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(.orange)
+                        .frame(width: pauseWidth, height: 8)
+                        .offset(x: startPosition)
+                }
+            }
+        }
+        .frame(height: 8)
+    }
+}
+
+// MARK: - Flow Layout
+
+struct FlowLayout: Layout {
+    var alignment: HorizontalAlignment = .leading
+    var spacing: CGFloat = 8
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let result = FlowResult(
+            in: proposal.replacingUnspecifiedDimensions().width,
+            subviews: subviews,
+            spacing: spacing
+        )
+        return result.size
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let result = FlowResult(
+            in: bounds.width,
+            subviews: subviews,
+            spacing: spacing
+        )
+
+        for (index, subview) in subviews.enumerated() {
+            let position = result.positions[index]
+            subview.place(at: CGPoint(x: bounds.minX + position.x, y: bounds.minY + position.y), proposal: .unspecified)
+        }
+    }
+
+    struct FlowResult {
+        var size: CGSize = .zero
+        var positions: [CGPoint] = []
+
+        init(in maxWidth: CGFloat, subviews: Subviews, spacing: CGFloat) {
+            var currentX: CGFloat = 0
+            var currentY: CGFloat = 0
+            var lineHeight: CGFloat = 0
+
+            for subview in subviews {
+                let size = subview.sizeThatFits(.unspecified)
+
+                if currentX + size.width > maxWidth && currentX > 0 {
+                    currentX = 0
+                    currentY += lineHeight + spacing
+                    lineHeight = 0
+                }
+
+                positions.append(CGPoint(x: currentX, y: currentY))
+                lineHeight = max(lineHeight, size.height)
+                currentX += size.width + spacing
+
+                self.size.width = max(self.size.width, currentX)
+            }
+
+            self.size.height = currentY + lineHeight
         }
     }
 }

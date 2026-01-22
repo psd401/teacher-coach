@@ -194,6 +194,9 @@ final class TranscriptionService: ObservableObject {
             }
         }
 
+        // Detect pauses (gaps >= 3.0 seconds between segments)
+        let pauses = detectPauses(in: segments, threshold: 3.0)
+
         let fullText = result.map { $0.text }.joined(separator: " ").trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
 
         return Transcript(
@@ -201,8 +204,47 @@ final class TranscriptionService: ObservableObject {
             createdAt: Date(),
             modelUsed: loadedModelName,
             processingTime: 0,  // Will be updated by caller
-            segments: segments
+            segments: segments,
+            pauses: pauses
         )
+    }
+
+    /// Detects pauses (silence) between transcript segments
+    private func detectPauses(in segments: [TranscriptSegment], threshold: TimeInterval) -> [TranscriptPause] {
+        guard segments.count > 1 else { return [] }
+
+        var pauses: [TranscriptPause] = []
+        let sortedSegments = segments.sorted { $0.startTime < $1.startTime }
+
+        for i in 0..<(sortedSegments.count - 1) {
+            let current = sortedSegments[i]
+            let next = sortedSegments[i + 1]
+            let gap = next.startTime - current.endTime
+
+            if gap >= threshold {
+                pauses.append(TranscriptPause(
+                    startTime: current.endTime,
+                    endTime: next.startTime,
+                    precedingText: extractLastWords(from: current.text, count: 5),
+                    followingText: extractFirstWords(from: next.text, count: 5)
+                ))
+            }
+        }
+        return pauses
+    }
+
+    /// Extracts the last N words from a string
+    private func extractLastWords(from text: String, count: Int) -> String {
+        let words = text.split(separator: " ")
+        let lastWords = words.suffix(count)
+        return lastWords.joined(separator: " ")
+    }
+
+    /// Extracts the first N words from a string
+    private func extractFirstWords(from text: String, count: Int) -> String {
+        let words = text.split(separator: " ")
+        let firstWords = words.prefix(count)
+        return firstWords.joined(separator: " ")
     }
 
     /// Estimates transcription time based on audio duration

@@ -81,11 +81,14 @@ final class AnalysisService: ObservableObject {
         request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
         request.timeoutInterval = 300  // 5 minutes for long transcripts
 
-        // Build request body
+        // Build request body with optional pause data
+        let pauseData = PauseDataRequest(from: transcript.pauses)
+
         let requestBody = AnalysisRequest(
             transcript: transcript.fullText,
             techniques: techniques.map { TechniqueDefinition(from: $0) },
-            includeRatings: includeRatings
+            includeRatings: includeRatings,
+            pauseData: pauseData
         )
         request.httpBody = try JSONEncoder().encode(requestBody)
 
@@ -222,6 +225,51 @@ private struct AnalysisRequest: Codable {
     let transcript: String
     let techniques: [TechniqueDefinition]
     let includeRatings: Bool
+    let pauseData: PauseDataRequest?
+}
+
+private struct PauseDataRequest: Codable {
+    let pauses: [PauseInfo]
+    let summary: PauseSummary
+
+    struct PauseInfo: Codable {
+        let startTime: Double
+        let endTime: Double
+        let duration: Double
+        let precedingText: String
+        let followingText: String
+    }
+
+    struct PauseSummary: Codable {
+        let count: Int
+        let averageDuration: Double
+        let maxDuration: Double
+        let totalPauseTime: Double
+    }
+
+    init?(from pauses: [TranscriptPause]) {
+        guard !pauses.isEmpty else { return nil }
+
+        self.pauses = pauses.map { pause in
+            PauseInfo(
+                startTime: pause.startTime,
+                endTime: pause.endTime,
+                duration: pause.duration,
+                precedingText: pause.precedingText,
+                followingText: pause.followingText
+            )
+        }
+
+        let totalPauseTime = pauses.reduce(0) { $0 + $1.duration }
+        let maxDuration = pauses.map(\.duration).max() ?? 0
+
+        self.summary = PauseSummary(
+            count: pauses.count,
+            averageDuration: totalPauseTime / Double(pauses.count),
+            maxDuration: maxDuration,
+            totalPauseTime: totalPauseTime
+        )
+    }
 }
 
 private struct TechniqueDefinition: Codable {
