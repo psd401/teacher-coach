@@ -375,7 +375,7 @@ struct TranscriptSection: View {
             }
             .buttonStyle(.plain)
 
-            if isExpanded && !collapsed {
+            if isExpanded {
                 // Pause Summary (if pauses exist)
                 if !transcript.pauses.isEmpty {
                     PauseSummaryView(pauses: transcript.pauses, recordingDuration: transcript.recording?.duration ?? 0)
