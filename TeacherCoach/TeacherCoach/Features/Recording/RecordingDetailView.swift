@@ -401,17 +401,14 @@ struct TranscriptContentView: View {
     let showPauses: Bool
 
     var body: some View {
-        let items = buildTranscriptItems()
-
-        FlowLayout(alignment: .leading, spacing: 4) {
-            ForEach(items) { item in
-                switch item.type {
-                case .text(let text):
-                    Text(text)
-                        .font(.body)
-                case .pause(let pause):
-                    PauseMarkerView(pause: pause)
-                }
+        Group {
+            if showPauses && !transcript.pauses.isEmpty {
+                // Use flow layout with interleaved pause markers
+                flowLayoutContent
+            } else {
+                // Simple text display when no pauses
+                Text(transcript.fullText)
+                    .font(.body)
             }
         }
         .padding()
@@ -420,31 +417,49 @@ struct TranscriptContentView: View {
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
-    private func buildTranscriptItems() -> [TranscriptItem] {
-        guard showPauses, !transcript.pauses.isEmpty else {
-            // No pauses to show, return full text as single item
-            return [TranscriptItem(type: .text(transcript.fullText))]
-        }
+    @ViewBuilder
+    private var flowLayoutContent: some View {
+        let items = buildTranscriptItems()
 
-        var items: [TranscriptItem] = []
+        VStack(alignment: .leading, spacing: 8) {
+            ForEach(items) { item in
+                switch item.type {
+                case .segment(let text):
+                    HStack(alignment: .top, spacing: 4) {
+                        Text(text)
+                            .font(.body)
+                        if let pause = item.followingPause {
+                            PauseMarkerView(pause: pause)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private func buildTranscriptItems() -> [TranscriptItem] {
         let segments = transcript.segments.sorted { $0.startTime < $1.startTime }
         let pauses = transcript.pauses.sorted { $0.startTime < $1.startTime }
 
+        var items: [TranscriptItem] = []
         var pauseIndex = 0
 
         for segment in segments {
-            // Add segment text
-            items.append(TranscriptItem(type: .text(segment.text)))
+            var followingPause: TranscriptPause? = nil
 
             // Check if there's a pause after this segment
             if pauseIndex < pauses.count {
                 let pause = pauses[pauseIndex]
-                // Pause starts at segment's end time (with small tolerance)
                 if abs(pause.startTime - segment.endTime) < 0.5 {
-                    items.append(TranscriptItem(type: .pause(pause)))
+                    followingPause = pause
                     pauseIndex += 1
                 }
             }
+
+            items.append(TranscriptItem(
+                type: .segment(segment.text),
+                followingPause: followingPause
+            ))
         }
 
         return items
@@ -454,11 +469,16 @@ struct TranscriptContentView: View {
 struct TranscriptItem: Identifiable {
     let id = UUID()
     let type: TranscriptItemType
+    let followingPause: TranscriptPause?
+
+    init(type: TranscriptItemType, followingPause: TranscriptPause? = nil) {
+        self.type = type
+        self.followingPause = followingPause
+    }
 }
 
 enum TranscriptItemType {
-    case text(String)
-    case pause(TranscriptPause)
+    case segment(String)
 }
 
 // MARK: - Pause Marker View
