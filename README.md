@@ -1,6 +1,6 @@
 # Teacher Coach
 
-Native macOS app for Peninsula SD teachers to record teaching sessions, receive local transcription via WhisperKit, and get AI-powered feedback on specific teaching techniques via Claude Opus 4.5.
+Native macOS app for Peninsula SD teachers to record teaching sessions, receive local transcription via WhisperKit, and get AI-powered feedback on specific teaching techniques via Claude (`claude-opus-4-5-20251101`).
 
 ## Architecture
 
@@ -31,9 +31,9 @@ Native macOS app for Peninsula SD teachers to record teaching sessions, receive 
 - Apple Silicon Mac (for WhisperKit)
 
 ### Backend
-- Node.js 18+
 - Cloudflare Workers account
 - Anthropic API key
+- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/) for deployment
 
 ## Project Structure
 
@@ -72,7 +72,7 @@ TeacherCoach/
 
 ```bash
 cd CloudflareWorker
-npm install
+bun install
 
 # Set secrets
 wrangler secret put CLAUDE_API_KEY
@@ -84,7 +84,7 @@ wrangler kv:namespace create RATE_LIMIT
 # Update wrangler.toml with the namespace ID
 
 # Deploy
-npm run deploy
+bun run deploy
 ```
 
 ### 3. Build macOS App
@@ -103,15 +103,29 @@ open TeacherCoach.xcodeproj
 
 ### 4. Environment Variables
 
-Create a `.env` file or set in Xcode scheme:
-
+#### macOS App (Xcode Scheme)
 ```
 GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+DEV_BYPASS_AUTH=1  # Optional: bypass OAuth for local testing
 ```
+
+#### Backend (wrangler.toml + secrets)
+
+Set via `wrangler secret put`:
+- `CLAUDE_API_KEY` - Anthropic API key
+- `GOOGLE_CLIENT_ID` - Google OAuth client ID
+- `JWT_SECRET` - Secret for signing session tokens
+
+Configured in `wrangler.toml`:
+- `ALLOWED_DOMAIN` - Email domain restriction (e.g., `psd401.net`)
+- `RATE_LIMIT_PER_HOUR` - API rate limit per user (default: 20)
+- `CLAUDE_MODEL` - Model ID (default: `claude-opus-4-5-20251101`)
 
 ## Teaching Techniques
 
-The app evaluates 10 research-based teaching techniques:
+The app supports two research-based frameworks for evaluating teaching:
+
+### TLAC (Teach Like a Champion)
 
 | Category | Techniques |
 |----------|------------|
@@ -122,6 +136,13 @@ The app evaluates 10 research-based teaching techniques:
 | Instruction | Modeling/Think Aloud, Scaffolded Practice |
 | Differentiation | Strategic Grouping |
 
+### Danielson Framework
+
+| Domain | Components |
+|--------|------------|
+| Domain 2: Classroom Environment | 2a: Respect & Rapport, 2b: Culture for Learning, 2c: Classroom Procedures, 2d: Student Behavior |
+| Domain 3: Instruction | 3a: Communicating with Students, 3b: Questioning & Discussion, 3c: Engaging Students, 3d: Assessment in Instruction, 3e: Flexibility & Responsiveness |
+
 Each technique includes:
 - Description
 - Look-fors (observable indicators)
@@ -131,7 +152,7 @@ Each technique includes:
 
 - **Audio stays local**: Recordings are stored only on the user's device
 - **Only transcripts sent**: Audio is transcribed locally, only text is sent for analysis
-- **Domain-restricted**: Only @peninsula.wednet.edu accounts can sign in
+- **Domain-restricted**: Only @psd401.net accounts can sign in
 - **Secure storage**: Session tokens stored in macOS Keychain
 
 ## API Endpoints
@@ -150,17 +171,27 @@ Returns current rate limit status.
 
 ## Development
 
+### Local Development (No OAuth)
+
+Set `DEV_BYPASS_AUTH=1` in your Xcode scheme environment variables to bypass Google authentication during development. This creates a mock session that allows you to test the app without configuring Google OAuth credentials.
+
+1. In Xcode, select Product → Scheme → Edit Scheme
+2. Select Run → Arguments → Environment Variables
+3. Add `DEV_BYPASS_AUTH` with value `1`
+
+Note: The mock token is rejected by the production backend, so this bypass only works for local UI testing.
+
 ### Run Backend Locally
 ```bash
 cd CloudflareWorker
-npm run dev
+bun run dev
 ```
 
 ### Run Tests
 ```bash
 # Backend
 cd CloudflareWorker
-npm test
+bun test
 
 # macOS App (in Xcode)
 ⌘U

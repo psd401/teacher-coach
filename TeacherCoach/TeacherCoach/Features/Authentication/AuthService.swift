@@ -36,7 +36,10 @@ final class AuthService: ObservableObject {
 
         defer { isAuthenticating = false }
 
-        // Development bypass - skip OAuth when DEV_BYPASS_AUTH=1
+        // MARK: - Development Bypass
+        // Enable with DEV_BYPASS_AUTH=1 environment variable in Xcode scheme.
+        // Allows local testing without Google OAuth configuration.
+        // The mock token is rejected by production backend - safe to leave enabled.
         if config.devBypassAuth {
             let mockUser = User(
                 id: "dev-user",
