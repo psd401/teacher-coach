@@ -138,3 +138,72 @@ extension TechniqueService {
         getBuiltInTechniques().map { $0.id }
     }
 }
+
+// MARK: - Data Migration
+
+extension TechniqueService {
+    private static let techniqueNameMigrationKey = "techniqueNameMigrationComplete_v1"
+
+    /// Migrates technique evaluations to use full technique names
+    /// This fixes evaluations where only the code (e.g., "3b") was stored instead of the full name
+    @MainActor
+    func migrateIncompleteTeechniqueNames(context: ModelContext) {
+        // Check if migration has already run
+        if UserDefaults.standard.bool(forKey: Self.techniqueNameMigrationKey) {
+            return
+        }
+
+        do {
+            let descriptor = FetchDescriptor<TechniqueEvaluation>()
+            let evaluations = try context.fetch(descriptor)
+
+            var updatedCount = 0
+            for evaluation in evaluations {
+                if let fullName = findFullTechniqueName(for: evaluation.techniqueId, currentName: evaluation.techniqueName) {
+                    if evaluation.techniqueName != fullName {
+                        evaluation.techniqueName = fullName
+                        updatedCount += 1
+                    }
+                }
+            }
+
+            if updatedCount > 0 {
+                try context.save()
+                print("Migration: Updated \(updatedCount) technique evaluation names")
+            }
+
+            // Mark migration as complete
+            UserDefaults.standard.set(true, forKey: Self.techniqueNameMigrationKey)
+        } catch {
+            print("Failed to migrate technique names: \(error)")
+        }
+    }
+
+    /// Finds the full technique name given a technique ID or partial name
+    /// Handles cases where Claude returned incorrect IDs like "3b" instead of "danielson-3b"
+    private func findFullTechniqueName(for techniqueId: String, currentName: String) -> String? {
+        let allTechniques = FrameworkRegistry.allTechniques()
+
+        // First, try direct lookup by ID
+        if let technique = allTechniques.first(where: { $0.id == techniqueId }) {
+            return technique.name
+        }
+
+        // If not found, the techniqueId might be a partial code like "3b"
+        // Try to match technique names that start with this code
+        // Danielson names are formatted as "3b: Description"
+        let searchPrefix = "\(techniqueId):"
+        if let technique = allTechniques.first(where: { $0.name.lowercased().hasPrefix(searchPrefix.lowercased()) }) {
+            return technique.name
+        }
+
+        // Also try matching the current stored name if it's just a code
+        let currentNamePrefix = "\(currentName):"
+        if let technique = allTechniques.first(where: { $0.name.lowercased().hasPrefix(currentNamePrefix.lowercased()) }) {
+            return technique.name
+        }
+
+        // No match found - return nil to keep the existing name
+        return nil
+    }
+}

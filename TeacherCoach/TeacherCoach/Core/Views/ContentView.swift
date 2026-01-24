@@ -27,6 +27,8 @@ struct ContentView: View {
         .onAppear {
             // Initialize techniques in database
             services.techniqueService.initializeTechniquesInDatabase(context: modelContext)
+            // Migrate incomplete technique names from older analyses
+            services.techniqueService.migrateIncompleteTeechniqueNames(context: modelContext)
         }
     }
 }

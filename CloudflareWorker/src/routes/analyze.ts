@@ -259,6 +259,7 @@ Analyze the transcript for evidence of the following teaching techniques:
   for (const technique of techniques) {
     prompt += `
 ### ${technique.name}
+**ID:** ${technique.id}
 **Description:** ${technique.description}
 
 **Look-fors (observable indicators):**
@@ -273,7 +274,7 @@ ${technique.exemplarPhrases.map(p => `- "${p}"`).join('\n')}
   // Build technique evaluation schema based on whether ratings are included
   const techniqueEvalSchema = includeRatings
     ? `{
-            "techniqueId": "technique-id",
+            "techniqueId": "exact-id-from-technique-definition",
             "wasObserved": true/false,
             "rating": 1-5 (null if not observed),
             "evidence": ["specific quote or behavior from transcript"],
@@ -281,7 +282,7 @@ ${technique.exemplarPhrases.map(p => `- "${p}"`).join('\n')}
             "suggestions": ["specific improvement suggestion"]
         }`
     : `{
-            "techniqueId": "technique-id",
+            "techniqueId": "exact-id-from-technique-definition",
             "wasObserved": true/false,
             "evidence": ["specific quote or behavior from transcript"],
             "feedback": "Detailed feedback about technique usage",
@@ -321,6 +322,7 @@ Provide your analysis as a JSON object with the following structure:
 
   prompt += `
 ## Guidelines
+- IMPORTANT: Use the exact "ID" value shown for each technique as the "techniqueId" in your response
 - Be specific and cite evidence from the transcript
 - Provide actionable, growth-oriented feedback
 - Balance recognition of strengths with constructive suggestions
