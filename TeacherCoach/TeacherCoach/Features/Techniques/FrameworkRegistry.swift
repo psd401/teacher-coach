@@ -9,6 +9,8 @@ struct FrameworkRegistry {
             return TLACTechniques.createTechniques()
         case .danielson:
             return DanielsonTechniques.createTechniques()
+        case .rosenshine:
+            return RosenshineTechniques.createTechniques()
         }
     }
 

@@ -4,6 +4,7 @@ import Foundation
 enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
     case tlac = "tlac"
     case danielson = "danielson"
+    case rosenshine = "rosenshine"
 
     var id: String { rawValue }
 
@@ -13,6 +14,8 @@ enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
             return "TLAC (Teach Like A Champion)"
         case .danielson:
             return "Danielson Framework"
+        case .rosenshine:
+            return "Rosenshine's Principles of Instruction"
         }
     }
 
@@ -22,6 +25,8 @@ enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
             return "TLAC"
         case .danielson:
             return "Danielson"
+        case .rosenshine:
+            return "Rosenshine"
         }
     }
 
@@ -31,6 +36,8 @@ enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
             return "Practical teaching techniques from Doug Lemov's research on high-performing teachers."
         case .danielson:
             return "Charlotte Danielson's Framework for Teaching, focusing on observable classroom components."
+        case .rosenshine:
+            return "Research-based principles from Barak Rosenshine's synthesis of cognitive science and classroom instruction research."
         }
     }
 }
