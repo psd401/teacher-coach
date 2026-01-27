@@ -44,6 +44,7 @@ struct MainView: View {
     @State private var selectedRecording: Recording?
     @State private var showingNewRecording = false
     @State private var showingFileImporter = false
+    @State private var showingVideoImporter = false
 
     var body: some View {
         NavigationSplitView {
@@ -83,7 +84,13 @@ struct MainView: View {
                     Button {
                         showingFileImporter = true
                     } label: {
-                        Label("Import Audio", systemImage: "square.and.arrow.down")
+                        Label("Import Audio", systemImage: "waveform")
+                    }
+
+                    Button {
+                        showingVideoImporter = true
+                    } label: {
+                        Label("Import Video", systemImage: "video")
                     }
                 } label: {
                     Label("Add", systemImage: "plus")
@@ -96,6 +103,12 @@ struct MainView: View {
             allowsMultipleSelection: false
         ) { result in
             handleFileImport(result)
+        }
+        .sheet(isPresented: $showingVideoImporter) {
+            VideoImportView { recording in
+                selectedRecording = recording
+                showingNewRecording = false
+            }
         }
     }
 
@@ -206,6 +219,10 @@ struct RecordingRowView: View {
 
                 Spacer()
 
+                if recording.isVideo {
+                    MediaTypeBadge(mediaType: .video)
+                }
+
                 if recording.isImported {
                     ImportedBadge()
                 }
@@ -214,6 +231,27 @@ struct RecordingRowView: View {
             }
         }
         .padding(.vertical, 4)
+    }
+}
+
+// MARK: - Media Type Badge
+
+struct MediaTypeBadge: View {
+    let mediaType: MediaType
+
+    var body: some View {
+        HStack(spacing: 2) {
+            Image(systemName: mediaType == .video ? "video" : "waveform")
+                .font(.caption2)
+            Text(mediaType == .video ? "Video" : "Audio")
+                .font(.caption2)
+                .fontWeight(.medium)
+        }
+        .padding(.horizontal, 6)
+        .padding(.vertical, 2)
+        .background(mediaType == .video ? Color.purple.opacity(0.2) : Color.blue.opacity(0.2))
+        .foregroundStyle(mediaType == .video ? .purple : .blue)
+        .clipShape(Capsule())
     }
 }
 
@@ -252,7 +290,7 @@ struct StatusBadge: View {
         switch status {
         case .recording: return .red.opacity(0.2)
         case .recorded: return .orange.opacity(0.2)
-        case .transcribing, .analyzing: return .blue.opacity(0.2)
+        case .uploading, .transcribing, .analyzing: return .blue.opacity(0.2)
         case .transcribed: return .purple.opacity(0.2)
         case .complete: return .green.opacity(0.2)
         case .failed: return .red.opacity(0.2)
@@ -263,7 +301,7 @@ struct StatusBadge: View {
         switch status {
         case .recording: return .red
         case .recorded: return .orange
-        case .transcribing, .analyzing: return .blue
+        case .uploading, .transcribing, .analyzing: return .blue
         case .transcribed: return .purple
         case .complete: return .green
         case .failed: return .red

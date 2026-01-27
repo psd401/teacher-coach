@@ -11,6 +11,7 @@ struct RecordingDetailView: View {
     @State private var showingDeleteConfirmation = false
     @State private var showingAnalysisConfig = false
     @State private var showingExportConfig = false
+    @State private var showingVideoAnalysisConfig = false
     @State private var isProcessing = false
     @State private var processingMessage = ""
 
@@ -22,15 +23,36 @@ struct RecordingDetailView: View {
 
                 Divider()
 
+                // Video preview for video recordings
+                if recording.isVideo {
+                    VideoPlayerView(videoURL: recording.absoluteVideoPath)
+                        .frame(height: 300)
+                        .padding(.bottom, 8)
+                }
+
                 // Actions based on status
                 switch recording.status {
                 case .recorded:
-                    ActionPromptView(
-                        title: "Ready for Transcription",
-                        description: "Transcribe this recording to prepare it for analysis.",
-                        buttonTitle: "Start Transcription",
-                        isLoading: isProcessing,
-                        action: startTranscription
+                    if recording.isVideo {
+                        VideoAnalysisOptionsView(
+                            isProcessing: isProcessing,
+                            onVideoAnalysis: { showingVideoAnalysisConfig = true },
+                            onAudioAnalysis: startAudioExtractionAndTranscription
+                        )
+                    } else {
+                        ActionPromptView(
+                            title: "Ready for Transcription",
+                            description: "Transcribe this recording to prepare it for analysis.",
+                            buttonTitle: "Start Transcription",
+                            isLoading: isProcessing,
+                            action: startTranscription
+                        )
+                    }
+
+                case .uploading:
+                    ProcessingView(
+                        title: "Uploading Video...",
+                        progress: services.videoAnalysisService.uploadProgress
                     )
 
                 case .transcribing:
@@ -58,8 +80,8 @@ struct RecordingDetailView: View {
                     }
 
                     ProcessingView(
-                        title: "Analyzing...",
-                        progress: services.analysisService.progress
+                        title: recording.isVideo && recording.transcript == nil ? "Analyzing Video..." : "Analyzing...",
+                        progress: recording.isVideo && recording.transcript == nil ? services.videoAnalysisService.progress : services.analysisService.progress
                     )
 
                 case .complete:
@@ -129,6 +151,11 @@ struct RecordingDetailView: View {
                 ) { configuration in
                     exportAnalysis(configuration: configuration)
                 }
+            }
+        }
+        .sheet(isPresented: $showingVideoAnalysisConfig) {
+            VideoAnalysisConfigurationSheet { framework, techniqueIds, includeRatings in
+                startVideoAnalysis(framework: framework, techniqueIds: techniqueIds, includeRatings: includeRatings)
             }
         }
     }
@@ -225,6 +252,85 @@ struct RecordingDetailView: View {
         try? modelContext.save()
     }
 
+    private func startVideoAnalysis(framework: TeachingFramework, techniqueIds: [String], includeRatings: Bool = true) {
+        guard let videoURL = recording.absoluteVideoPath,
+              let session = services.authService.getCurrentSession() else {
+            return
+        }
+
+        isProcessing = true
+        recording.status = .uploading
+
+        Task {
+            do {
+                try modelContext.save()
+
+                // Get enabled techniques for the selected framework
+                let techniques = services.techniqueService.getEnabledTechniques(
+                    for: framework,
+                    enabledIds: techniqueIds
+                )
+
+                recording.status = .analyzing
+                try modelContext.save()
+
+                let analysis = try await services.videoAnalysisService.analyzeVideo(
+                    videoURL: videoURL,
+                    techniques: techniques,
+                    sessionToken: session.accessToken,
+                    includeRatings: includeRatings
+                )
+
+                // Save analysis
+                recording.analysis = analysis
+                recording.status = .complete
+                try modelContext.save()
+
+            } catch {
+                recording.status = .recorded
+                appState.handleError(.videoAnalysisError(.apiError(500, error.localizedDescription)))
+            }
+
+            isProcessing = false
+        }
+    }
+
+    private func startAudioExtractionAndTranscription() {
+        guard recording.isVideo,
+              let videoURL = recording.absoluteVideoPath else {
+            return
+        }
+
+        isProcessing = true
+        recording.status = .transcribing
+
+        Task {
+            do {
+                try modelContext.save()
+
+                // Extract audio from video
+                let audioURL = try await services.audioExtractionService.extractAudio(from: videoURL)
+
+                // Update recording with extracted audio path
+                recording.audioFilePath = audioURL.lastPathComponent
+
+                // Transcribe the extracted audio
+                let transcript = try await services.transcriptionService.transcribe(recording: recording)
+
+                // Save transcript
+                recording.transcript = transcript
+                recording.status = .transcribed
+                try modelContext.save()
+
+            } catch {
+                recording.status = .recorded
+                appState.handleError(.transcription(.processingFailed(error)))
+            }
+
+            isProcessing = false
+        }
+    }
+
     private func exportAnalysis(configuration: ExportConfiguration) {
         guard let analysis = recording.analysis else { return }
 
@@ -258,6 +364,10 @@ struct RecordingHeaderView: View {
                     .fontWeight(.bold)
 
                 Spacer()
+
+                if recording.isVideo {
+                    MediaTypeBadge(mediaType: .video)
+                }
 
                 StatusBadge(status: recording.status)
             }
@@ -672,6 +782,280 @@ struct FailedRecordingView: View {
         .frame(maxWidth: .infinity)
         .background(.red.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+}
+
+// MARK: - Video Analysis Options View
+
+struct VideoAnalysisOptionsView: View {
+    let isProcessing: Bool
+    let onVideoAnalysis: () -> Void
+    let onAudioAnalysis: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Choose Analysis Method")
+                .font(.headline)
+
+            Text("For best results and cost efficiency, we recommend clips of 5-20 minutes.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            // Video Analysis Option
+            AnalysisMethodCard(
+                title: "Video Analysis (Gemini)",
+                description: "Analyzes visual + audio content. Observes teacher movements, student engagement, and classroom dynamics.",
+                cost: "~$0.15-0.27 per analysis",
+                icon: "video",
+                isRecommended: true,
+                isProcessing: isProcessing,
+                action: onVideoAnalysis
+            )
+
+            // Audio Analysis Option
+            AnalysisMethodCard(
+                title: "Audio Only (Claude)",
+                description: "Extracts audio track and transcribes. Focuses on verbal communication and questioning techniques.",
+                cost: "~$0.03-0.05 per analysis",
+                icon: "waveform",
+                isRecommended: false,
+                isProcessing: isProcessing,
+                action: onAudioAnalysis
+            )
+        }
+        .padding()
+        .background(.regularMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+}
+
+struct AnalysisMethodCard: View {
+    let title: String
+    let description: String
+    let cost: String
+    let icon: String
+    let isRecommended: Bool
+    let isProcessing: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: icon)
+                    .font(.title2)
+                    .foregroundStyle(isRecommended ? .blue : .secondary)
+                    .frame(width: 32)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text(title)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+
+                        if isRecommended {
+                            Text("Recommended")
+                                .font(.caption2)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(.blue.opacity(0.2))
+                                .foregroundStyle(.blue)
+                                .clipShape(Capsule())
+                        }
+                    }
+
+                    Text(description)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.leading)
+
+                    Text(cost)
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                }
+
+                Spacer()
+
+                if isProcessing {
+                    ProgressView()
+                        .controlSize(.small)
+                } else {
+                    Image(systemName: "chevron.right")
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding()
+            .background(isRecommended ? Color.blue.opacity(0.05) : Color.secondary.opacity(0.05))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+        }
+        .buttonStyle(.plain)
+        .disabled(isProcessing)
+    }
+}
+
+// MARK: - Video Analysis Configuration Sheet
+
+struct VideoAnalysisConfigurationSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.serviceContainer) private var services
+    @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var appState: AppState
+
+    @State private var selectedFramework: TeachingFramework = .tlac
+    @State private var enabledTechniqueIds: Set<String> = []
+    @State private var includeRatings: Bool = true
+
+    let onAnalyze: (TeachingFramework, [String], Bool) -> Void
+
+    private var canStartAnalysis: Bool {
+        !enabledTechniqueIds.isEmpty
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            // Header
+            HStack {
+                Text("Configure Video Analysis")
+                    .font(.headline)
+
+                Spacer()
+
+                Button("Cancel") {
+                    dismiss()
+                }
+                .buttonStyle(.plain)
+            }
+            .padding()
+            .background(.bar)
+
+            Divider()
+
+            // Content
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    // Info banner
+                    HStack(spacing: 12) {
+                        Image(systemName: "video.fill")
+                            .font(.title2)
+                            .foregroundStyle(.blue)
+
+                        Text("Video analysis uses Google Gemini to observe visual and audio content, providing feedback on teacher positioning, student engagement, and non-verbal cues.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding()
+                    .background(.blue.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                    FrameworkSelectionView(
+                        selectedFramework: $selectedFramework,
+                        enabledTechniqueIds: $enabledTechniqueIds
+                    )
+
+                    // Ratings toggle
+                    VStack(alignment: .leading, spacing: 8) {
+                        Toggle("Include Star Ratings", isOn: $includeRatings)
+                        Text("When enabled, each technique receives a 1-5 star rating.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding()
+                    .background(.regularMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+                .padding()
+            }
+
+            Divider()
+
+            // Footer
+            HStack {
+                if enabledTechniqueIds.isEmpty {
+                    Text("Select at least one technique")
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
+
+                Spacer()
+
+                Button("Start Video Analysis") {
+                    savePreferences()
+                    onAnalyze(selectedFramework, Array(enabledTechniqueIds), includeRatings)
+                    dismiss()
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(!canStartAnalysis)
+            }
+            .padding()
+            .background(.bar)
+        }
+        .frame(width: 450, height: 550)
+        .onAppear {
+            loadUserPreferences()
+        }
+        .onChange(of: selectedFramework) { _, newFramework in
+            enabledTechniqueIds = Set(loadEnabledIds(for: newFramework))
+        }
+    }
+
+    private func loadUserPreferences() {
+        guard let email = appState.currentUser?.email else {
+            loadDefaultTechniques()
+            return
+        }
+
+        let descriptor = FetchDescriptor<UserSettings>(
+            predicate: #Predicate { $0.userEmail == email }
+        )
+
+        if let settings = try? modelContext.fetch(descriptor).first {
+            selectedFramework = settings.selectedFramework
+            enabledTechniqueIds = Set(settings.enabledTechniqueIds(for: selectedFramework))
+            includeRatings = settings.includeRatingsInAnalysis
+        } else {
+            loadDefaultTechniques()
+        }
+    }
+
+    private func loadEnabledIds(for framework: TeachingFramework) -> [String] {
+        guard let email = appState.currentUser?.email else {
+            return FrameworkRegistry.defaultEnabledIds(for: framework)
+        }
+
+        let descriptor = FetchDescriptor<UserSettings>(
+            predicate: #Predicate { $0.userEmail == email }
+        )
+
+        if let settings = try? modelContext.fetch(descriptor).first {
+            return settings.enabledTechniqueIds(for: framework)
+        }
+
+        return FrameworkRegistry.defaultEnabledIds(for: framework)
+    }
+
+    private func loadDefaultTechniques() {
+        enabledTechniqueIds = Set(FrameworkRegistry.defaultEnabledIds(for: selectedFramework))
+    }
+
+    private func savePreferences() {
+        guard let email = appState.currentUser?.email else { return }
+
+        let descriptor = FetchDescriptor<UserSettings>(
+            predicate: #Predicate { $0.userEmail == email }
+        )
+
+        let settings: UserSettings
+        if let existingSettings = try? modelContext.fetch(descriptor).first {
+            settings = existingSettings
+        } else {
+            settings = UserSettings(userEmail: email)
+            modelContext.insert(settings)
+        }
+
+        settings.selectedFramework = selectedFramework
+        settings.setEnabledTechniqueIds(Array(enabledTechniqueIds), for: selectedFramework)
+        settings.includeRatingsInAnalysis = includeRatings
+
+        try? modelContext.save()
     }
 }
 

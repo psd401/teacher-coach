@@ -112,6 +112,8 @@ enum AppError: Error, LocalizedError {
     case network(NetworkError)
     case storage(StorageError)
     case importError(ImportError)
+    case videoImportError(VideoImportError)
+    case videoAnalysisError(VideoAnalysisError)
 
     var errorDescription: String? {
         switch self {
@@ -121,6 +123,8 @@ enum AppError: Error, LocalizedError {
         case .network(let error): return error.localizedDescription
         case .storage(let error): return error.localizedDescription
         case .importError(let error): return error.localizedDescription
+        case .videoImportError(let error): return error.localizedDescription
+        case .videoAnalysisError(let error): return error.localizedDescription
         }
     }
 }

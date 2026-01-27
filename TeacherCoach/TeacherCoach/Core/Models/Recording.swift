@@ -1,6 +1,13 @@
 import Foundation
 import SwiftData
 
+// MARK: - Media Type
+
+enum MediaType: String, Codable {
+    case audio
+    case video
+}
+
 /// Represents a teaching session recording
 @Model
 final class Recording {
@@ -10,6 +17,8 @@ final class Recording {
     var createdAt: Date
     var duration: TimeInterval
     var audioFilePath: String  // Relative path within app's Documents
+    var videoFilePath: String?  // Relative path for video files
+    var mediaType: MediaType = MediaType.audio
     var status: RecordingStatus
     var isImported: Bool = false
 
@@ -31,6 +40,23 @@ final class Recording {
             .appendingPathComponent("com.peninsula.teachercoach")
             .appendingPathComponent("Recordings")
             .appendingPathComponent(audioFilePath)
+    }
+
+    var absoluteVideoPath: URL? {
+        guard let videoFilePath = videoFilePath,
+              let documentsURL = FileManager.default.urls(
+                for: .applicationSupportDirectory,
+                in: .userDomainMask
+              ).first else { return nil }
+
+        return documentsURL
+            .appendingPathComponent("com.peninsula.teachercoach")
+            .appendingPathComponent("Recordings")
+            .appendingPathComponent(videoFilePath)
+    }
+
+    var isVideo: Bool {
+        mediaType == .video
     }
 
     var formattedDuration: String {
@@ -60,6 +86,8 @@ final class Recording {
         createdAt: Date = Date(),
         duration: TimeInterval = 0,
         audioFilePath: String,
+        videoFilePath: String? = nil,
+        mediaType: MediaType = .audio,
         status: RecordingStatus = .recording,
         isImported: Bool = false
     ) {
@@ -68,6 +96,8 @@ final class Recording {
         self.createdAt = createdAt
         self.duration = duration
         self.audioFilePath = audioFilePath
+        self.videoFilePath = videoFilePath
+        self.mediaType = mediaType
         self.status = status
         self.isImported = isImported
     }
@@ -78,6 +108,7 @@ final class Recording {
 enum RecordingStatus: String, Codable {
     case recording
     case recorded
+    case uploading  // Video upload to cloud for analysis
     case transcribing
     case transcribed
     case analyzing
@@ -88,6 +119,7 @@ enum RecordingStatus: String, Codable {
         switch self {
         case .recording: return "Recording"
         case .recorded: return "Recorded"
+        case .uploading: return "Uploading..."
         case .transcribing: return "Transcribing..."
         case .transcribed: return "Ready for Analysis"
         case .analyzing: return "Analyzing..."
@@ -97,6 +129,6 @@ enum RecordingStatus: String, Codable {
     }
 
     var isProcessing: Bool {
-        self == .transcribing || self == .analyzing
+        self == .uploading || self == .transcribing || self == .analyzing
     }
 }

@@ -11,8 +11,11 @@ final class ServiceContainer {
     let authService: AuthService
     let recordingService: RecordingService
     let audioImportService: AudioImportService
+    let videoImportService: VideoImportService
     let transcriptionService: TranscriptionService
     let analysisService: AnalysisService
+    let videoAnalysisService: VideoAnalysisService
+    let audioExtractionService: AudioExtractionService
     let techniqueService: TechniqueService
     let exportService: ExportService
 
@@ -26,8 +29,11 @@ final class ServiceContainer {
         self.authService = AuthService(config: config)
         self.recordingService = RecordingService(config: config)
         self.audioImportService = AudioImportService(config: config)
+        self.videoImportService = VideoImportService(config: config)
         self.transcriptionService = TranscriptionService(config: config)
         self.analysisService = AnalysisService(config: config)
+        self.videoAnalysisService = VideoAnalysisService(config: config)
+        self.audioExtractionService = AudioExtractionService()
         self.techniqueService = TechniqueService()
         self.exportService = ExportService()
     }
