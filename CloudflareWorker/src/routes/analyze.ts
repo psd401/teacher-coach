@@ -98,6 +98,23 @@ analyzeRoutes.post('/', async (c) => {
     return c.json({ error: 'Missing transcript or techniques' }, 400);
   }
 
+  // Input size validation to prevent DoS and excessive API costs
+  const MAX_TRANSCRIPT_LENGTH = 100000; // ~100KB of text
+  const MAX_TECHNIQUES = 20;
+  const MAX_PAUSES = 100;
+
+  if (transcript.length > MAX_TRANSCRIPT_LENGTH) {
+    return c.json({ error: 'Transcript too large', maxLength: MAX_TRANSCRIPT_LENGTH }, 400);
+  }
+
+  if (techniques.length > MAX_TECHNIQUES) {
+    return c.json({ error: 'Too many techniques', maxTechniques: MAX_TECHNIQUES }, 400);
+  }
+
+  if (pauseData?.pauses && pauseData.pauses.length > MAX_PAUSES) {
+    return c.json({ error: 'Too many pauses', maxPauses: MAX_PAUSES }, 400);
+  }
+
   // Build the analysis prompt
   const prompt = buildAnalysisPrompt(transcript, techniques, includeRatings, pauseData);
 
@@ -151,11 +168,11 @@ analyzeRoutes.post('/', async (c) => {
       }
       analysisResult = JSON.parse(jsonText);
     } catch (parseErr) {
+      // Log error details server-side only (redact transcript content)
       console.error('Failed to parse Claude response:', parseErr);
-      console.error('Response text:', analysisText);
+      console.error('Response length:', analysisText.length);
       return c.json({
-        error: 'Invalid response format from analysis service',
-        raw_response: analysisText.slice(0, 500),
+        error: 'Invalid response format from analysis service'
       }, 502);
     }
 
@@ -185,8 +202,7 @@ analyzeRoutes.post('/', async (c) => {
   } catch (err) {
     console.error('Analysis request failed:', err);
     return c.json({
-      error: 'Analysis request failed',
-      message: err instanceof Error ? err.message : 'Unknown error',
+      error: 'Analysis request failed'
     }, 500);
   }
 });

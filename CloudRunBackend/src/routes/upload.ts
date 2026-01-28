@@ -18,6 +18,10 @@ interface InitiateUploadResponse {
 }
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024; // 2GB (Gemini File API limit)
+
+// Gemini file names follow pattern: files/<alphanumeric-id>
+const GEMINI_FILE_NAME_PATTERN = /^files\/[a-zA-Z0-9_-]+$/;
+
 const ALLOWED_CONTENT_TYPES = [
   'video/mp4',
   'video/quicktime',
@@ -97,8 +101,7 @@ uploadRoutes.post('/initiate', async (c) => {
       const errorText = await startResponse.text();
       console.error('Gemini upload initiation failed:', startResponse.status, errorText);
       return c.json({
-        error: 'Failed to initiate upload',
-        details: errorText,
+        error: 'Failed to initiate upload'
       }, 502);
     }
 
@@ -115,8 +118,7 @@ uploadRoutes.post('/initiate', async (c) => {
   } catch (err) {
     console.error('Failed to initiate Gemini upload:', err);
     return c.json({
-      error: 'Failed to initiate upload',
-      message: err instanceof Error ? err.message : 'Unknown error',
+      error: 'Failed to initiate upload'
     }, 500);
   }
 });
@@ -140,16 +142,20 @@ uploadRoutes.post('/status', async (c) => {
     return c.json({ error: 'Missing fileName' }, 400);
   }
 
+  // Validate fileName format to prevent path traversal
+  if (!GEMINI_FILE_NAME_PATTERN.test(fileName)) {
+    return c.json({ error: 'Invalid fileName format' }, 400);
+  }
+
   try {
     const response = await fetch(
       `${GEMINI_API_BASE}/v1beta/${fileName}?key=${env.GEMINI_API_KEY}`
     );
 
     if (!response.ok) {
-      const errorText = await response.text();
+      console.error('Failed to get file status:', response.status, await response.text());
       return c.json({
-        error: 'Failed to get file status',
-        details: errorText,
+        error: 'Failed to get file status'
       }, response.status);
     }
 
@@ -159,8 +165,7 @@ uploadRoutes.post('/status', async (c) => {
   } catch (err) {
     console.error('Failed to get file status:', err);
     return c.json({
-      error: 'Failed to get file status',
-      message: err instanceof Error ? err.message : 'Unknown error',
+      error: 'Failed to get file status'
     }, 500);
   }
 });
@@ -184,6 +189,11 @@ uploadRoutes.delete('/:fileName{.+}', async (c) => {
     return c.json({ error: 'Missing fileName' }, 400);
   }
 
+  // Validate fileName format to prevent path traversal
+  if (!GEMINI_FILE_NAME_PATTERN.test(fileName)) {
+    return c.json({ error: 'Invalid fileName format' }, 400);
+  }
+
   try {
     const response = await fetch(
       `${GEMINI_API_BASE}/v1beta/${fileName}?key=${env.GEMINI_API_KEY}`,
@@ -191,10 +201,9 @@ uploadRoutes.delete('/:fileName{.+}', async (c) => {
     );
 
     if (!response.ok && response.status !== 404) {
-      const errorText = await response.text();
+      console.error('Failed to delete file:', response.status, await response.text());
       return c.json({
-        error: 'Failed to delete file',
-        details: errorText,
+        error: 'Failed to delete file'
       }, response.status);
     }
 
@@ -203,8 +212,7 @@ uploadRoutes.delete('/:fileName{.+}', async (c) => {
   } catch (err) {
     console.error('Failed to delete file:', err);
     return c.json({
-      error: 'Failed to delete file',
-      message: err instanceof Error ? err.message : 'Unknown error',
+      error: 'Failed to delete file'
     }, 500);
   }
 });

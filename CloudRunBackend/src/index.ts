@@ -31,7 +31,18 @@ export const env: Env = {
   VIDEO_RATE_LIMIT_PER_HOUR: parseInt(process.env.VIDEO_RATE_LIMIT_PER_HOUR || '5', 10),
 };
 
-// In-memory rate limiting (resets on restart - adequate for low traffic)
+// Startup validation for critical security configuration
+const MIN_JWT_SECRET_LENGTH = 32;
+if (!env.JWT_SECRET || env.JWT_SECRET.length < MIN_JWT_SECRET_LENGTH) {
+  throw new Error(`JWT_SECRET must be at least ${MIN_JWT_SECRET_LENGTH} characters for secure token signing`);
+}
+
+// SECURITY DESIGN DECISION: In-memory rate limiting
+// - Resets on container restart and doesn't scale horizontally across instances
+// - Acceptable for this low-traffic internal tool (@psd401.net domain-restricted)
+// - Rate limiting here is courtesy throttling for authenticated users, not abuse protection
+// - Primary protection comes from: auth middleware, Claude/Gemini API quotas, Cloud Run limits
+// - If scaling becomes necessary, migrate to Cloud Memorystore (Redis)
 export const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 
 export function checkRateLimit(key: string, limit: number): { allowed: boolean; current: number; resetIn: number } {
@@ -70,12 +81,24 @@ export function getRateLimitStatus(key: string, limit: number): { used: number; 
 
 const app = new Hono();
 
-// CORS configuration
+// SECURITY DESIGN DECISION: Permissive CORS (origin: '*')
+// - iOS app uses native networking (CORS doesn't apply to native apps)
+// - No web frontend exists for this application
+// - All endpoints require @psd401.net Google OAuth authentication
+// - CORS restrictions would only affect browser-based requests, which can't authenticate anyway
+// - Keeping permissive avoids maintenance overhead with no security benefit for this architecture
 app.use('*', cors({
   origin: '*',
   allowHeaders: ['Content-Type', 'Authorization'],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }));
+
+// Security headers middleware
+app.use('*', async (c, next) => {
+  await next();
+  c.header('X-Content-Type-Options', 'nosniff');
+  c.header('X-Frame-Options', 'DENY');
+});
 
 // Health check
 app.get('/', (c) => {
@@ -93,12 +116,11 @@ app.route('/analyze', analyzeRoutes);
 app.route('/analyze/video', analyzeVideoRoutes);
 app.route('/upload', uploadRoutes);
 
-// Error handler
+// Error handler - logs details server-side, returns generic message to client
 app.onError((err, c) => {
   console.error('Unhandled error:', err);
   return c.json({
-    error: 'Internal server error',
-    message: err.message
+    error: 'Internal server error'
   }, 500);
 });
 

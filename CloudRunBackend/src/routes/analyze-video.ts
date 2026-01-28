@@ -50,6 +50,9 @@ const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com';
 const FILE_PROCESSING_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes (Cloud Run allows longer)
 const FILE_PROCESSING_POLL_INTERVAL_MS = 5000; // 5 seconds
 
+// Gemini file names follow pattern: files/<alphanumeric-id>
+const GEMINI_FILE_NAME_PATTERN = /^files\/[a-zA-Z0-9_-]+$/;
+
 /**
  * POST /analyze/video
  * Analyze a video that has been uploaded to Gemini
@@ -91,6 +94,18 @@ analyzeVideoRoutes.post('/', async (c) => {
     return c.json({ error: 'Missing geminiFileName or techniques' }, 400);
   }
 
+  // Validate geminiFileName format to prevent path traversal
+  if (!GEMINI_FILE_NAME_PATTERN.test(geminiFileName)) {
+    return c.json({ error: 'Invalid geminiFileName format' }, 400);
+  }
+
+  // Input size validation to prevent DoS and excessive API costs
+  const MAX_TECHNIQUES = 20;
+
+  if (techniques.length > MAX_TECHNIQUES) {
+    return c.json({ error: 'Too many techniques', maxTechniques: MAX_TECHNIQUES }, 400);
+  }
+
   try {
     // 1. Wait for Gemini file processing to complete
     const processedFile = await waitForFileProcessing(
@@ -119,15 +134,14 @@ analyzeVideoRoutes.post('/', async (c) => {
       const blockReason = (geminiResponse as any).promptFeedback?.blockReason;
       return c.json({
         error: 'Video analysis blocked or failed',
-        message: blockReason || 'Gemini returned no analysis candidates',
-        details: (geminiResponse as any).promptFeedback,
+        message: blockReason ? 'Content was blocked by safety filters' : 'Analysis service returned no results'
       }, 502);
     }
 
     const analysisText = geminiResponse.candidates[0]?.content?.parts[0]?.text;
 
     if (!analysisText) {
-      console.error('Gemini candidate has no text:', JSON.stringify(geminiResponse.candidates[0], null, 2));
+      console.error('Gemini candidate has no text content');
       return c.json({ error: 'Empty response from analysis service' }, 502);
     }
 
@@ -140,11 +154,11 @@ analyzeVideoRoutes.post('/', async (c) => {
       }
       analysisResult = JSON.parse(jsonText);
     } catch (parseErr) {
+      // Log error details server-side only (avoid logging video analysis content)
       console.error('Failed to parse Gemini response:', parseErr);
-      console.error('Response text:', analysisText);
+      console.error('Response length:', analysisText.length);
       return c.json({
-        error: 'Invalid response format from analysis service',
-        raw_response: analysisText.slice(0, 500),
+        error: 'Invalid response format from analysis service'
       }, 502);
     }
 
@@ -179,8 +193,7 @@ analyzeVideoRoutes.post('/', async (c) => {
     await deleteGeminiFile(geminiFileName, env.GEMINI_API_KEY).catch(() => {});
 
     return c.json({
-      error: 'Video analysis failed',
-      message: err instanceof Error ? err.message : 'Unknown error',
+      error: 'Video analysis failed'
     }, 500);
   }
 });

@@ -21,12 +21,24 @@ export interface Env {
 
 const app = new Hono<{ Bindings: Env }>();
 
-// CORS configuration
+// SECURITY DESIGN DECISION: Permissive CORS (origin: '*')
+// - iOS app uses native networking (CORS doesn't apply to native apps)
+// - No web frontend exists for this application
+// - All endpoints require @psd401.net Google OAuth authentication
+// - CORS restrictions would only affect browser-based requests, which can't authenticate anyway
+// - Keeping permissive avoids maintenance overhead with no security benefit for this architecture
 app.use('*', cors({
-  origin: '*',  // Allow all origins for native app
+  origin: '*',
   allowHeaders: ['Content-Type', 'Authorization'],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }));
+
+// Security headers middleware
+app.use('*', async (c, next) => {
+  await next();
+  c.header('X-Content-Type-Options', 'nosniff');
+  c.header('X-Frame-Options', 'DENY');
+});
 
 // Health check
 app.get('/', (c) => {
@@ -43,12 +55,11 @@ app.route('/analyze', analyzeRoutes);
 app.route('/analyze/video', analyzeVideoRoutes);
 app.route('/upload', uploadRoutes);
 
-// Error handler
+// Error handler - logs details server-side, returns generic message to client
 app.onError((err, c) => {
   console.error('Unhandled error:', err);
   return c.json({
-    error: 'Internal server error',
-    message: err.message
+    error: 'Internal server error'
   }, 500);
 });
 

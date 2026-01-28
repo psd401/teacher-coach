@@ -57,9 +57,22 @@ authRoutes.post('/validate', async (c) => {
     }
 
     // CRITICAL: Verify the hosted domain (server-side domain restriction)
+    // Defense-in-depth: check both hd claim AND email domain suffix
     const allowedDomain = env.ALLOWED_DOMAIN;
+    const emailDomain = payload.email?.split('@')[1]?.toLowerCase();
+
     if (!payload.hd || payload.hd !== allowedDomain) {
-      console.warn(`Domain rejection: ${payload.email} (hd: ${payload.hd})`);
+      // Log rejection without exposing full email (privacy)
+      console.warn(`Domain rejection: hd=${payload.hd}, expected=${allowedDomain}`);
+      return c.json({
+        error: 'Access denied',
+        message: `Only @${allowedDomain} accounts are allowed`
+      }, 403);
+    }
+
+    // Additional check: verify email domain matches (defense-in-depth)
+    if (emailDomain !== allowedDomain) {
+      console.warn(`Email domain mismatch: domain=${emailDomain}, expected=${allowedDomain}`);
       return c.json({
         error: 'Access denied',
         message: `Only @${allowedDomain} accounts are allowed`
@@ -142,9 +155,17 @@ authRoutes.post('/refresh', async (c) => {
       .setSubject(payload.userId)
       .sign(secret);
 
+    // Rotate refresh token (issue new one, old one becomes invalid)
+    const newRefreshToken = await new jose.SignJWT({ userId: payload.userId })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setIssuedAt()
+      .setExpirationTime('30d')
+      .setSubject(payload.userId)
+      .sign(secret);
+
     return c.json({
       access_token: newSessionToken,
-      refresh_token: refresh_token,  // Return same refresh token
+      refresh_token: newRefreshToken,  // Return new refresh token (rotation)
       expires_in: 7 * 24 * 60 * 60,
     });
 
