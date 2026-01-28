@@ -13,6 +13,8 @@ struct FrameworkRegistry {
             return RosenshineTechniques.createTechniques()
         case .avid:
             return AVIDTechniques.createTechniques()
+        case .nationalBoard:
+            return NationalBoardTechniques.createTechniques()
         }
     }
 

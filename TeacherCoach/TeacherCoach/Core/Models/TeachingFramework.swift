@@ -6,6 +6,7 @@ enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
     case danielson = "danielson"
     case rosenshine = "rosenshine"
     case avid = "avid"
+    case nationalBoard = "nationalBoard"
 
     var id: String { rawValue }
 
@@ -19,6 +20,8 @@ enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
             return "Rosenshine's Principles of Instruction"
         case .avid:
             return "AVID WICOR"
+        case .nationalBoard:
+            return "National Board Standards"
         }
     }
 
@@ -32,6 +35,8 @@ enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
             return "Rosenshine"
         case .avid:
             return "AVID"
+        case .nationalBoard:
+            return "NBPTS"
         }
     }
 
@@ -45,6 +50,8 @@ enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
             return "Research-based principles from Barak Rosenshine's synthesis of cognitive science and classroom instruction research."
         case .avid:
             return "AVID's WICOR framework focusing on Writing, Inquiry, Collaboration, Organization, and Reading strategies for college readiness."
+        case .nationalBoard:
+            return "National Board for Professional Teaching Standards' Five Core Propositions for accomplished teaching practice."
         }
     }
 }
