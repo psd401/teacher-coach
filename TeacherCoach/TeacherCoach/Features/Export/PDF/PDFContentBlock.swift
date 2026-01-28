@@ -7,6 +7,7 @@ enum PDFContentBlock: Identifiable {
     case documentHeader(title: String, duration: String, date: Date)
     case summary(text: String)
     case strengthsAndGrowth(strengths: [String], growthAreas: [String], stacked: Bool)
+    case ratingLegend
     case techniqueCard(TechniqueCardData)
     case techniqueSuggestionsContinued(techniqueName: String, suggestions: [String])
     case nextSteps([String])
@@ -19,6 +20,8 @@ enum PDFContentBlock: Identifiable {
             return "summary"
         case .strengthsAndGrowth:
             return "strengths-growth"
+        case .ratingLegend:
+            return "rating-legend"
         case .techniqueCard(let data):
             return "technique-\(data.id)"
         case .techniqueSuggestionsContinued(let name, _):

@@ -32,6 +32,9 @@ struct PDFBlockMeasurer {
         case .strengthsAndGrowth(let strengths, let growthAreas, let stacked):
             PDFStrengthsGrowthView(strengths: strengths, growthAreas: growthAreas, stacked: stacked)
 
+        case .ratingLegend:
+            PDFRatingLegendView()
+
         case .techniqueCard(let data):
             PDFTechniqueCardView(data: data)
 

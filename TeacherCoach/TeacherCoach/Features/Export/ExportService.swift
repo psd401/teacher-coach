@@ -154,6 +154,11 @@ final class ExportService {
         let selectedTechniques = (analysis.techniqueEvaluations ?? [])
             .filter { configuration.includedTechniqueIds.contains($0.id) }
 
+        // Add rating legend before technique cards if ratings are included
+        if !selectedTechniques.isEmpty && analysis.ratingsIncluded {
+            blocks.append(.ratingLegend)
+        }
+
         for technique in selectedTechniques {
             let data = TechniqueCardData(from: technique, ratingsIncluded: analysis.ratingsIncluded)
             blocks.append(.techniqueCard(data))
@@ -241,6 +246,19 @@ final class ExportService {
         if !selectedTechniques.isEmpty {
             lines.append("## Technique Feedback")
             lines.append("")
+
+            // Rating legend if ratings are included
+            if analysis.ratingsIncluded {
+                lines.append("### Rating Scale")
+                lines.append("")
+                lines.append("| Rating | Level | Description |")
+                lines.append("|--------|-------|-------------|")
+                for level in RatingLevel.allCases {
+                    let stars = String(repeating: "\u{2605}", count: level.rawValue) + String(repeating: "\u{2606}", count: 5 - level.rawValue)
+                    lines.append("| \(stars) | \(level.displayText) | \(level.description) |")
+                }
+                lines.append("")
+            }
 
             for technique in selectedTechniques {
                 lines.append("### \(technique.techniqueName)")

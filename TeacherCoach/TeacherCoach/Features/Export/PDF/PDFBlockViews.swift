@@ -132,6 +132,49 @@ struct PDFStrengthsGrowthView: View {
     }
 }
 
+// MARK: - Rating Legend Block
+
+struct PDFRatingLegendView: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Rating Scale")
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .foregroundStyle(.black)
+
+            HStack(spacing: 8) {
+                ForEach(RatingLevel.allCases, id: \.rawValue) { level in
+                    VStack(alignment: .center, spacing: 4) {
+                        HStack(spacing: 1) {
+                            ForEach(1...5, id: \.self) { index in
+                                Image(systemName: index <= level.rawValue ? "star.fill" : "star")
+                                    .font(.system(size: 8))
+                                    .foregroundStyle(index <= level.rawValue ? level.swiftUIColor : .gray.opacity(0.3))
+                            }
+                        }
+
+                        Text(level.displayText)
+                            .font(.system(size: 9))
+                            .fontWeight(.medium)
+                            .foregroundStyle(level.swiftUIColor)
+
+                        Text(level.description)
+                            .font(.system(size: 7))
+                            .foregroundStyle(.gray)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: 95)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            }
+        }
+        .padding()
+        .frame(width: PDFLayout.contentWidth, alignment: .leading)
+        .background(Color.gray.opacity(0.05))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+}
+
 // MARK: - Technique Card Block
 
 struct PDFTechniqueCardView: View {
