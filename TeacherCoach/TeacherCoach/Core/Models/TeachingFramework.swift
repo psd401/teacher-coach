@@ -5,6 +5,7 @@ enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
     case tlac = "tlac"
     case danielson = "danielson"
     case rosenshine = "rosenshine"
+    case avid = "avid"
 
     var id: String { rawValue }
 
@@ -16,6 +17,8 @@ enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
             return "Danielson Framework"
         case .rosenshine:
             return "Rosenshine's Principles of Instruction"
+        case .avid:
+            return "AVID WICOR"
         }
     }
 
@@ -27,6 +30,8 @@ enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
             return "Danielson"
         case .rosenshine:
             return "Rosenshine"
+        case .avid:
+            return "AVID"
         }
     }
 
@@ -38,6 +43,8 @@ enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
             return "Charlotte Danielson's Framework for Teaching, focusing on observable classroom components."
         case .rosenshine:
             return "Research-based principles from Barak Rosenshine's synthesis of cognitive science and classroom instruction research."
+        case .avid:
+            return "AVID's WICOR framework focusing on Writing, Inquiry, Collaboration, Organization, and Reading strategies for college readiness."
         }
     }
 }

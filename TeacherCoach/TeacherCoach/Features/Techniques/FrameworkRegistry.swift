@@ -11,6 +11,8 @@ struct FrameworkRegistry {
             return DanielsonTechniques.createTechniques()
         case .rosenshine:
             return RosenshineTechniques.createTechniques()
+        case .avid:
+            return AVIDTechniques.createTechniques()
         }
     }
 
