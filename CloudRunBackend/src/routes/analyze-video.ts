@@ -113,9 +113,21 @@ analyzeVideoRoutes.post('/', async (c) => {
     );
 
     // 3. Parse response
+    // Check if Gemini returned candidates (may be blocked by safety filters)
+    if (!geminiResponse.candidates || geminiResponse.candidates.length === 0) {
+      console.error('Gemini returned no candidates:', JSON.stringify(geminiResponse, null, 2));
+      const blockReason = (geminiResponse as any).promptFeedback?.blockReason;
+      return c.json({
+        error: 'Video analysis blocked or failed',
+        message: blockReason || 'Gemini returned no analysis candidates',
+        details: (geminiResponse as any).promptFeedback,
+      }, 502);
+    }
+
     const analysisText = geminiResponse.candidates[0]?.content?.parts[0]?.text;
 
     if (!analysisText) {
+      console.error('Gemini candidate has no text:', JSON.stringify(geminiResponse.candidates[0], null, 2));
       return c.json({ error: 'Empty response from analysis service' }, 502);
     }
 
