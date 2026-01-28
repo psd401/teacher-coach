@@ -1,34 +1,9 @@
 import { Hono } from 'hono';
 import { verifySession } from './auth';
 import type { Env } from '../index';
+import { buildAnalysisPrompt, type TechniqueDefinition, type PauseData } from '../../../shared/prompts';
 
 export const analyzeRoutes = new Hono<{ Bindings: Env }>();
-
-interface TechniqueDefinition {
-  id: string;
-  name: string;
-  description: string;
-  lookFors: string[];
-  exemplarPhrases: string[];
-}
-
-interface PauseInfo {
-  startTime: number;
-  endTime: number;
-  duration: number;
-  precedingText: string;
-  followingText: string;
-}
-
-interface PauseData {
-  pauses: PauseInfo[];
-  summary: {
-    count: number;
-    averageDuration: number;
-    maxDuration: number;
-    totalPauseTime: number;
-  };
-}
 
 interface AnalyzeRequest {
   transcript: string;
@@ -116,7 +91,7 @@ analyzeRoutes.post('/', async (c) => {
   }
 
   // Build the analysis prompt
-  const prompt = buildAnalysisPrompt(transcript, techniques, includeRatings, pauseData);
+  const prompt = buildAnalysisPrompt({ transcript, techniques, includeRatings, pauseData });
 
   // Call Claude API
   try {
@@ -232,120 +207,3 @@ analyzeRoutes.get('/rate-limit', async (c) => {
     resets_in: 3600 - (Date.now() % 3600000) / 1000,
   });
 });
-
-/**
- * Builds the analysis prompt for Claude
- */
-function buildAnalysisPrompt(transcript: string, techniques: TechniqueDefinition[], includeRatings: boolean, pauseData?: PauseData): string {
-  let prompt = `You are an expert instructional coach analyzing a teaching session transcript. Your task is to evaluate the teacher's use of specific teaching techniques and provide constructive feedback.
-
-## Teaching Session Transcript
-\`\`\`
-${transcript}
-\`\`\`
-
-`;
-
-  // Add pause data section if provided and wait-time technique is selected
-  if (pauseData && techniques.some(t => t.id === 'wait-time')) {
-    prompt += `## Wait Time Data (Detected Pauses >= 3 seconds)
-This data shows pauses detected in the recording that may indicate wait time after questions.
-
-**Summary:**
-- Total pauses: ${pauseData.summary.count}
-- Average duration: ${pauseData.summary.averageDuration.toFixed(1)}s
-- Longest pause: ${pauseData.summary.maxDuration.toFixed(1)}s
-- Total pause time: ${pauseData.summary.totalPauseTime.toFixed(1)}s
-
-**Pause Details:**
-${pauseData.pauses.map((p, i) =>
-  `${i + 1}. ${p.duration.toFixed(1)}s pause after "${p.precedingText}" → before "${p.followingText}"`
-).join('\n')}
-
-Use this quantitative data to provide specific feedback on wait time usage. Consider whether pauses occur after questions and if the duration is adequate (research suggests 3+ seconds is optimal).
-
-`;
-  }
-
-  prompt += `## Techniques to Evaluate
-Analyze the transcript for evidence of the following teaching techniques:
-
-`;
-
-  for (const technique of techniques) {
-    prompt += `
-### ${technique.name}
-**ID:** ${technique.id}
-**Description:** ${technique.description}
-
-**Look-fors (observable indicators):**
-${technique.lookFors.map(lf => `- ${lf}`).join('\n')}
-
-**Exemplar phrases:**
-${technique.exemplarPhrases.map(p => `- "${p}"`).join('\n')}
-
-`;
-  }
-
-  // Build technique evaluation schema based on whether ratings are included
-  const techniqueEvalSchema = includeRatings
-    ? `{
-            "techniqueId": "exact-id-from-technique-definition",
-            "wasObserved": true/false,
-            "rating": 1-5 (null if not observed),
-            "evidence": ["specific quote or behavior from transcript"],
-            "feedback": "Detailed feedback about technique usage",
-            "suggestions": ["specific improvement suggestion"]
-        }`
-    : `{
-            "techniqueId": "exact-id-from-technique-definition",
-            "wasObserved": true/false,
-            "evidence": ["specific quote or behavior from transcript"],
-            "feedback": "Detailed feedback about technique usage",
-            "suggestions": ["specific improvement suggestion"]
-        }`;
-
-  prompt += `
-## Response Format
-Provide your analysis as a JSON object with the following structure:
-{
-    "overallSummary": "2-3 sentence summary of the teaching session's effectiveness",
-    "strengths": ["strength 1", "strength 2", "strength 3"],
-    "growthAreas": ["growth area 1", "growth area 2"],
-    "actionableNextSteps": ["specific action 1", "specific action 2", "specific action 3"],
-    "techniqueEvaluations": [
-        ${techniqueEvalSchema}
-    ]
-}
-`;
-
-  // Only include rating scale if ratings are enabled
-  if (includeRatings) {
-    prompt += `
-## Rating Scale
-1 - Developing: Technique not observed or needs significant development
-2 - Emerging: Beginning to implement technique with inconsistent results
-3 - Proficient: Solid implementation of technique with room for refinement
-4 - Accomplished: Effective and consistent use of technique
-5 - Exemplary: Masterful implementation that could serve as a model
-`;
-  }
-
-  // Build guidelines based on whether ratings are included
-  const ratingGuideline = includeRatings
-    ? '- If a technique was not observed, set wasObserved to false and rating to null'
-    : '- If a technique was not observed, set wasObserved to false';
-
-  prompt += `
-## Guidelines
-- IMPORTANT: Use the exact "ID" value shown for each technique as the "techniqueId" in your response
-- Be specific and cite evidence from the transcript
-- Provide actionable, growth-oriented feedback
-- Balance recognition of strengths with constructive suggestions
-${ratingGuideline}
-- Focus on patterns rather than isolated instances
-
-Respond ONLY with the JSON object, no additional text.`;
-
-  return prompt;
-}

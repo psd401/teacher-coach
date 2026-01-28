@@ -1,16 +1,9 @@
 import { Hono } from 'hono';
 import { verifySession } from './auth';
 import { env, checkRateLimit, getRateLimitStatus } from '../index';
+import { buildVideoAnalysisPrompt, type TechniqueDefinition } from '../../../shared/prompts';
 
 export const analyzeVideoRoutes = new Hono();
-
-interface TechniqueDefinition {
-  id: string;
-  name: string;
-  description: string;
-  lookFors: string[];
-  exemplarPhrases: string[];
-}
 
 interface AnalyzeVideoRequest {
   geminiFileName: string;  // e.g., "files/abc123"
@@ -118,7 +111,7 @@ analyzeVideoRoutes.post('/', async (c) => {
     }
 
     // 2. Call Gemini with video and prompt
-    const prompt = buildVideoAnalysisPrompt(techniques, includeRatings);
+    const prompt = buildVideoAnalysisPrompt({ techniques, includeRatings });
     const geminiResponse = await callGeminiWithVideo(
       processedFile.uri,
       processedFile.mimeType,
@@ -314,99 +307,4 @@ async function deleteGeminiFile(fileName: string, apiKey: string): Promise<void>
   if (!response.ok && response.status !== 404) {
     console.error('Failed to delete Gemini file:', await response.text());
   }
-}
-
-/**
- * Build the video analysis prompt for Gemini
- */
-function buildVideoAnalysisPrompt(techniques: TechniqueDefinition[], includeRatings: boolean): string {
-  let prompt = `You are an expert instructional coach analyzing a teaching session video. Your task is to evaluate the teacher's use of specific teaching techniques and provide constructive feedback.
-
-Watch the entire video carefully, paying attention to:
-- Teacher verbal communication and questioning techniques
-- Teacher non-verbal communication (body language, positioning, gestures)
-- Student engagement and responses
-- Classroom management and pacing
-- Use of instructional materials and technology
-
-## Techniques to Evaluate
-Analyze the video for evidence of the following teaching techniques:
-
-`;
-
-  for (const technique of techniques) {
-    prompt += `
-### ${technique.name}
-**ID:** ${technique.id}
-**Description:** ${technique.description}
-
-**Look-fors (observable indicators):**
-${technique.lookFors.map(lf => `- ${lf}`).join('\n')}
-
-**Exemplar phrases:**
-${technique.exemplarPhrases.map(p => `- "${p}"`).join('\n')}
-
-`;
-  }
-
-  const techniqueEvalSchema = includeRatings
-    ? `{
-            "techniqueId": "exact-id-from-technique-definition",
-            "wasObserved": true/false,
-            "rating": 1-5 (null if not observed),
-            "evidence": ["specific observed behavior or quote from video"],
-            "feedback": "Detailed feedback about technique usage",
-            "suggestions": ["specific improvement suggestion"]
-        }`
-    : `{
-            "techniqueId": "exact-id-from-technique-definition",
-            "wasObserved": true/false,
-            "evidence": ["specific observed behavior or quote from video"],
-            "feedback": "Detailed feedback about technique usage",
-            "suggestions": ["specific improvement suggestion"]
-        }`;
-
-  prompt += `
-## Response Format
-Provide your analysis as a JSON object with the following structure:
-{
-    "overallSummary": "2-3 sentence summary of the teaching session's effectiveness based on video observation",
-    "strengths": ["strength 1", "strength 2", "strength 3"],
-    "growthAreas": ["growth area 1", "growth area 2"],
-    "actionableNextSteps": ["specific action 1", "specific action 2", "specific action 3"],
-    "techniqueEvaluations": [
-        ${techniqueEvalSchema}
-    ]
-}
-`;
-
-  if (includeRatings) {
-    prompt += `
-## Rating Scale
-1 - Developing: Technique not observed or needs significant development
-2 - Emerging: Beginning to implement technique with inconsistent results
-3 - Proficient: Solid implementation of technique with room for refinement
-4 - Accomplished: Effective and consistent use of technique
-5 - Exemplary: Masterful implementation that could serve as a model
-`;
-  }
-
-  const ratingGuideline = includeRatings
-    ? '- If a technique was not observed, set wasObserved to false and rating to null'
-    : '- If a technique was not observed, set wasObserved to false';
-
-  prompt += `
-## Guidelines
-- IMPORTANT: Use the exact "ID" value shown for each technique as the "techniqueId" in your response
-- Be specific and cite observable evidence from the video (actions, quotes, interactions)
-- Include timestamps when referencing specific moments if possible
-- Consider both verbal and non-verbal teacher behaviors
-- Provide actionable, growth-oriented feedback
-- Balance recognition of strengths with constructive suggestions
-${ratingGuideline}
-- Focus on patterns rather than isolated instances
-
-Respond ONLY with the JSON object, no additional text.`;
-
-  return prompt;
 }
