@@ -1,6 +1,20 @@
 # Teacher Coach
 
-Native macOS app for Peninsula SD teachers to record teaching sessions, receive local transcription via WhisperKit, and get AI-powered feedback on specific teaching techniques via Claude (`claude-opus-4-5-20251101`).
+Native macOS app for Peninsula SD teachers to record teaching sessions, receive local transcription via WhisperKit, and get AI-powered feedback on specific teaching techniques.
+
+## Features
+
+- **Live Recording** - Record teaching sessions directly in the app
+- **Audio Import** - Import voice memos and audio files (M4A, MP3, WAV, CAF)
+- **Video Import** - Import classroom recordings (MP4, MOV, M4V, WebM)
+- **Local Transcription** - On-device transcription using WhisperKit (Apple Silicon)
+- **Wait Time Detection** - Automatic detection of pauses (3+ seconds) for wait time analysis
+- **AI Analysis** - Claude-powered feedback on teaching techniques
+- **Video Analysis** - Gemini-powered visual+audio analysis for classroom dynamics
+- **Multiple Frameworks** - Three research-based teaching evaluation frameworks
+- **Star Ratings** - Optional 1-5 star ratings with visual legend
+- **PDF & Markdown Export** - Export analysis reports with customizable content
+- **Domain-Restricted Auth** - Google SSO limited to @psd401.net accounts
 
 ## Architecture
 
@@ -9,17 +23,20 @@ Native macOS app for Peninsula SD teachers to record teaching sessions, receive 
 │                    macOS App (SwiftUI)                      │
 ├─────────────────────────────────────────────────────────────┤
 │  Recording → Transcription (WhisperKit) → Analysis Request  │
+│  Video Import → Direct Upload to Gemini → Video Analysis    │
 │                           ↓                                 │
-│              Local Storage (SwiftData + Audio Files)        │
+│              Local Storage (SwiftData + Media Files)        │
 └─────────────────────────────────────────────────────────────┘
                             │
                             ↓ HTTPS
 ┌─────────────────────────────────────────────────────────────┐
-│              Cloudflare Workers Backend                      │
+│              Cloud Run Backend (Hono.js)                    │
 ├─────────────────────────────────────────────────────────────┤
-│  /auth/validate  │  /analyze (proxy)  │  Rate Limiting      │
-│  Google JWT →    │  → Claude API      │  (20 req/hr/user)   │
-│  Domain check    │  (API key secured) │                     │
+│  /auth/validate    │ Google JWT → Domain check              │
+│  /analyze          │ → Claude API (text analysis)           │
+│  /analyze/video    │ → Gemini API (video analysis)          │
+│  /upload/initiate  │ → Gemini File Upload                   │
+│  Rate Limiting     │ 20 text/hr, 5 video/hr per user        │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -31,31 +48,107 @@ Native macOS app for Peninsula SD teachers to record teaching sessions, receive 
 - Apple Silicon Mac (for WhisperKit)
 
 ### Backend
-- Cloudflare Workers account
-- Anthropic API key
-- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/) for deployment
+- Google Cloud Run account
+- Anthropic API key (Claude)
+- Google AI API key (Gemini)
 
 ## Project Structure
 
 ```
-TeacherCoach/
-├── TeacherCoach/              # macOS App
-│   ├── App/                   # App entry point, state, DI
-│   ├── Features/              # Feature modules
-│   │   ├── Authentication/    # Google SSO
-│   │   ├── Recording/         # Audio recording
-│   │   ├── Transcription/     # WhisperKit integration
-│   │   ├── Analysis/          # Claude API integration
-│   │   ├── Techniques/        # Teaching technique library
-│   │   └── Settings/          # User preferences
-│   ├── Core/                  # Shared code
-│   │   ├── Models/            # SwiftData models
-│   │   ├── Views/             # Shared UI components
-│   │   └── Services/          # Utility services
-│   └── Resources/             # Info.plist, entitlements
-└── CloudflareWorker/          # Backend API
-    └── src/routes/            # API routes
+teacher-coach/
+├── TeacherCoach/                 # macOS App
+│   ├── TeacherCoach/
+│   │   ├── App/                  # Entry point, AppState, ServiceContainer
+│   │   ├── Features/
+│   │   │   ├── Authentication/   # Google SSO, session management
+│   │   │   ├── Recording/        # Audio/video recording & import
+│   │   │   ├── Transcription/    # WhisperKit integration
+│   │   │   ├── Analysis/         # Claude/Gemini API integration
+│   │   │   ├── Techniques/       # Teaching frameworks & technique library
+│   │   │   ├── Export/           # PDF & Markdown export
+│   │   │   └── Settings/         # User preferences
+│   │   └── Core/
+│   │       ├── Models/           # SwiftData models
+│   │       ├── Views/            # Shared UI components
+│   │       └── Services/         # Utility services
+│   └── TeacherCoach.xcodeproj
+├── CloudRunBackend/              # Primary backend (Google Cloud Run)
+│   └── src/routes/               # API routes
+└── CloudflareWorker/             # Alternative backend (Cloudflare Workers)
+    └── src/routes/               # API routes
 ```
+
+## Teaching Frameworks
+
+The app supports three research-based frameworks for evaluating teaching:
+
+### TLAC (Teach Like a Champion)
+
+| Category | Techniques |
+|----------|------------|
+| Questioning | Wait Time, Higher-Order Questions |
+| Engagement | Cold Calling, Think-Pair-Share |
+| Feedback | Specific Praise, Check for Understanding |
+| Management | Positive Framing |
+| Instruction | Modeling/Think Aloud, Scaffolded Practice |
+| Differentiation | Strategic Grouping |
+
+### Danielson Framework for Teaching
+
+| Domain | Components |
+|--------|------------|
+| Domain 2: Classroom Environment | 2a: Respect & Rapport, 2b: Culture for Learning, 2c: Managing Procedures, 2d: Managing Behavior |
+| Domain 3: Instruction | 3a: Communicating with Students, 3b: Questioning & Discussion, 3c: Engaging Students, 3d: Using Assessment, 3e: Flexibility & Responsiveness |
+
+### Rosenshine's Principles of Instruction
+
+| Principle | Focus |
+|-----------|-------|
+| Daily Review | Begin lessons with review of previous learning |
+| Small Steps | Present new material in small, manageable steps |
+| Ask Questions | Frequent questioning to check understanding |
+| Provide Models | Demonstrate and model procedures |
+| Guide Practice | Supervised practice with feedback |
+| Check Understanding | Verify comprehension before moving on |
+| High Success Rate | Ensure students achieve mastery |
+| Provide Scaffolds | Support complex tasks with frameworks |
+| Independent Practice | Allow autonomous practice time |
+| Weekly/Monthly Review | Regular review cycles |
+
+Each technique includes:
+- Description
+- Look-fors (observable indicators)
+- Exemplar phrases
+
+## Analysis Methods
+
+### Audio Analysis (Claude)
+- Records or imports audio
+- Transcribes locally via WhisperKit
+- Analyzes transcript for teaching techniques
+- Detects wait time pauses (3+ seconds)
+- Cost: ~$0.03-0.05 per analysis
+- Rate limit: 20 analyses/hour
+
+### Video Analysis (Gemini)
+- Imports video recordings (5-50 minutes, max 2GB)
+- Uploads directly to Google Gemini
+- Analyzes visual + audio content
+- Observes teacher positioning, student engagement, non-verbal cues
+- Cost: ~$0.15-0.27 per analysis
+- Rate limit: 5 analyses/hour
+
+## Rating Scale
+
+When star ratings are enabled, each technique receives a 1-5 star rating:
+
+| Rating | Level | Description |
+|--------|-------|-------------|
+| 1 | Developing | Technique not observed or needs significant development |
+| 2 | Emerging | Beginning to implement technique with inconsistent results |
+| 3 | Proficient | Solid implementation with room for refinement |
+| 4 | Accomplished | Effective and consistent use of technique |
+| 5 | Exemplary | Masterful implementation that could serve as a model |
 
 ## Setup
 
@@ -68,23 +161,21 @@ TeacherCoach/
 5. Set authorized redirect URI: `com.peninsula.teachercoach:/oauth2callback`
 6. Note the Client ID
 
-### 2. Deploy Backend
+### 2. Deploy Backend (Cloud Run)
 
 ```bash
-cd CloudflareWorker
+cd CloudRunBackend
 bun install
 
-# Set secrets
-wrangler secret put CLAUDE_API_KEY
-wrangler secret put GOOGLE_CLIENT_ID
-wrangler secret put JWT_SECRET
-
-# Create KV namespace for rate limiting
-wrangler kv:namespace create RATE_LIMIT
-# Update wrangler.toml with the namespace ID
+# Set environment variables in Cloud Run console or via gcloud:
+# - CLAUDE_API_KEY
+# - GEMINI_API_KEY
+# - GOOGLE_CLIENT_ID
+# - JWT_SECRET
+# - ALLOWED_DOMAIN (e.g., psd401.net)
 
 # Deploy
-bun run deploy
+gcloud run deploy teacher-coach-api --source .
 ```
 
 ### 3. Build macOS App
@@ -109,93 +200,86 @@ GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
 DEV_BYPASS_AUTH=1  # Optional: bypass OAuth for local testing
 ```
 
-#### Backend (wrangler.toml + secrets)
-
-Set via `wrangler secret put`:
+#### Backend (Cloud Run)
 - `CLAUDE_API_KEY` - Anthropic API key
+- `GEMINI_API_KEY` - Google AI API key
 - `GOOGLE_CLIENT_ID` - Google OAuth client ID
 - `JWT_SECRET` - Secret for signing session tokens
-
-Configured in `wrangler.toml`:
 - `ALLOWED_DOMAIN` - Email domain restriction (e.g., `psd401.net`)
-- `RATE_LIMIT_PER_HOUR` - API rate limit per user (default: 20)
 - `CLAUDE_MODEL` - Model ID (default: `claude-opus-4-5-20251101`)
-
-## Teaching Techniques
-
-The app supports two research-based frameworks for evaluating teaching:
-
-### TLAC (Teach Like a Champion)
-
-| Category | Techniques |
-|----------|------------|
-| Questioning | Wait Time, Higher-Order Questions |
-| Engagement | Cold Calling, Think-Pair-Share |
-| Feedback | Specific Praise, Check for Understanding |
-| Management | Positive Framing |
-| Instruction | Modeling/Think Aloud, Scaffolded Practice |
-| Differentiation | Strategic Grouping |
-
-### Danielson Framework
-
-| Domain | Components |
-|--------|------------|
-| Domain 2: Classroom Environment | 2a: Respect & Rapport, 2b: Culture for Learning, 2c: Classroom Procedures, 2d: Student Behavior |
-| Domain 3: Instruction | 3a: Communicating with Students, 3b: Questioning & Discussion, 3c: Engaging Students, 3d: Assessment in Instruction, 3e: Flexibility & Responsiveness |
-
-Each technique includes:
-- Description
-- Look-fors (observable indicators)
-- Exemplar phrases
-
-## Privacy
-
-- **Audio stays local**: Recordings are stored only on the user's device
-- **Only transcripts sent**: Audio is transcribed locally, only text is sent for analysis
-- **Domain-restricted**: Only @psd401.net accounts can sign in
-- **Secure storage**: Session tokens stored in macOS Keychain
+- `GEMINI_MODEL` - Model ID (default: `gemini-2.5-flash`)
+- `TEXT_RATE_LIMIT_PER_HOUR` - Text analysis rate limit (default: 20)
+- `VIDEO_RATE_LIMIT_PER_HOUR` - Video analysis rate limit (default: 5)
 
 ## API Endpoints
 
-### `POST /auth/validate`
-Validates Google ID token and returns session token.
+### Authentication
+| Endpoint | Description |
+|----------|-------------|
+| `POST /auth/validate` | Validate Google ID token, return session JWT |
+| `POST /auth/refresh` | Refresh expired session token |
 
-### `POST /auth/refresh`
-Refreshes expired session token.
+### Analysis
+| Endpoint | Description |
+|----------|-------------|
+| `POST /analyze` | Analyze transcript for teaching techniques (Claude) |
+| `POST /analyze/video` | Analyze uploaded video (Gemini) |
+| `GET /analyze/rate-limit` | Get current rate limit status |
 
-### `POST /analyze`
-Analyzes transcript for teaching techniques.
+### Video Upload
+| Endpoint | Description |
+|----------|-------------|
+| `POST /upload/initiate` | Initiate Gemini video upload, get upload URL |
 
-### `GET /analyze/rate-limit`
-Returns current rate limit status.
+## Privacy & Security
+
+- **Audio stays local** - Recordings stored only on user's device
+- **Transcripts sent for analysis** - Audio transcribed locally, only text sent to Claude
+- **Videos uploaded to Gemini** - Deleted after analysis completion
+- **Domain-restricted** - Only @psd401.net accounts can sign in
+- **Secure storage** - Session tokens stored in macOS Keychain
+- **Rate limiting** - Per-user hourly limits prevent abuse
 
 ## Development
 
 ### Local Development (No OAuth)
 
-Set `DEV_BYPASS_AUTH=1` in your Xcode scheme environment variables to bypass Google authentication during development. This creates a mock session that allows you to test the app without configuring Google OAuth credentials.
+Set `DEV_BYPASS_AUTH=1` in your Xcode scheme environment variables to bypass Google authentication during development.
 
 1. In Xcode, select Product → Scheme → Edit Scheme
 2. Select Run → Arguments → Environment Variables
 3. Add `DEV_BYPASS_AUTH` with value `1`
 
-Note: The mock token is rejected by the production backend, so this bypass only works for local UI testing.
-
 ### Run Backend Locally
 ```bash
-cd CloudflareWorker
+cd CloudRunBackend
 bun run dev
 ```
 
 ### Run Tests
 ```bash
 # Backend
-cd CloudflareWorker
+cd CloudRunBackend
 bun test
 
 # macOS App (in Xcode)
 ⌘U
 ```
+
+## Export Options
+
+Analysis reports can be exported in two formats:
+
+### PDF Export
+- Multi-page layout with page numbers
+- Configurable sections (summary, strengths, growth areas, techniques, next steps)
+- Star rating visualization
+- Evidence and suggestions for each technique
+
+### Markdown Export
+- Plain text format for easy sharing
+- Same section configurability as PDF
+- Compatible with note-taking apps and documentation systems
 
 ## Deployment
 
@@ -209,4 +293,4 @@ bun test
 
 ## License
 
-Copyright © 2024 Peninsula School District. Internal use only.
+Copyright 2024-2025 Peninsula School District. Internal use only.
