@@ -53,6 +53,11 @@ struct AnalysisConfigurationSheet: View {
                         Text("When enabled, each technique receives a 1-5 star rating.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
+
+                        if includeRatings {
+                            RatingLegendView(compact: false)
+                                .padding(.top, 4)
+                        }
                     }
                     .padding()
                     .background(.regularMaterial)

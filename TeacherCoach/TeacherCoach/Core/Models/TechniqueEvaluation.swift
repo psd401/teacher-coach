@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import SwiftUI
 
 /// Evaluation of a specific teaching technique within an analysis
 @Model
@@ -108,6 +109,16 @@ enum RatingLevel: Int, CaseIterable {
             return "Effective and consistent use of technique"
         case .exemplary:
             return "Masterful implementation that could serve as a model"
+        }
+    }
+
+    var swiftUIColor: Color {
+        switch self {
+        case .developing: return .red
+        case .emerging: return .orange
+        case .proficient: return .yellow
+        case .accomplished: return .green
+        case .exemplary: return .blue
         }
     }
 }

@@ -116,6 +116,10 @@ struct TechniqueEvaluationsSection: View {
             Label("Technique Feedback", systemImage: "list.bullet.clipboard")
                 .font(.headline)
 
+            if showRatings {
+                RatingLegendView(compact: true)
+            }
+
             ForEach(evaluations) { evaluation in
                 TechniqueEvaluationCard(
                     evaluation: evaluation,
@@ -133,6 +137,62 @@ struct TechniqueEvaluationsSection: View {
                 )
             }
         }
+    }
+}
+
+// MARK: - Rating Legend View
+
+struct RatingLegendView: View {
+    var compact: Bool = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: compact ? 6 : 10) {
+            if !compact {
+                Text("Rating Scale")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+            }
+
+            HStack(spacing: compact ? 8 : 12) {
+                ForEach(RatingLevel.allCases, id: \.rawValue) { level in
+                    RatingLegendItem(level: level, compact: compact)
+                }
+            }
+        }
+        .padding(compact ? 10 : 12)
+        .background(.regularMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+struct RatingLegendItem: View {
+    let level: RatingLevel
+    var compact: Bool = false
+
+    var body: some View {
+        VStack(alignment: .center, spacing: 4) {
+            HStack(spacing: 1) {
+                ForEach(1...5, id: \.self) { index in
+                    Image(systemName: index <= level.rawValue ? "star.fill" : "star")
+                        .font(.system(size: compact ? 8 : 10))
+                        .foregroundStyle(index <= level.rawValue ? level.swiftUIColor : .secondary.opacity(0.3))
+                }
+            }
+
+            Text(level.displayText)
+                .font(.system(size: compact ? 9 : 11))
+                .fontWeight(.medium)
+                .foregroundStyle(level.swiftUIColor)
+
+            if !compact {
+                Text(level.description)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: 120)
+            }
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 

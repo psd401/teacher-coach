@@ -149,6 +149,17 @@ struct SidebarView: View {
 
     var body: some View {
         List(selection: $selectedRecording) {
+            // Home button
+            Button {
+                selectedRecording = nil
+                showingNewRecording = false
+            } label: {
+                Label("Home", systemImage: "house")
+                    .font(.headline)
+            }
+            .buttonStyle(.plain)
+            .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+
             Section("Sessions") {
                 ForEach(recordings) { recording in
                     RecordingRowView(recording: recording)
@@ -319,42 +330,61 @@ struct WelcomeView: View {
     @Environment(\.modelContext) private var modelContext
 
     @State private var showingFileImporter = false
+    @State private var showingVideoImporter = false
+
+    private let columns = [
+        GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 16)
+    ]
 
     var body: some View {
-        VStack(spacing: 24) {
-            Image(systemName: "waveform.circle.fill")
-                .font(.system(size: 80))
-                .foregroundStyle(.tint)
-
-            Text("Welcome, \(appState.currentUser?.displayName.components(separatedBy: " ").first ?? "Teacher")!")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-
-            Text("Record your teaching sessions to receive AI-powered feedback on your instructional techniques.")
-                .font(.title3)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: 500)
-
+        VStack(spacing: 32) {
+            // Header
             VStack(spacing: 12) {
-                Button {
-                    showingNewRecording = true
-                } label: {
-                    Label("Start New Session", systemImage: "plus.circle.fill")
-                        .font(.title3)
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
+                Image(systemName: "waveform.circle.fill")
+                    .font(.system(size: 64))
+                    .foregroundStyle(.tint)
 
-                Button {
-                    showingFileImporter = true
-                } label: {
-                    Label("Import Voice Memo", systemImage: "square.and.arrow.down")
-                        .font(.body)
-                }
-                .buttonStyle(.bordered)
-                .controlSize(.regular)
+                Text("Welcome, \(appState.currentUser?.displayName.components(separatedBy: " ").first ?? "Teacher")!")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+
+                Text("Record your teaching sessions to receive AI-powered feedback.")
+                    .font(.title3)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: 450)
             }
+
+            // Action Tiles
+            LazyVGrid(columns: columns, spacing: 16) {
+                ActionTile(
+                    title: "New Recording",
+                    subtitle: "Record a lesson",
+                    icon: "record.circle.fill",
+                    color: .red
+                ) {
+                    showingNewRecording = true
+                }
+
+                ActionTile(
+                    title: "Import Audio",
+                    subtitle: "Voice memo or audio",
+                    icon: "waveform",
+                    color: .blue
+                ) {
+                    showingFileImporter = true
+                }
+
+                ActionTile(
+                    title: "Import Video",
+                    subtitle: "Classroom recording",
+                    icon: "video.fill",
+                    color: .purple
+                ) {
+                    showingVideoImporter = true
+                }
+            }
+            .frame(maxWidth: 560)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding()
@@ -364,6 +394,11 @@ struct WelcomeView: View {
             allowsMultipleSelection: false
         ) { result in
             handleFileImport(result)
+        }
+        .sheet(isPresented: $showingVideoImporter) {
+            VideoImportView { recording in
+                onImportComplete?(recording)
+            }
         }
     }
 
@@ -384,6 +419,55 @@ struct WelcomeView: View {
             }
         case .failure(let error):
             appState.handleError(.importError(.copyFailed(error)))
+        }
+    }
+}
+
+// MARK: - Action Tile
+
+struct ActionTile: View {
+    let title: String
+    let subtitle: String
+    let icon: String
+    let color: Color
+    let action: () -> Void
+
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.system(size: 32))
+                    .foregroundStyle(color)
+
+                VStack(spacing: 4) {
+                    Text(title)
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 24)
+            .padding(.horizontal, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(color.opacity(isHovering ? 0.15 : 0.1))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(color.opacity(isHovering ? 0.4 : 0.2), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .onHover { hovering in
+            withAnimation(.easeInOut(duration: 0.15)) {
+                isHovering = hovering
+            }
         }
     }
 }
