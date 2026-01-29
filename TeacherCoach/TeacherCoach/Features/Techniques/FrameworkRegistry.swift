@@ -15,6 +15,8 @@ struct FrameworkRegistry {
             return AVIDTechniques.createTechniques()
         case .nationalBoard:
             return NationalBoardTechniques.createTechniques()
+        case .psdEssentials:
+            return PSDEssentialsTechniques.createTechniques()
         }
     }
 

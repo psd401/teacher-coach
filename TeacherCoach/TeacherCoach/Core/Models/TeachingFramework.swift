@@ -7,6 +7,7 @@ enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
     case rosenshine = "rosenshine"
     case avid = "avid"
     case nationalBoard = "nationalBoard"
+    case psdEssentials = "psdEssentials"
 
     var id: String { rawValue }
 
@@ -22,6 +23,8 @@ enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
             return "AVID WICOR"
         case .nationalBoard:
             return "National Board Standards"
+        case .psdEssentials:
+            return "PSD Instructional Essentials"
         }
     }
 
@@ -37,6 +40,8 @@ enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
             return "AVID"
         case .nationalBoard:
             return "NBPTS"
+        case .psdEssentials:
+            return "PSD"
         }
     }
 
@@ -52,6 +57,8 @@ enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
             return "AVID's WICOR framework focusing on Writing, Inquiry, Collaboration, Organization, and Reading strategies for college readiness."
         case .nationalBoard:
             return "National Board for Professional Teaching Standards' Five Core Propositions for accomplished teaching practice."
+        case .psdEssentials:
+            return "Peninsula School District's Tier 1 instructional practices supporting rigorous, inclusive, and future-focused learning."
         }
     }
 }

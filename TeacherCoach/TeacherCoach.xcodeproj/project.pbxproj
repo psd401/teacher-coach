@@ -36,6 +36,7 @@
 		0037 /* RosenshineTechniques.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1036 /* RosenshineTechniques.swift */; };
 		0038 /* AVIDTechniques.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1037 /* AVIDTechniques.swift */; };
 		0039 /* NationalBoardTechniques.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1038 /* NationalBoardTechniques.swift */; };
+		0045 /* PSDEssentialsTechniques.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1045 /* PSDEssentialsTechniques.swift */; };
 		0030 /* FrameworkSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1029 /* FrameworkSelectionView.swift */; };
 		0031 /* TechniqueChecklistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1030 /* TechniqueChecklistView.swift */; };
 		0032 /* AnalysisConfigurationSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1031 /* AnalysisConfigurationSheet.swift */; };
@@ -91,6 +92,7 @@
 		1036 /* RosenshineTechniques.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RosenshineTechniques.swift; sourceTree = "<group>"; };
 		1037 /* AVIDTechniques.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVIDTechniques.swift; sourceTree = "<group>"; };
 		1038 /* NationalBoardTechniques.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NationalBoardTechniques.swift; sourceTree = "<group>"; };
+		1045 /* PSDEssentialsTechniques.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PSDEssentialsTechniques.swift; sourceTree = "<group>"; };
 		1029 /* FrameworkSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameworkSelectionView.swift; sourceTree = "<group>"; };
 		1030 /* TechniqueChecklistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TechniqueChecklistView.swift; sourceTree = "<group>"; };
 		1031 /* AnalysisConfigurationSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisConfigurationSheet.swift; sourceTree = "<group>"; };
@@ -262,6 +264,7 @@
 				1036 /* RosenshineTechniques.swift */,
 				1037 /* AVIDTechniques.swift */,
 				1038 /* NationalBoardTechniques.swift */,
+				1045 /* PSDEssentialsTechniques.swift */,
 			);
 			path = Frameworks;
 			sourceTree = "<group>";
@@ -448,6 +451,7 @@
 				0037 /* RosenshineTechniques.swift in Sources */,
 				0038 /* AVIDTechniques.swift in Sources */,
 				0039 /* NationalBoardTechniques.swift in Sources */,
+				0045 /* PSDEssentialsTechniques.swift in Sources */,
 				0030 /* FrameworkSelectionView.swift in Sources */,
 				0031 /* TechniqueChecklistView.swift in Sources */,
 				0032 /* AnalysisConfigurationSheet.swift in Sources */,
