@@ -1,12 +1,15 @@
 FROM oven/bun:1 AS base
-WORKDIR /app
+WORKDIR /app/CloudRunBackend
 
 # Install dependencies
-COPY package.json bun.lock* ./
+COPY CloudRunBackend/package.json CloudRunBackend/bun.lock* ./
 RUN bun install --frozen-lockfile
 
 # Copy source
-COPY src ./src
+COPY CloudRunBackend/src ./src
+
+# Copy shared modules (preserves ../../../shared relative import paths)
+COPY shared /app/shared
 
 # Set environment
 ENV NODE_ENV=production
