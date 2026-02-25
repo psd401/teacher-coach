@@ -1,5 +1,5 @@
 /**
- * Text/Transcript analysis prompt template for Claude
+ * Text/Transcript analysis prompt template
  */
 
 export const TEXT_ANALYSIS_SYSTEM = `You are an expert instructional coach analyzing a teaching session transcript. Your task is to evaluate the teacher's use of specific teaching techniques and provide constructive feedback.`;

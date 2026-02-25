@@ -1,7 +1,7 @@
 {
   "name": "teacher-coach-api",
   "version": "1.0.0",
-  "description": "Backend API for Teacher Coach - handles auth validation, Claude API proxy, and rate limiting",
+  "description": "Backend API for Teacher Coach - handles auth validation, Gemini API proxy, and rate limiting",
   "main": "src/index.ts",
   "scripts": {
     "dev": "wrangler dev",

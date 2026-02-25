@@ -2,27 +2,27 @@ import Foundation
 
 /// Defines the analysis method for video recordings
 enum VideoAnalysisMethod: String, CaseIterable {
-    case geminiVideo = "gemini"      // Full video analysis with Gemini
-    case claudeAudio = "claude"       // Extract audio and use Claude
+    case geminiVideo = "gemini"        // Full video analysis with Gemini
+    case geminiText = "gemini-text"    // Extract audio, transcribe, analyze with Gemini
 
     var displayName: String {
         switch self {
         case .geminiVideo: return "Video Analysis (Gemini)"
-        case .claudeAudio: return "Audio Only (Claude)"
+        case .geminiText: return "Audio Only (Gemini)"
         }
     }
 
     var description: String {
         switch self {
         case .geminiVideo: return "Analyzes visual + audio content"
-        case .claudeAudio: return "Extracts audio, transcribes"
+        case .geminiText: return "Extracts audio, transcribes"
         }
     }
 
     var estimatedCost: String {
         switch self {
         case .geminiVideo: return "~$0.15-0.27"
-        case .claudeAudio: return "~$0.03-0.05"
+        case .geminiText: return "~$0.01-0.03"
         }
     }
 }

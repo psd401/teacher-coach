@@ -8,7 +8,7 @@ final class Analysis {
     @Attribute(.unique) var id: UUID
     var overallSummary: String
     var createdAt: Date
-    var modelUsed: String  // e.g., "claude-opus-4-5-20251101"
+    var modelUsed: String  // e.g., "gemini-3-pro-preview"
     var ratingsIncluded: Bool = true  // Whether star ratings were included in this analysis
 
     // MARK: - JSON-stored arrays

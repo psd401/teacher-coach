@@ -7,27 +7,25 @@ import { uploadRoutes } from './routes/upload';
 
 // Environment configuration
 export interface Env {
-  CLAUDE_API_KEY: string;
   GOOGLE_CLIENT_ID: string;
   JWT_SECRET: string;
   ALLOWED_DOMAIN: string;
   RATE_LIMIT_PER_HOUR: number;
-  CLAUDE_MODEL: string;
   GEMINI_API_KEY: string;
-  GEMINI_MODEL: string;
+  GEMINI_TEXT_MODEL: string;
+  GEMINI_VIDEO_MODEL: string;
   VIDEO_RATE_LIMIT_PER_HOUR: number;
 }
 
 // Load environment variables
 export const env: Env = {
-  CLAUDE_API_KEY: process.env.CLAUDE_API_KEY || '',
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || '',
   JWT_SECRET: process.env.JWT_SECRET || '',
   ALLOWED_DOMAIN: process.env.ALLOWED_DOMAIN || 'psd401.net',
   RATE_LIMIT_PER_HOUR: parseInt(process.env.RATE_LIMIT_PER_HOUR || '20', 10),
-  CLAUDE_MODEL: process.env.CLAUDE_MODEL || 'claude-opus-4-5-20251101',
   GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
-  GEMINI_MODEL: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+  GEMINI_TEXT_MODEL: process.env.GEMINI_TEXT_MODEL || 'gemini-3-pro-preview',
+  GEMINI_VIDEO_MODEL: process.env.GEMINI_VIDEO_MODEL || 'gemini-3-flash-preview',
   VIDEO_RATE_LIMIT_PER_HOUR: parseInt(process.env.VIDEO_RATE_LIMIT_PER_HOUR || '5', 10),
 };
 
@@ -41,7 +39,7 @@ if (!env.JWT_SECRET || env.JWT_SECRET.length < MIN_JWT_SECRET_LENGTH) {
 // - Resets on container restart and doesn't scale horizontally across instances
 // - Acceptable for this low-traffic internal tool (@psd401.net domain-restricted)
 // - Rate limiting here is courtesy throttling for authenticated users, not abuse protection
-// - Primary protection comes from: auth middleware, Claude/Gemini API quotas, Cloud Run limits
+// - Primary protection comes from: auth middleware, Gemini API quotas, Cloud Run limits
 // - If scaling becomes necessary, migrate to Cloud Memorystore (Redis)
 export const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 

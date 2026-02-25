@@ -359,7 +359,7 @@ struct NextStepsSection: View {
 #Preview {
     let analysis = Analysis(
         overallSummary: "This was an engaging math lesson with strong use of questioning techniques. The teacher demonstrated effective wait time and used specific praise to reinforce student learning.",
-        modelUsed: "claude-opus-4-5-20251101",
+        modelUsed: "gemini-3-pro-preview",
         strengths: [
             "Consistent use of wait time after questions",
             "Effective positive framing for behavior management"

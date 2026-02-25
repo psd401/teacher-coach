@@ -6,16 +6,14 @@ import { analyzeVideoRoutes } from './routes/analyze-video';
 import { uploadRoutes } from './routes/upload';
 
 export interface Env {
-  CLAUDE_API_KEY: string;
   GOOGLE_CLIENT_ID: string;
   JWT_SECRET: string;
   ALLOWED_DOMAIN: string;
   RATE_LIMIT_PER_HOUR: string;
-  CLAUDE_MODEL: string;
   RATE_LIMIT: KVNamespace;
-  // Video analysis additions
   GEMINI_API_KEY: string;
-  GEMINI_MODEL: string;
+  GEMINI_TEXT_MODEL: string;
+  GEMINI_VIDEO_MODEL: string;
   VIDEO_RATE_LIMIT_PER_HOUR: string;
 }
 

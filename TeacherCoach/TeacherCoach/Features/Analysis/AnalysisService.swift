@@ -1,6 +1,6 @@
 import Foundation
 
-/// Service for analyzing transcripts using Claude API via backend proxy
+/// Service for analyzing transcripts using Gemini API via backend proxy
 @MainActor
 final class AnalysisService: ObservableObject {
     private let config: AppConfiguration
@@ -147,7 +147,7 @@ final class AnalysisService: ObservableObject {
         return analysis
     }
 
-    /// Builds the analysis prompt for Claude
+    /// Builds the analysis prompt
     static func buildAnalysisPrompt(transcript: String, techniques: [Technique]) -> String {
         var prompt = """
         You are an expert instructional coach analyzing a teaching session transcript. Your task is to evaluate the teacher's use of specific teaching techniques and provide constructive feedback.

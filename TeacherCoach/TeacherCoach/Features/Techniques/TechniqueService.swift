@@ -180,7 +180,7 @@ extension TechniqueService {
     }
 
     /// Finds the full technique name given a technique ID or partial name
-    /// Handles cases where Claude returned incorrect IDs like "3b" instead of "danielson-3b"
+    /// Handles cases where the LLM returned incorrect IDs like "3b" instead of "danielson-3b"
     private func findFullTechniqueName(for techniqueId: String, currentName: String) -> String? {
         let allTechniques = FrameworkRegistry.allTechniques()
 

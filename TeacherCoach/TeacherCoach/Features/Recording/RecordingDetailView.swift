@@ -814,9 +814,9 @@ struct VideoAnalysisOptionsView: View {
 
             // Audio Analysis Option
             AnalysisMethodCard(
-                title: "Audio Only (Claude)",
+                title: "Audio Only (Gemini)",
                 description: "Extracts audio track and transcribes. Focuses on verbal communication and questioning techniques.",
-                cost: "~$0.03-0.05 per analysis",
+                cost: "~$0.01-0.03 per analysis",
                 icon: "waveform",
                 isRecommended: false,
                 isProcessing: isProcessing,

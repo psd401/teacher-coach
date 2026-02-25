@@ -39,3 +39,18 @@ export interface VideoAnalysisPromptOptions {
   techniques: TechniqueDefinition[];
   includeRatings: boolean;
 }
+
+export interface GeminiGenerateResponse {
+  candidates: Array<{
+    content: {
+      parts: Array<{ text: string }>;
+      role: string;
+    };
+    finishReason: string;
+  }>;
+  usageMetadata: {
+    promptTokenCount: number;
+    candidatesTokenCount: number;
+    totalTokenCount: number;
+  };
+}

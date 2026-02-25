@@ -12,6 +12,7 @@ export type {
   PauseData,
   TextAnalysisPromptOptions,
   VideoAnalysisPromptOptions,
+  GeminiGenerateResponse,
 } from './types';
 
 // Re-export builder functions

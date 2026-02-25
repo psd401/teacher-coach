@@ -1,13 +1,13 @@
 # Teacher Coach API (Cloud Run)
 
-Backend API for Teacher Coach macOS app. Handles authentication, text analysis (Claude), and video analysis (Gemini).
+Backend API for Teacher Coach macOS app. Handles authentication, text analysis, and video analysis via Gemini.
 
 ## Stack
 
 - **Runtime**: Bun
 - **Framework**: Hono.js
 - **Deployment**: Google Cloud Run
-- **AI**: Claude (claude-opus-4-5-20251101) + Gemini (gemini-2.5-flash)
+- **AI**: Gemini 3 Pro (text) + Gemini 3 Flash (video)
 
 ## Endpoints
 
@@ -16,7 +16,7 @@ Backend API for Teacher Coach macOS app. Handles authentication, text analysis (
 | GET | `/` | Health check |
 | POST | `/auth/validate` | Validate Google ID token, return JWT |
 | POST | `/auth/refresh` | Refresh expired session |
-| POST | `/analyze` | Analyze transcript (Claude) |
+| POST | `/analyze` | Analyze transcript (Gemini) |
 | GET | `/analyze/rate-limit` | Get rate limit status |
 | POST | `/analyze/video` | Analyze video (Gemini) |
 | POST | `/upload/initiate` | Initiate Gemini file upload |
@@ -25,13 +25,12 @@ Backend API for Teacher Coach macOS app. Handles authentication, text analysis (
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `CLAUDE_API_KEY` | Yes | - | Anthropic API key |
 | `GEMINI_API_KEY` | Yes | - | Google AI API key |
 | `GOOGLE_CLIENT_ID` | Yes | - | Google OAuth client ID |
 | `JWT_SECRET` | Yes | - | Secret for signing tokens |
 | `ALLOWED_DOMAIN` | No | `psd401.net` | Email domain restriction |
-| `CLAUDE_MODEL` | No | `claude-opus-4-5-20251101` | Claude model ID |
-| `GEMINI_MODEL` | No | `gemini-2.5-flash` | Gemini model ID |
+| `GEMINI_TEXT_MODEL` | No | `gemini-3-pro-preview` | Text analysis model |
+| `GEMINI_VIDEO_MODEL` | No | `gemini-3-flash-preview` | Video analysis model |
 | `RATE_LIMIT_PER_HOUR` | No | `20` | Text analysis rate limit |
 | `VIDEO_RATE_LIMIT_PER_HOUR` | No | `5` | Video analysis rate limit |
 | `PORT` | No | `8080` | Server port |
@@ -43,7 +42,6 @@ Backend API for Teacher Coach macOS app. Handles authentication, text analysis (
 bun install
 
 # Set environment variables
-export CLAUDE_API_KEY=your-key
 export GEMINI_API_KEY=your-key
 export GOOGLE_CLIENT_ID=your-client-id
 export JWT_SECRET=your-secret
@@ -72,7 +70,7 @@ gcloud run deploy teacher-coach-api \
 
 # Set secrets (recommended for API keys)
 gcloud run services update teacher-coach-api \
-  --set-secrets="CLAUDE_API_KEY=claude-api-key:latest,GEMINI_API_KEY=gemini-api-key:latest,JWT_SECRET=jwt-secret:latest,GOOGLE_CLIENT_ID=google-client-id:latest"
+  --set-secrets="GEMINI_API_KEY=gemini-api-key:latest,JWT_SECRET=jwt-secret:latest,GOOGLE_CLIENT_ID=google-client-id:latest"
 ```
 
 ## Rate Limiting
@@ -93,7 +91,7 @@ src/
 ├── index.ts              # App entry, CORS, rate limiting
 └── routes/
     ├── auth.ts           # JWT validation, Google token verification
-    ├── analyze.ts        # Text analysis with Claude
+    ├── analyze.ts        # Text analysis with Gemini
     ├── analyze-video.ts  # Video analysis with Gemini
     └── upload.ts         # Gemini file upload initiation
 ```
@@ -104,7 +102,7 @@ src/
 1. Client sends transcript + technique definitions
 2. Backend validates JWT
 3. Checks rate limit
-4. Calls Claude API with analysis prompt
+4. Calls Gemini API with analysis prompt
 5. Returns structured feedback
 
 ### Video Analysis

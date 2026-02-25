@@ -338,7 +338,7 @@ struct ExportableAnalysisView: View {
 #Preview {
     let analysis = Analysis(
         overallSummary: "This was an engaging math lesson with strong use of questioning techniques.",
-        modelUsed: "claude-opus-4-5-20251101",
+        modelUsed: "gemini-3-pro-preview",
         strengths: ["Consistent use of wait time", "Effective positive framing"],
         growthAreas: ["More higher-order questioning", "Add check for understanding"],
         actionableNextSteps: ["Plan 2-3 higher-order questions", "Use exit tickets"]

@@ -358,7 +358,7 @@ struct AboutTab: View {
 
             Spacer()
 
-            Text("Powered by WhisperKit and Claude")
+            Text("Powered by WhisperKit and Gemini")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

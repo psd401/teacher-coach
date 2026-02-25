@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { verifySession } from './auth';
 import { env, checkRateLimit, getRateLimitStatus } from '../index';
-import { buildVideoAnalysisPrompt, type TechniqueDefinition } from '../../../shared/prompts';
+import { buildVideoAnalysisPrompt, type TechniqueDefinition, type GeminiGenerateResponse } from '../../../shared/prompts';
 
 export const analyzeVideoRoutes = new Hono();
 
@@ -22,21 +22,6 @@ interface GeminiFileStatusResponse {
   sha256Hash: string;
   uri: string;
   state: 'PROCESSING' | 'ACTIVE' | 'FAILED';
-}
-
-interface GeminiGenerateResponse {
-  candidates: Array<{
-    content: {
-      parts: Array<{ text: string }>;
-      role: string;
-    };
-    finishReason: string;
-  }>;
-  usageMetadata: {
-    promptTokenCount: number;
-    candidatesTokenCount: number;
-    totalTokenCount: number;
-  };
 }
 
 const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com';
@@ -116,7 +101,7 @@ analyzeVideoRoutes.post('/', async (c) => {
       processedFile.uri,
       processedFile.mimeType,
       prompt,
-      env.GEMINI_MODEL,
+      env.GEMINI_VIDEO_MODEL,
       env.GEMINI_API_KEY
     );
 
@@ -158,7 +143,7 @@ analyzeVideoRoutes.post('/', async (c) => {
     // 4. Cleanup: delete from Gemini (best effort)
     await deleteGeminiFile(geminiFileName, env.GEMINI_API_KEY).catch(() => {});
 
-    // Return formatted response (same structure as Claude analysis)
+    // Return formatted response (same structure as text analysis)
     return c.json({
       overall_summary: analysisResult.overallSummary,
       strengths: analysisResult.strengths || [],
@@ -172,7 +157,7 @@ analyzeVideoRoutes.post('/', async (c) => {
         feedback: te.feedback,
         suggestions: te.suggestions || [],
       })),
-      model_used: env.GEMINI_MODEL,
+      model_used: env.GEMINI_VIDEO_MODEL,
       usage: {
         input_tokens: geminiResponse.usageMetadata?.promptTokenCount,
         output_tokens: geminiResponse.usageMetadata?.candidatesTokenCount,

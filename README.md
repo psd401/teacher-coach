@@ -9,7 +9,7 @@ Native macOS app for Peninsula SD teachers to record teaching sessions, receive 
 - **Video Import** - Import classroom recordings (MP4, MOV, M4V, WebM)
 - **Local Transcription** - On-device transcription using WhisperKit (Apple Silicon)
 - **Wait Time Detection** - Automatic detection of pauses (3+ seconds) for wait time analysis
-- **AI Analysis** - Claude-powered feedback on teaching techniques
+- **AI Analysis** - Gemini-powered feedback on teaching techniques
 - **Video Analysis** - Gemini-powered visual+audio analysis for classroom dynamics
 - **Multiple Frameworks** - Three research-based teaching evaluation frameworks
 - **Star Ratings** - Optional 1-5 star ratings with visual legend
@@ -33,7 +33,7 @@ Native macOS app for Peninsula SD teachers to record teaching sessions, receive 
 │              Cloud Run Backend (Hono.js)                    │
 ├─────────────────────────────────────────────────────────────┤
 │  /auth/validate    │ Google JWT → Domain check              │
-│  /analyze          │ → Claude API (text analysis)           │
+│  /analyze          │ → Gemini API (text analysis)            │
 │  /analyze/video    │ → Gemini API (video analysis)          │
 │  /upload/initiate  │ → Gemini File Upload                   │
 │  Rate Limiting     │ 20 text/hr, 5 video/hr per user        │
@@ -49,7 +49,6 @@ Native macOS app for Peninsula SD teachers to record teaching sessions, receive 
 
 ### Backend
 - Google Cloud Run account
-- Anthropic API key (Claude)
 - Google AI API key (Gemini)
 
 ## Project Structure
@@ -63,7 +62,7 @@ teacher-coach/
 │   │   │   ├── Authentication/   # Google SSO, session management
 │   │   │   ├── Recording/        # Audio/video recording & import
 │   │   │   ├── Transcription/    # WhisperKit integration
-│   │   │   ├── Analysis/         # Claude/Gemini API integration
+│   │   │   ├── Analysis/         # Gemini API integration
 │   │   │   ├── Techniques/       # Teaching frameworks & technique library
 │   │   │   ├── Export/           # PDF & Markdown export
 │   │   │   └── Settings/         # User preferences
@@ -122,18 +121,18 @@ Each technique includes:
 
 ## Analysis Methods
 
-### Audio Analysis (Claude)
+### Audio Analysis (Gemini)
 - Records or imports audio
 - Transcribes locally via WhisperKit
-- Analyzes transcript for teaching techniques
+- Analyzes transcript for teaching techniques (Gemini 3 Pro)
 - Detects wait time pauses (3+ seconds)
-- Cost: ~$0.03-0.05 per analysis
+- Cost: ~$0.01-0.03 per analysis
 - Rate limit: 20 analyses/hour
 
 ### Video Analysis (Gemini)
 - Imports video recordings (5-50 minutes, max 2GB)
 - Uploads directly to Google Gemini
-- Analyzes visual + audio content
+- Analyzes visual + audio content (Gemini 3 Flash)
 - Observes teacher positioning, student engagement, non-verbal cues
 - Cost: ~$0.15-0.27 per analysis
 - Rate limit: 5 analyses/hour
@@ -168,7 +167,6 @@ cd CloudRunBackend
 bun install
 
 # Set environment variables in Cloud Run console or via gcloud:
-# - CLAUDE_API_KEY
 # - GEMINI_API_KEY
 # - GOOGLE_CLIENT_ID
 # - JWT_SECRET
@@ -201,14 +199,13 @@ DEV_BYPASS_AUTH=1  # Optional: bypass OAuth for local testing
 ```
 
 #### Backend (Cloud Run)
-- `CLAUDE_API_KEY` - Anthropic API key
 - `GEMINI_API_KEY` - Google AI API key
 - `GOOGLE_CLIENT_ID` - Google OAuth client ID
 - `JWT_SECRET` - Secret for signing session tokens
 - `ALLOWED_DOMAIN` - Email domain restriction (e.g., `psd401.net`)
-- `CLAUDE_MODEL` - Model ID (default: `claude-opus-4-5-20251101`)
-- `GEMINI_MODEL` - Model ID (default: `gemini-2.5-flash`)
-- `TEXT_RATE_LIMIT_PER_HOUR` - Text analysis rate limit (default: 20)
+- `GEMINI_TEXT_MODEL` - Text analysis model (default: `gemini-3-pro-preview`)
+- `GEMINI_VIDEO_MODEL` - Video analysis model (default: `gemini-3-flash-preview`)
+- `RATE_LIMIT_PER_HOUR` - Text analysis rate limit (default: 20)
 - `VIDEO_RATE_LIMIT_PER_HOUR` - Video analysis rate limit (default: 5)
 
 ## API Endpoints
@@ -222,7 +219,7 @@ DEV_BYPASS_AUTH=1  # Optional: bypass OAuth for local testing
 ### Analysis
 | Endpoint | Description |
 |----------|-------------|
-| `POST /analyze` | Analyze transcript for teaching techniques (Claude) |
+| `POST /analyze` | Analyze transcript for teaching techniques (Gemini) |
 | `POST /analyze/video` | Analyze uploaded video (Gemini) |
 | `GET /analyze/rate-limit` | Get current rate limit status |
 
@@ -234,7 +231,7 @@ DEV_BYPASS_AUTH=1  # Optional: bypass OAuth for local testing
 ## Privacy & Security
 
 - **Audio stays local** - Recordings stored only on user's device
-- **Transcripts sent for analysis** - Audio transcribed locally, only text sent to Claude
+- **Transcripts sent for analysis** - Audio transcribed locally, only text sent to Gemini
 - **Videos uploaded to Gemini** - Deleted after analysis completion
 - **Domain-restricted** - Only @psd401.net accounts can sign in
 - **Secure storage** - Session tokens stored in macOS Keychain

@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { verifySession } from './auth';
 import { env, checkRateLimit, getRateLimitStatus } from '../index';
-import { buildAnalysisPrompt, type TechniqueDefinition, type PauseData } from '../../../shared/prompts';
+import { buildAnalysisPrompt, type TechniqueDefinition, type PauseData, type GeminiGenerateResponse } from '../../../shared/prompts';
 
 export const analyzeRoutes = new Hono();
 
@@ -12,22 +12,11 @@ interface AnalyzeRequest {
   pauseData?: PauseData;
 }
 
-interface ClaudeResponse {
-  id: string;
-  type: string;
-  role: string;
-  content: Array<{ type: string; text: string }>;
-  model: string;
-  stop_reason: string;
-  usage: {
-    input_tokens: number;
-    output_tokens: number;
-  };
-}
+const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com';
 
 /**
  * POST /analyze
- * Proxies analysis request to Claude API with rate limiting
+ * Proxies analysis request to Gemini API with rate limiting
  */
 analyzeRoutes.post('/', async (c) => {
   // Verify authentication
@@ -86,46 +75,61 @@ analyzeRoutes.post('/', async (c) => {
   // Build the analysis prompt
   const prompt = buildAnalysisPrompt({ transcript, techniques, includeRatings, pauseData });
 
-  // Call Claude API
+  const model = env.GEMINI_TEXT_MODEL;
+
+  // Call Gemini API
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': env.CLAUDE_API_KEY,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: env.CLAUDE_MODEL,
-        max_tokens: 4096,
-        messages: [
-          {
-            role: 'user',
-            content: prompt,
+    const response = await fetch(
+      `${GEMINI_API_BASE}/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [{ text: prompt }],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.4,
+            maxOutputTokens: 4096,
           },
-        ],
-      }),
-    });
+        }),
+      }
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Claude API error:', response.status, errorText);
+      console.error('Gemini API error:', response.status, errorText);
       return c.json({
         error: 'Analysis service error',
         status: response.status,
       }, 502);
     }
 
-    const claudeResponse = await response.json<ClaudeResponse>();
+    const geminiResponse = await response.json() as GeminiGenerateResponse;
 
-    // Extract the JSON response from Claude
-    const analysisText = claudeResponse.content[0]?.text;
+    // Check if Gemini returned candidates (may be blocked by safety filters)
+    if (!geminiResponse.candidates || geminiResponse.candidates.length === 0) {
+      console.error('Gemini returned no candidates:', JSON.stringify(geminiResponse, null, 2));
+      const blockReason = (geminiResponse as any).promptFeedback?.blockReason;
+      return c.json({
+        error: 'Analysis blocked or failed',
+        message: blockReason ? 'Content was blocked by safety filters' : 'Analysis service returned no results'
+      }, 502);
+    }
+
+    // Extract the JSON response from Gemini
+    const analysisText = geminiResponse.candidates[0]?.content?.parts[0]?.text;
 
     if (!analysisText) {
+      console.error('Gemini candidate has no text content');
       return c.json({ error: 'Empty response from analysis service' }, 502);
     }
 
-    // Parse Claude's JSON response
+    // Parse Gemini's JSON response
     let analysisResult;
     try {
       // Try to extract JSON from the response (handle potential markdown code blocks)
@@ -137,7 +141,7 @@ analyzeRoutes.post('/', async (c) => {
       analysisResult = JSON.parse(jsonText);
     } catch (parseErr) {
       // Log error details server-side only (redact transcript content)
-      console.error('Failed to parse Claude response:', parseErr);
+      console.error('Failed to parse Gemini response:', parseErr);
       console.error('Response length:', analysisText.length);
       return c.json({
         error: 'Invalid response format from analysis service'
@@ -158,8 +162,11 @@ analyzeRoutes.post('/', async (c) => {
         feedback: te.feedback,
         suggestions: te.suggestions || [],
       })),
-      model_used: claudeResponse.model,
-      usage: claudeResponse.usage,
+      model_used: model,
+      usage: {
+        input_tokens: geminiResponse.usageMetadata?.promptTokenCount,
+        output_tokens: geminiResponse.usageMetadata?.candidatesTokenCount,
+      },
     });
 
   } catch (err) {

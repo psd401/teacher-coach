@@ -193,7 +193,7 @@ struct ExportConfigurationSheet: View {
 #Preview {
     let analysis = Analysis(
         overallSummary: "Test summary",
-        modelUsed: "claude-opus-4-5-20251101",
+        modelUsed: "gemini-3-pro-preview",
         strengths: ["Strength 1"],
         growthAreas: ["Growth 1"],
         actionableNextSteps: ["Step 1"]

@@ -76,7 +76,7 @@ function formatPauseData(pauseData: PauseData): string {
 }
 
 /**
- * Build the complete text analysis prompt for Claude
+ * Build the complete text analysis prompt
  */
 export function buildAnalysisPrompt(options: TextAnalysisPromptOptions): string {
   const { transcript, techniques, includeRatings, pauseData } = options;
