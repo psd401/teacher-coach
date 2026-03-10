@@ -326,14 +326,11 @@ struct AccountSettingsTab: View {
 struct AboutTab: View {
     var body: some View {
         VStack(spacing: 24) {
-            Image(systemName: "waveform.circle.fill")
-                .font(.system(size: 64))
-                .foregroundStyle(.tint)
+            PSDLogoView(size: 80)
 
             VStack(spacing: 4) {
                 Text("Teacher Coach")
-                    .font(.title)
-                    .fontWeight(.bold)
+                    .font(PSDFonts.title)
 
                 Text("Version 1.0.0")
                     .font(.subheadline)
@@ -341,7 +338,7 @@ struct AboutTab: View {
             }
 
             Text("AI-powered feedback for teaching techniques")
-                .font(.body)
+                .font(PSDFonts.body())
                 .foregroundStyle(.secondary)
 
             Divider()
@@ -349,7 +346,7 @@ struct AboutTab: View {
 
             VStack(spacing: 8) {
                 Text("Peninsula School District")
-                    .font(.headline)
+                    .font(PSDFonts.headline)
 
                 Text("Research & Assessment")
                     .font(.subheadline)

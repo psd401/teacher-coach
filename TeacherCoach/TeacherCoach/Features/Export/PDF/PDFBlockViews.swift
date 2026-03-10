@@ -10,9 +10,8 @@ struct PDFDocumentHeaderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
-                .font(.title)
-                .fontWeight(.bold)
-                .foregroundStyle(.black)
+                .font(PSDFonts.title)
+                .foregroundStyle(Color.psdPacific)
 
             HStack(spacing: 16) {
                 Label(duration, systemImage: "clock")
@@ -37,8 +36,8 @@ struct PDFSummaryView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Summary", systemImage: "doc.text")
-                .font(.headline)
-                .foregroundStyle(.black)
+                .font(PSDFonts.headline)
+                .foregroundStyle(Color.psdPacific)
 
             Text(text)
                 .font(.body)
@@ -46,7 +45,7 @@ struct PDFSummaryView: View {
         }
         .padding()
         .frame(width: PDFLayout.contentWidth, alignment: .leading)
-        .background(Color.gray.opacity(0.1))
+        .background(Color.psdSeaFoam)
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
@@ -86,13 +85,13 @@ struct PDFStrengthsGrowthView: View {
     private var strengthsSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Strengths", systemImage: "star.fill")
-                .font(.headline)
-                .foregroundStyle(.green)
+                .font(PSDFonts.headline)
+                .foregroundStyle(PSDTheme.strength)
 
             ForEach(strengths, id: \.self) { strength in
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
+                        .foregroundStyle(PSDTheme.strength)
                         .font(.caption)
 
                     Text(strength)
@@ -103,20 +102,20 @@ struct PDFStrengthsGrowthView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.green.opacity(0.1))
+        .background(PSDTheme.strength.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
     private var growthAreasSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Growth Areas", systemImage: "arrow.up.right")
-                .font(.headline)
-                .foregroundStyle(.orange)
+                .font(PSDFonts.headline)
+                .foregroundStyle(PSDTheme.growth)
 
             ForEach(growthAreas, id: \.self) { area in
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "arrow.right.circle")
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(PSDTheme.growth)
                         .font(.caption)
 
                     Text(area)
@@ -127,7 +126,7 @@ struct PDFStrengthsGrowthView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.orange.opacity(0.1))
+        .background(PSDTheme.growth.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
@@ -170,7 +169,7 @@ struct PDFRatingLegendView: View {
         }
         .padding()
         .frame(width: PDFLayout.contentWidth, alignment: .leading)
-        .background(Color.gray.opacity(0.05))
+        .background(Color.psdSeaFoam)
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
@@ -185,8 +184,8 @@ struct PDFTechniqueCardView: View {
             // Header
             HStack {
                 Text(data.techniqueName)
-                    .font(.headline)
-                    .foregroundStyle(.black)
+                    .font(PSDFonts.headline)
+                    .foregroundStyle(Color.psdPacific)
 
                 Spacer()
 
@@ -248,33 +247,23 @@ struct PDFTechniqueCardView: View {
         }
         .padding()
         .frame(width: PDFLayout.contentWidth, alignment: .leading)
-        .background(Color.gray.opacity(0.05))
+        .background(Color.psdSeaFoam)
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
     private func ratingBadge(rating: Int) -> some View {
-        HStack(spacing: 2) {
+        let color = PSDTheme.ratingColor(rating)
+        return HStack(spacing: 2) {
             ForEach(1...5, id: \.self) { index in
                 Image(systemName: index <= rating ? "star.fill" : "star")
                     .font(.caption2)
-                    .foregroundStyle(index <= rating ? ratingColor(rating) : .gray.opacity(0.3))
+                    .foregroundStyle(index <= rating ? color : .gray.opacity(0.3))
             }
         }
         .padding(.horizontal, 6)
         .padding(.vertical, 2)
-        .background(ratingColor(rating).opacity(0.1))
+        .background(color.opacity(0.1))
         .clipShape(Capsule())
-    }
-
-    private func ratingColor(_ rating: Int) -> Color {
-        switch rating {
-        case 1: return .red
-        case 2: return .orange
-        case 3: return .yellow
-        case 4: return .green
-        case 5: return .blue
-        default: return .gray
-        }
     }
 }
 
@@ -287,8 +276,8 @@ struct PDFTechniqueSuggestionsContinuedView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("\(techniqueName) (continued)")
-                .font(.headline)
-                .foregroundStyle(.black)
+                .font(PSDFonts.headline)
+                .foregroundStyle(Color.psdPacific)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text("Suggestions")
@@ -311,7 +300,7 @@ struct PDFTechniqueSuggestionsContinuedView: View {
         }
         .padding()
         .frame(width: PDFLayout.contentWidth, alignment: .leading)
-        .background(Color.gray.opacity(0.05))
+        .background(Color.psdSeaFoam)
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
@@ -324,8 +313,8 @@ struct PDFNextStepsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Label("Next Steps", systemImage: "arrow.right.circle.fill")
-                .font(.headline)
-                .foregroundStyle(.blue)
+                .font(PSDFonts.headline)
+                .foregroundStyle(PSDTheme.nextSteps)
 
             ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
                 HStack(alignment: .top, spacing: 12) {
@@ -333,7 +322,7 @@ struct PDFNextStepsView: View {
                         .font(.caption)
                         .fontWeight(.bold)
                         .frame(width: 20, height: 20)
-                        .background(Color.blue)
+                        .background(PSDTheme.nextSteps)
                         .foregroundStyle(.white)
                         .clipShape(Circle())
 
@@ -345,7 +334,7 @@ struct PDFNextStepsView: View {
         }
         .padding()
         .frame(width: PDFLayout.contentWidth, alignment: .leading)
-        .background(Color.blue.opacity(0.1))
+        .background(PSDTheme.nextSteps.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }

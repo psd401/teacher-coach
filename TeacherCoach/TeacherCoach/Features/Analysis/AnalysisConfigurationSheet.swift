@@ -25,7 +25,7 @@ struct AnalysisConfigurationSheet: View {
             // Header
             HStack {
                 Text("Configure Analysis")
-                    .font(.headline)
+                    .font(PSDFonts.headline)
 
                 Spacer()
 

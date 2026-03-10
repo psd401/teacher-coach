@@ -33,15 +33,13 @@ struct SummarySection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Summary", systemImage: "doc.text")
-                .font(.headline)
+                .font(PSDFonts.headline)
 
             Text(summary)
                 .font(.body)
         }
-        .padding()
+        .psdCard()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.regularMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
 
@@ -53,13 +51,13 @@ struct StrengthsSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Strengths", systemImage: "star.fill")
-                .font(.headline)
-                .foregroundStyle(.green)
+                .font(PSDFonts.headline)
+                .foregroundStyle(PSDTheme.strength)
 
             ForEach(strengths, id: \.self) { strength in
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
+                        .foregroundStyle(PSDTheme.strength)
                         .font(.caption)
 
                     Text(strength)
@@ -69,7 +67,7 @@ struct StrengthsSection: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.green.opacity(0.1))
+        .background(PSDTheme.strength.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
@@ -82,13 +80,13 @@ struct GrowthAreasSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Growth Areas", systemImage: "arrow.up.right")
-                .font(.headline)
-                .foregroundStyle(.orange)
+                .font(PSDFonts.headline)
+                .foregroundStyle(PSDTheme.growth)
 
             ForEach(growthAreas, id: \.self) { area in
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "arrow.right.circle")
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(PSDTheme.growth)
                         .font(.caption)
 
                     Text(area)
@@ -98,7 +96,7 @@ struct GrowthAreasSection: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.orange.opacity(0.1))
+        .background(PSDTheme.growth.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
@@ -114,7 +112,7 @@ struct TechniqueEvaluationsSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Label("Technique Feedback", systemImage: "list.bullet.clipboard")
-                .font(.headline)
+                .font(PSDFonts.headline)
 
             if showRatings {
                 RatingLegendView(compact: true)
@@ -213,7 +211,7 @@ struct TechniqueEvaluationCard: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(evaluation.techniqueName)
-                            .font(.headline)
+                            .font(PSDFonts.headline)
 
                         if !evaluation.wasObserved {
                             Text("Not observed")
@@ -286,9 +284,7 @@ struct TechniqueEvaluationCard: View {
                 .padding(.top, 8)
             }
         }
-        .padding()
-        .background(.regularMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .psdCard()
     }
 }
 
@@ -296,6 +292,10 @@ struct TechniqueEvaluationCard: View {
 
 struct RatingBadge: View {
     let rating: Int
+
+    private var ratingColor: Color {
+        PSDTheme.ratingColor(rating)
+    }
 
     var body: some View {
         HStack(spacing: 4) {
@@ -310,17 +310,6 @@ struct RatingBadge: View {
         .background(ratingColor.opacity(0.1))
         .clipShape(Capsule())
     }
-
-    private var ratingColor: Color {
-        switch rating {
-        case 1: return .red
-        case 2: return .orange
-        case 3: return .yellow
-        case 4: return .green
-        case 5: return .blue
-        default: return .gray
-        }
-    }
 }
 
 // MARK: - Next Steps Section
@@ -331,8 +320,8 @@ struct NextStepsSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Label("Next Steps", systemImage: "arrow.right.circle.fill")
-                .font(.headline)
-                .foregroundStyle(.blue)
+                .font(PSDFonts.headline)
+                .foregroundStyle(PSDTheme.nextSteps)
 
             ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
                 HStack(alignment: .top, spacing: 12) {
@@ -340,7 +329,7 @@ struct NextStepsSection: View {
                         .font(.caption)
                         .fontWeight(.bold)
                         .frame(width: 20, height: 20)
-                        .background(.blue)
+                        .background(PSDTheme.nextSteps)
                         .foregroundStyle(.white)
                         .clipShape(Circle())
 
@@ -351,7 +340,7 @@ struct NextStepsSection: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.blue.opacity(0.1))
+        .background(PSDTheme.nextSteps.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }

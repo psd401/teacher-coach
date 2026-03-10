@@ -34,8 +34,12 @@ struct PDFPageView: View {
     private var pageHeader: some View {
         HStack {
             Text("Teacher Coach")
-                .font(.caption)
+                .font(PSDFonts.caption(size: 11))
                 .fontWeight(.semibold)
+                .foregroundStyle(Color.psdPacific)
+
+            Text("Peninsula School District")
+                .font(.caption)
                 .foregroundStyle(.gray)
 
             Spacer()

@@ -33,8 +33,12 @@ struct TeacherCoachApp: App {
             ContentView()
                 .environmentObject(appState)
                 .environment(ServiceContainer.shared)
+                .tint(PSDTheme.accent)
                 .onOpenURL { url in
                     GIDSignIn.sharedInstance.handle(url)
+                }
+                .onAppear {
+                    PSDFonts.registerFonts()
                 }
         }
         .modelContainer(sharedModelContainer)

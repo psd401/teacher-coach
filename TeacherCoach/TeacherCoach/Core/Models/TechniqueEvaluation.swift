@@ -91,9 +91,9 @@ enum RatingLevel: Int, CaseIterable {
         switch self {
         case .developing: return "red"
         case .emerging: return "orange"
-        case .proficient: return "yellow"
-        case .accomplished: return "green"
-        case .exemplary: return "blue"
+        case .proficient: return "driftwood"
+        case .accomplished: return "meadow"
+        case .exemplary: return "whulge"
         }
     }
 
@@ -113,12 +113,6 @@ enum RatingLevel: Int, CaseIterable {
     }
 
     var swiftUIColor: Color {
-        switch self {
-        case .developing: return .red
-        case .emerging: return .orange
-        case .proficient: return .yellow
-        case .accomplished: return .green
-        case .exemplary: return .blue
-        }
+        PSDTheme.ratingColor(self.rawValue)
     }
 }

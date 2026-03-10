@@ -11,23 +11,21 @@ struct LoginView: View {
         VStack(spacing: 32) {
             // Logo and title
             VStack(spacing: 16) {
-                Image(systemName: "waveform.circle.fill")
-                    .font(.system(size: 100))
-                    .foregroundStyle(.tint)
+                PSDLogoView(size: 120)
 
                 Text("Teacher Coach")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
+                    .font(PSDFonts.largeTitle)
+                    .foregroundStyle(Color.psdPacific)
 
                 Text("AI-Powered Teaching Feedback")
-                    .font(.title3)
+                    .font(PSDFonts.title3)
                     .foregroundStyle(.secondary)
             }
 
             // Domain notice
             VStack(spacing: 8) {
                 Text("Peninsula School District")
-                    .font(.headline)
+                    .font(PSDFonts.headline)
 
                 Text("Sign in with your @psd401.net account")
                     .font(.subheadline)
@@ -83,7 +81,7 @@ struct LoginView: View {
         .padding(48)
         .background(
             LinearGradient(
-                colors: [.clear, .accentColor.opacity(0.05)],
+                colors: [Color.psdSkylight, Color.psdSeaFoam],
                 startPoint: .top,
                 endPoint: .bottom
             )

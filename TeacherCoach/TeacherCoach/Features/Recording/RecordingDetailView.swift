@@ -360,8 +360,8 @@ struct RecordingHeaderView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(recording.title)
-                    .font(.title)
-                    .fontWeight(.bold)
+                    .font(PSDFonts.title)
+                    .foregroundStyle(.primary)
 
                 Spacer()
 
@@ -398,7 +398,7 @@ struct ActionPromptView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
-                .font(.headline)
+                .font(PSDFonts.headline)
 
             Text(description)
                 .font(.body)
@@ -471,7 +471,7 @@ struct TranscriptSection: View {
             } label: {
                 HStack {
                     Text("Transcript")
-                        .font(.headline)
+                        .font(PSDFonts.headline)
 
                     Spacer()
 
@@ -795,7 +795,7 @@ struct VideoAnalysisOptionsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Choose Analysis Method")
-                .font(.headline)
+                .font(PSDFonts.headline)
 
             Text("For best results and cost efficiency, we recommend clips of 5-20 minutes.")
                 .font(.caption)
@@ -843,7 +843,7 @@ struct AnalysisMethodCard: View {
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: icon)
                     .font(.title2)
-                    .foregroundStyle(isRecommended ? .blue : .secondary)
+                    .foregroundStyle(isRecommended ? PSDTheme.nextSteps : .secondary)
                     .frame(width: 32)
 
                 VStack(alignment: .leading, spacing: 4) {
@@ -857,8 +857,8 @@ struct AnalysisMethodCard: View {
                                 .font(.caption2)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
-                                .background(.blue.opacity(0.2))
-                                .foregroundStyle(.blue)
+                                .background(PSDTheme.nextSteps.opacity(0.2))
+                                .foregroundStyle(PSDTheme.nextSteps)
                                 .clipShape(Capsule())
                         }
                     }
@@ -884,7 +884,7 @@ struct AnalysisMethodCard: View {
                 }
             }
             .padding()
-            .background(isRecommended ? Color.blue.opacity(0.05) : Color.secondary.opacity(0.05))
+            .background(isRecommended ? PSDTheme.nextSteps.opacity(0.05) : Color.secondary.opacity(0.05))
             .clipShape(RoundedRectangle(cornerRadius: 8))
         }
         .buttonStyle(.plain)
@@ -915,7 +915,7 @@ struct VideoAnalysisConfigurationSheet: View {
             // Header
             HStack {
                 Text("Configure Video Analysis")
-                    .font(.headline)
+                    .font(PSDFonts.headline)
 
                 Spacer()
 
@@ -936,14 +936,14 @@ struct VideoAnalysisConfigurationSheet: View {
                     HStack(spacing: 12) {
                         Image(systemName: "video.fill")
                             .font(.title2)
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(PSDTheme.infoBannerAccent)
 
                         Text("Video analysis uses Google Gemini to observe visual and audio content, providing feedback on teacher positioning, student engagement, and non-verbal cues.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
                     .padding()
-                    .background(.blue.opacity(0.1))
+                    .background(PSDTheme.infoBanner)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
 
                     FrameworkSelectionView(

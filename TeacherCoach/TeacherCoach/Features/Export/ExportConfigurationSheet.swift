@@ -156,7 +156,7 @@ struct ExportConfigurationSheet: View {
                 }
                 .font(.caption)
                 .buttonStyle(.plain)
-                .foregroundStyle(.blue)
+                .foregroundStyle(PSDTheme.accent)
             }
 
             VStack(alignment: .leading, spacing: 8) {

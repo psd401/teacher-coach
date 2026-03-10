@@ -63,9 +63,8 @@ struct ExportableAnalysisView: View {
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(recording.title)
-                .font(.title)
-                .fontWeight(.bold)
-                .foregroundStyle(.black)
+                .font(PSDFonts.title)
+                .foregroundStyle(Color.psdPacific)
 
             HStack(spacing: 16) {
                 Label(recording.formattedDuration, systemImage: "clock")
@@ -85,8 +84,8 @@ struct ExportableAnalysisView: View {
     private var summarySection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Summary", systemImage: "doc.text")
-                .font(.headline)
-                .foregroundStyle(.black)
+                .font(PSDFonts.headline)
+                .foregroundStyle(Color.psdPacific)
 
             Text(analysis.overallSummary)
                 .font(.body)
@@ -94,7 +93,7 @@ struct ExportableAnalysisView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.gray.opacity(0.1))
+        .background(Color.psdSeaFoam)
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
@@ -103,13 +102,13 @@ struct ExportableAnalysisView: View {
     private var strengthsSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Strengths", systemImage: "star.fill")
-                .font(.headline)
-                .foregroundStyle(.green)
+                .font(PSDFonts.headline)
+                .foregroundStyle(PSDTheme.strength)
 
             ForEach(analysis.strengths, id: \.self) { strength in
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
+                        .foregroundStyle(PSDTheme.strength)
                         .font(.caption)
 
                     Text(strength)
@@ -120,7 +119,7 @@ struct ExportableAnalysisView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.green.opacity(0.1))
+        .background(PSDTheme.strength.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
@@ -129,13 +128,13 @@ struct ExportableAnalysisView: View {
     private var growthAreasSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Growth Areas", systemImage: "arrow.up.right")
-                .font(.headline)
-                .foregroundStyle(.orange)
+                .font(PSDFonts.headline)
+                .foregroundStyle(PSDTheme.growth)
 
             ForEach(analysis.growthAreas, id: \.self) { area in
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "arrow.right.circle")
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(PSDTheme.growth)
                         .font(.caption)
 
                     Text(area)
@@ -146,7 +145,7 @@ struct ExportableAnalysisView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.orange.opacity(0.1))
+        .background(PSDTheme.growth.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
@@ -155,8 +154,8 @@ struct ExportableAnalysisView: View {
     private var techniquesSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Label("Technique Feedback", systemImage: "list.bullet.clipboard")
-                .font(.headline)
-                .foregroundStyle(.black)
+                .font(PSDFonts.headline)
+                .foregroundStyle(Color.psdPacific)
 
             // Rating legend if ratings are included
             if analysis.ratingsIncluded {
@@ -204,7 +203,7 @@ struct ExportableAnalysisView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.gray.opacity(0.05))
+        .background(Color.psdSeaFoam)
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
@@ -213,8 +212,8 @@ struct ExportableAnalysisView: View {
             // Header
             HStack {
                 Text(technique.techniqueName)
-                    .font(.headline)
-                    .foregroundStyle(.black)
+                    .font(PSDFonts.headline)
+                    .foregroundStyle(Color.psdPacific)
 
                 Spacer()
 
@@ -275,33 +274,23 @@ struct ExportableAnalysisView: View {
             }
         }
         .padding()
-        .background(Color.gray.opacity(0.05))
+        .background(Color.psdSeaFoam)
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
     private func exportRatingBadge(rating: Int) -> some View {
-        HStack(spacing: 2) {
+        let color = PSDTheme.ratingColor(rating)
+        return HStack(spacing: 2) {
             ForEach(1...5, id: \.self) { index in
                 Image(systemName: index <= rating ? "star.fill" : "star")
                     .font(.caption2)
-                    .foregroundStyle(index <= rating ? ratingColor(rating) : .gray.opacity(0.3))
+                    .foregroundStyle(index <= rating ? color : .gray.opacity(0.3))
             }
         }
         .padding(.horizontal, 6)
         .padding(.vertical, 2)
-        .background(ratingColor(rating).opacity(0.1))
+        .background(color.opacity(0.1))
         .clipShape(Capsule())
-    }
-
-    private func ratingColor(_ rating: Int) -> Color {
-        switch rating {
-        case 1: return .red
-        case 2: return .orange
-        case 3: return .yellow
-        case 4: return .green
-        case 5: return .blue
-        default: return .gray
-        }
     }
 
     // MARK: - Next Steps Section
@@ -309,8 +298,8 @@ struct ExportableAnalysisView: View {
     private var nextStepsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Label("Next Steps", systemImage: "arrow.right.circle.fill")
-                .font(.headline)
-                .foregroundStyle(.blue)
+                .font(PSDFonts.headline)
+                .foregroundStyle(PSDTheme.nextSteps)
 
             ForEach(Array(analysis.actionableNextSteps.enumerated()), id: \.offset) { index, step in
                 HStack(alignment: .top, spacing: 12) {
@@ -318,7 +307,7 @@ struct ExportableAnalysisView: View {
                         .font(.caption)
                         .fontWeight(.bold)
                         .frame(width: 20, height: 20)
-                        .background(Color.blue)
+                        .background(PSDTheme.nextSteps)
                         .foregroundStyle(.white)
                         .clipShape(Circle())
 
@@ -330,7 +319,7 @@ struct ExportableAnalysisView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.blue.opacity(0.1))
+        .background(PSDTheme.nextSteps.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }

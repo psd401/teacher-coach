@@ -155,7 +155,7 @@ struct SidebarView: View {
                 showingNewRecording = false
             } label: {
                 Label("Home", systemImage: "house")
-                    .font(.headline)
+                    .font(PSDFonts.headline)
             }
             .buttonStyle(.plain)
             .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
@@ -260,8 +260,8 @@ struct MediaTypeBadge: View {
         }
         .padding(.horizontal, 6)
         .padding(.vertical, 2)
-        .background(mediaType == .video ? Color.purple.opacity(0.2) : Color.blue.opacity(0.2))
-        .foregroundStyle(mediaType == .video ? .purple : .blue)
+        .background(mediaType == .video ? PSDTheme.video.opacity(0.2) : PSDTheme.audio.opacity(0.2))
+        .foregroundStyle(mediaType == .video ? PSDTheme.video : PSDTheme.audio)
         .clipShape(Capsule())
     }
 }
@@ -299,23 +299,23 @@ struct StatusBadge: View {
 
     private var backgroundColor: Color {
         switch status {
-        case .recording: return .red.opacity(0.2)
-        case .recorded: return .orange.opacity(0.2)
-        case .uploading, .transcribing, .analyzing: return .blue.opacity(0.2)
-        case .transcribed: return .purple.opacity(0.2)
-        case .complete: return .green.opacity(0.2)
-        case .failed: return .red.opacity(0.2)
+        case .recording: return PSDTheme.recording.opacity(0.2)
+        case .recorded: return PSDTheme.growth.opacity(0.2)
+        case .uploading, .transcribing, .analyzing: return PSDTheme.processing.opacity(0.2)
+        case .transcribed: return PSDTheme.processing.opacity(0.2)
+        case .complete: return PSDTheme.success.opacity(0.2)
+        case .failed: return PSDTheme.error.opacity(0.2)
         }
     }
 
     private var foregroundColor: Color {
         switch status {
-        case .recording: return .red
-        case .recorded: return .orange
-        case .uploading, .transcribing, .analyzing: return .blue
-        case .transcribed: return .purple
-        case .complete: return .green
-        case .failed: return .red
+        case .recording: return PSDTheme.recording
+        case .recorded: return PSDTheme.growth
+        case .uploading, .transcribing, .analyzing: return PSDTheme.processing
+        case .transcribed: return PSDTheme.processing
+        case .complete: return PSDTheme.success
+        case .failed: return PSDTheme.error
         }
     }
 }
@@ -328,6 +328,7 @@ struct WelcomeView: View {
     @EnvironmentObject private var appState: AppState
     @Environment(\.serviceContainer) private var services
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.colorScheme) private var colorScheme
 
     @State private var showingFileImporter = false
     @State private var showingVideoImporter = false
@@ -340,16 +341,14 @@ struct WelcomeView: View {
         VStack(spacing: 32) {
             // Header
             VStack(spacing: 12) {
-                Image(systemName: "waveform.circle.fill")
-                    .font(.system(size: 64))
-                    .foregroundStyle(.tint)
+                PSDLogoView(size: 80)
 
                 Text("Welcome, \(appState.currentUser?.displayName.components(separatedBy: " ").first ?? "Teacher")!")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
+                    .font(PSDFonts.largeTitle)
+                    .foregroundStyle(PSDTheme.headingText(for: colorScheme))
 
                 Text("Record your teaching sessions to receive AI-powered feedback.")
-                    .font(.title3)
+                    .font(PSDFonts.title3)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: 450)
@@ -361,7 +360,7 @@ struct WelcomeView: View {
                     title: "New Recording",
                     subtitle: "Record a lesson",
                     icon: "record.circle.fill",
-                    color: .red
+                    color: PSDTheme.recording
                 ) {
                     showingNewRecording = true
                 }
@@ -370,7 +369,7 @@ struct WelcomeView: View {
                     title: "Import Audio",
                     subtitle: "Voice memo or audio",
                     icon: "waveform",
-                    color: .blue
+                    color: PSDTheme.audio
                 ) {
                     showingFileImporter = true
                 }
@@ -379,7 +378,7 @@ struct WelcomeView: View {
                     title: "Import Video",
                     subtitle: "Classroom recording",
                     icon: "video.fill",
-                    color: .purple
+                    color: PSDTheme.video
                 ) {
                     showingVideoImporter = true
                 }
@@ -388,6 +387,7 @@ struct WelcomeView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding()
+        .psdPageBackground()
         .fileImporter(
             isPresented: $showingFileImporter,
             allowedContentTypes: AudioImportService.supportedTypes,
@@ -443,7 +443,7 @@ struct ActionTile: View {
 
                 VStack(spacing: 4) {
                     Text(title)
-                        .font(.headline)
+                        .font(PSDFonts.headline)
                         .foregroundStyle(.primary)
 
                     Text(subtitle)

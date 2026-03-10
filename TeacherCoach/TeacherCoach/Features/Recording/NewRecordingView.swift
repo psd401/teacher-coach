@@ -37,7 +37,7 @@ struct NewRecordingView: View {
                 Spacer()
 
                 Text("New Recording")
-                    .font(.headline)
+                    .font(PSDFonts.headline)
 
                 Spacer()
 
@@ -214,8 +214,7 @@ struct PermissionRequestView: View {
                 .foregroundStyle(.secondary)
 
             Text("Microphone Access Required")
-                .font(.title2)
-                .fontWeight(.semibold)
+                .font(PSDFonts.title2)
 
             Text("Teacher Coach needs access to your microphone to record teaching sessions.")
                 .font(.body)
@@ -283,8 +282,7 @@ struct RecordingInProgressView: View {
             }
 
             Text(title)
-                .font(.title2)
-                .fontWeight(.medium)
+                .font(PSDFonts.title2)
 
             // Duration display
             Text(formattedDuration)
@@ -303,7 +301,7 @@ struct RecordingInProgressView: View {
             } else {
                 Text("Ready to stop")
                     .font(.callout)
-                    .foregroundStyle(.green)
+                    .foregroundStyle(PSDTheme.success)
             }
 
             // Warning near max

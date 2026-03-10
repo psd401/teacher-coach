@@ -55,6 +55,14 @@
 		0042 /* AudioExtractionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1042 /* AudioExtractionService.swift */; };
 		0043 /* VideoImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1043 /* VideoImportView.swift */; };
 		0044 /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1044 /* VideoPlayerView.swift */; };
+		0046 /* PSDColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1046 /* PSDColors.swift */; };
+		0047 /* PSDTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1047 /* PSDTheme.swift */; };
+		0048 /* PSDTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1048 /* PSDTypography.swift */; };
+		0049 /* PSDViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1049 /* PSDViewModifiers.swift */; };
+		0050 /* JosefinSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1050 /* JosefinSans-Bold.ttf */; };
+		0051 /* JosefinSlab-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1051 /* JosefinSlab-Regular.ttf */; };
+		0052 /* JosefinSlab-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1052 /* JosefinSlab-Bold.ttf */; };
+		0053 /* psd-logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 1053 /* psd-logo.png */; };
 		0022 /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3001 /* WhisperKit */; };
 		0023 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 3002 /* GoogleSignIn */; };
 		0024 /* Models in Resources */ = {isa = PBXBuildFile; fileRef = 29C274B02F1C7E6D00B3F6F3 /* Models */; };
@@ -111,6 +119,14 @@
 		1042 /* AudioExtractionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioExtractionService.swift; sourceTree = "<group>"; };
 		1043 /* VideoImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoImportView.swift; sourceTree = "<group>"; };
 		1044 /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
+		1046 /* PSDColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PSDColors.swift; sourceTree = "<group>"; };
+		1047 /* PSDTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PSDTheme.swift; sourceTree = "<group>"; };
+		1048 /* PSDTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PSDTypography.swift; sourceTree = "<group>"; };
+		1049 /* PSDViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PSDViewModifiers.swift; sourceTree = "<group>"; };
+		1050 /* JosefinSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JosefinSans-Bold.ttf"; sourceTree = "<group>"; };
+		1051 /* JosefinSlab-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JosefinSlab-Regular.ttf"; sourceTree = "<group>"; };
+		1052 /* JosefinSlab-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JosefinSlab-Bold.ttf"; sourceTree = "<group>"; };
+		1053 /* psd-logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "psd-logo.png"; sourceTree = "<group>"; };
 		2001 /* TeacherCoach.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeacherCoach.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -188,6 +204,7 @@
 				5014 /* Models */,
 				5015 /* Views */,
 				5016 /* Services */,
+				5020 /* Theme */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -196,6 +213,8 @@
 			isa = PBXGroup;
 			children = (
 				29C274B02F1C7E6D00B3F6F3 /* Models */,
+				5021 /* Fonts */,
+				1053 /* psd-logo.png */,
 				1022 /* Info.plist */,
 				1023 /* TeacherCoach.entitlements */,
 			);
@@ -342,6 +361,27 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		5020 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				1046 /* PSDColors.swift */,
+				1047 /* PSDTheme.swift */,
+				1048 /* PSDTypography.swift */,
+				1049 /* PSDViewModifiers.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		5021 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				1050 /* JosefinSans-Bold.ttf */,
+				1051 /* JosefinSlab-Regular.ttf */,
+				1052 /* JosefinSlab-Bold.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -412,6 +452,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				0024 /* Models in Resources */,
+				0050 /* JosefinSans-Bold.ttf in Resources */,
+				0051 /* JosefinSlab-Regular.ttf in Resources */,
+				0052 /* JosefinSlab-Bold.ttf in Resources */,
+				0053 /* psd-logo.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -470,6 +514,10 @@
 				0042 /* AudioExtractionService.swift in Sources */,
 				0043 /* VideoImportView.swift in Sources */,
 				0044 /* VideoPlayerView.swift in Sources */,
+				0046 /* PSDColors.swift in Sources */,
+				0047 /* PSDTheme.swift in Sources */,
+				0048 /* PSDTypography.swift in Sources */,
+				0049 /* PSDViewModifiers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
