@@ -337,7 +337,7 @@ struct AboutTab: View {
                     .foregroundStyle(.secondary)
             }
 
-            Text("AI-powered feedback for teaching techniques")
+            Text("Self-reflection and AI-powered coaching for teaching techniques")
                 .font(PSDFonts.body())
                 .foregroundStyle(.secondary)
 

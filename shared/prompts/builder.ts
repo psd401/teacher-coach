@@ -2,7 +2,7 @@
  * Prompt builder functions for LLM analysis
  */
 
-import type { TechniqueDefinition, PauseData, TextAnalysisPromptOptions, VideoAnalysisPromptOptions } from './types';
+import type { TechniqueDefinition, PauseData, TextAnalysisPromptOptions, VideoAnalysisPromptOptions, ChatPromptOptions } from './types';
 import {
   RATING_SCALE,
   RESPONSE_SCHEMA_WITH_RATINGS,
@@ -22,6 +22,11 @@ import {
   VIDEO_ANALYSIS_SYSTEM,
   VIDEO_TECHNIQUES_SECTION_HEADER,
 } from './templates/video-analysis';
+import {
+  CHAT_SYSTEM_PROMPT,
+  CHAT_CONTEXT_SECTION,
+  CHAT_REFLECTION_SECTION,
+} from './templates/chat';
 
 /**
  * Simple template processor for {{variable}} substitution
@@ -135,4 +140,46 @@ export function buildVideoAnalysisPrompt(options: VideoAnalysisPromptOptions): s
   prompt += processTemplate(GUIDELINES_VIDEO_BASE, { ratingGuideline });
 
   return prompt;
+}
+
+/**
+ * Build the chat system prompt with context
+ */
+export function buildChatPrompt(options: ChatPromptOptions): {
+  systemPrompt: string;
+  messages: Array<{ role: string; content: string }>;
+} {
+  const {
+    transcript,
+    analysisSummary,
+    techniqueEvaluationsSummary,
+    reflectionSummary,
+    messages,
+    techniqueNames,
+  } = options;
+
+  // Build system prompt
+  let systemPrompt = processTemplate(CHAT_SYSTEM_PROMPT, {
+    techniqueNames: techniqueNames.join(', '),
+  });
+
+  // Add context section
+  systemPrompt += processTemplate(CHAT_CONTEXT_SECTION, {
+    transcript,
+    analysisSummary,
+    techniqueEvaluationsSummary,
+  });
+
+  // Add reflection context if available
+  if (reflectionSummary) {
+    systemPrompt += reflectionSummary;
+  }
+
+  // Convert messages to Gemini format
+  const formattedMessages = messages.map(m => ({
+    role: m.role === 'assistant' ? 'model' : 'user',
+    content: m.content,
+  }));
+
+  return { systemPrompt, messages: formattedMessages };
 }

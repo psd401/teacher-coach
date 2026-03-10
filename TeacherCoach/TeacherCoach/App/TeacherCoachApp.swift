@@ -13,7 +13,10 @@ struct TeacherCoachApp: App {
             Analysis.self,
             TechniqueEvaluation.self,
             Technique.self,
-            UserSettings.self
+            UserSettings.self,
+            Reflection.self,
+            ChatSession.self,
+            ChatMessage.self
         ])
         let modelConfiguration = ModelConfiguration(
             schema: schema,

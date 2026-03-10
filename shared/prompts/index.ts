@@ -12,8 +12,10 @@ export type {
   PauseData,
   TextAnalysisPromptOptions,
   VideoAnalysisPromptOptions,
+  ChatPromptOptions,
+  ChatMessage,
   GeminiGenerateResponse,
 } from './types';
 
 // Re-export builder functions
-export { buildAnalysisPrompt, buildVideoAnalysisPrompt } from './builder';
+export { buildAnalysisPrompt, buildVideoAnalysisPrompt, buildChatPrompt } from './builder';

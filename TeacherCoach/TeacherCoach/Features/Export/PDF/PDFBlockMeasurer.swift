@@ -41,6 +41,9 @@ struct PDFBlockMeasurer {
         case .techniqueSuggestionsContinued(let name, let suggestions):
             PDFTechniqueSuggestionsContinuedView(techniqueName: name, suggestions: suggestions)
 
+        case .reflection(let data):
+            PDFReflectionView(data: data)
+
         case .nextSteps(let steps):
             PDFNextStepsView(steps: steps)
         }

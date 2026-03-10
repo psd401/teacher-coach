@@ -2,6 +2,9 @@ import SwiftUI
 
 struct AnalysisFeedbackView: View {
     let analysis: Analysis
+    var recording: Recording? = nil
+
+    @State private var showingChat = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
@@ -21,6 +24,21 @@ struct AnalysisFeedbackView: View {
 
             // Actionable Next Steps
             NextStepsSection(steps: analysis.actionableNextSteps)
+
+            // Chat follow-up button
+            if let recording = recording {
+                Button {
+                    showingChat = true
+                } label: {
+                    Label("Ask a Follow-up Question", systemImage: "bubble.left.and.bubble.right")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .tint(PSDTheme.accent)
+                .sheet(isPresented: $showingChat) {
+                    ChatPanelView(recording: recording)
+                }
+            }
         }
     }
 }

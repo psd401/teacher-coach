@@ -130,6 +130,10 @@ struct ExportConfigurationSheet: View {
             Toggle("Strengths", isOn: $configuration.includeStrengths)
             Toggle("Growth Areas", isOn: $configuration.includeGrowthAreas)
             Toggle("Next Steps", isOn: $configuration.includeNextSteps)
+
+            if recording.reflection != nil && recording.reflection?.isComplete == true {
+                Toggle("Self-Reflection", isOn: $configuration.includeReflection)
+            }
         }
         .padding()
         .background(.regularMaterial)

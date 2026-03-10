@@ -4,6 +4,7 @@ import { authRoutes } from './routes/auth';
 import { analyzeRoutes } from './routes/analyze';
 import { analyzeVideoRoutes } from './routes/analyze-video';
 import { uploadRoutes } from './routes/upload';
+import { chatRoutes } from './routes/chat';
 
 // Environment configuration
 export interface Env {
@@ -15,6 +16,7 @@ export interface Env {
   GEMINI_TEXT_MODEL: string;
   GEMINI_VIDEO_MODEL: string;
   VIDEO_RATE_LIMIT_PER_HOUR: number;
+  CHAT_RATE_LIMIT_PER_HOUR: number;
 }
 
 // Load environment variables
@@ -27,6 +29,7 @@ export const env: Env = {
   GEMINI_TEXT_MODEL: process.env.GEMINI_TEXT_MODEL || 'gemini-3-pro-preview',
   GEMINI_VIDEO_MODEL: process.env.GEMINI_VIDEO_MODEL || 'gemini-3-flash-preview',
   VIDEO_RATE_LIMIT_PER_HOUR: parseInt(process.env.VIDEO_RATE_LIMIT_PER_HOUR || '5', 10),
+  CHAT_RATE_LIMIT_PER_HOUR: parseInt(process.env.CHAT_RATE_LIMIT_PER_HOUR || '50', 10),
 };
 
 // Startup validation for critical security configuration
@@ -113,6 +116,7 @@ app.route('/auth', authRoutes);
 app.route('/analyze', analyzeRoutes);
 app.route('/analyze/video', analyzeVideoRoutes);
 app.route('/upload', uploadRoutes);
+app.route('/chat', chatRoutes);
 
 // Error handler - logs details server-side, returns generic message to client
 app.onError((err, c) => {

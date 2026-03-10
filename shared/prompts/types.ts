@@ -40,6 +40,20 @@ export interface VideoAnalysisPromptOptions {
   includeRatings: boolean;
 }
 
+export interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface ChatPromptOptions {
+  transcript: string;
+  analysisSummary: string;
+  techniqueEvaluationsSummary: string;
+  reflectionSummary?: string;
+  messages: ChatMessage[];
+  techniqueNames: string[];
+}
+
 export interface GeminiGenerateResponse {
   candidates: Array<{
     content: {

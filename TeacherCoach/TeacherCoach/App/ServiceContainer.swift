@@ -18,6 +18,7 @@ final class ServiceContainer {
     let audioExtractionService: AudioExtractionService
     let techniqueService: TechniqueService
     let exportService: ExportService
+    let chatService: ChatService
 
     // MARK: - Configuration
     let config: AppConfiguration
@@ -36,6 +37,7 @@ final class ServiceContainer {
         self.audioExtractionService = AudioExtractionService()
         self.techniqueService = TechniqueService()
         self.exportService = ExportService()
+        self.chatService = ChatService(config: config)
     }
 }
 

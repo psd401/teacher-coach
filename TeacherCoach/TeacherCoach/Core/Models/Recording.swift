@@ -29,6 +29,12 @@ final class Recording {
     @Relationship(deleteRule: .cascade, inverse: \Analysis.recording)
     var analysis: Analysis?
 
+    @Relationship(deleteRule: .cascade, inverse: \Reflection.recording)
+    var reflection: Reflection?
+
+    @Relationship(deleteRule: .cascade, inverse: \ChatSession.recording)
+    var chatSession: ChatSession?
+
     // MARK: - Computed Properties
     var absoluteAudioPath: URL? {
         guard let documentsURL = FileManager.default.urls(

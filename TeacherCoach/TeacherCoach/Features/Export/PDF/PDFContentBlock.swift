@@ -10,6 +10,7 @@ enum PDFContentBlock: Identifiable {
     case ratingLegend
     case techniqueCard(TechniqueCardData)
     case techniqueSuggestionsContinued(techniqueName: String, suggestions: [String])
+    case reflection(ReflectionExportData)
     case nextSteps([String])
 
     var id: String {
@@ -26,6 +27,8 @@ enum PDFContentBlock: Identifiable {
             return "technique-\(data.id)"
         case .techniqueSuggestionsContinued(let name, _):
             return "technique-continued-\(name)"
+        case .reflection:
+            return "reflection"
         case .nextSteps:
             return "next-steps"
         }
@@ -86,5 +89,20 @@ struct TechniqueCardData: Identifiable {
         self.feedback = feedback
         self.evidence = evidence
         self.suggestions = suggestions
+    }
+}
+
+/// Data for a reflection export block (decoupled from SwiftData model for rendering)
+struct ReflectionExportData {
+    let whatWentWell: String
+    let whatToChange: String
+    let selfRatings: [TechniqueSelfRating]
+    let focusTechniqueIds: [String]
+
+    init(from reflection: Reflection) {
+        self.whatWentWell = reflection.whatWentWell
+        self.whatToChange = reflection.whatToChange
+        self.selfRatings = reflection.selfRatings
+        self.focusTechniqueIds = reflection.focusTechniqueIds
     }
 }

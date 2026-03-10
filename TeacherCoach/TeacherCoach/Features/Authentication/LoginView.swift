@@ -17,7 +17,7 @@ struct LoginView: View {
                     .font(PSDFonts.largeTitle)
                     .foregroundStyle(Color.psdPacific)
 
-                Text("AI-Powered Teaching Feedback")
+                Text("Reflect, Analyze, Grow")
                     .font(PSDFonts.title3)
                     .foregroundStyle(.secondary)
             }

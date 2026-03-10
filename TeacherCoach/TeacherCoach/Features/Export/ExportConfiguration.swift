@@ -13,10 +13,11 @@ struct ExportConfiguration {
     var includeStrengths: Bool = true
     var includeGrowthAreas: Bool = true
     var includeNextSteps: Bool = true
+    var includeReflection: Bool = true
     var includedTechniqueIds: Set<UUID> = []
 
     /// Whether at least one item is selected for export
     var hasSelection: Bool {
-        includeSummary || includeStrengths || includeGrowthAreas || includeNextSteps || !includedTechniqueIds.isEmpty
+        includeSummary || includeStrengths || includeGrowthAreas || includeNextSteps || includeReflection || !includedTechniqueIds.isEmpty
     }
 }

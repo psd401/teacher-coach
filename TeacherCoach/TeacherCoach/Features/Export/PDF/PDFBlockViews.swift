@@ -305,6 +305,96 @@ struct PDFTechniqueSuggestionsContinuedView: View {
     }
 }
 
+// MARK: - Reflection Block
+
+struct PDFReflectionView: View {
+    let data: ReflectionExportData
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label("Self-Reflection", systemImage: "person.crop.circle.badge.checkmark")
+                .font(PSDFonts.headline)
+                .foregroundStyle(Color.psdPacific)
+
+            if !data.whatWentWell.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("What went well")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.black)
+                    Text(data.whatWentWell)
+                        .font(.body)
+                        .foregroundStyle(.black)
+                }
+                .padding(8)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(PSDTheme.strength.opacity(0.1))
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+            }
+
+            if !data.whatToChange.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("What to change")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.black)
+                    Text(data.whatToChange)
+                        .font(.body)
+                        .foregroundStyle(.black)
+                }
+                .padding(8)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(PSDTheme.growth.opacity(0.1))
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+            }
+
+            if !data.selfRatings.isEmpty {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Self-Ratings")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.black)
+
+                    ForEach(data.selfRatings) { rating in
+                        HStack {
+                            Text(rating.techniqueName)
+                                .font(.caption)
+                                .foregroundStyle(.black)
+                            Spacer()
+                            HStack(spacing: 1) {
+                                ForEach(1...5, id: \.self) { index in
+                                    Image(systemName: index <= rating.rating ? "star.fill" : "star")
+                                        .font(.system(size: 8))
+                                        .foregroundStyle(index <= rating.rating ? PSDTheme.ratingColor(rating.rating) : .gray.opacity(0.3))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if !data.focusTechniqueIds.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Focus Areas")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.black)
+
+                    ForEach(data.selfRatings.filter { data.focusTechniqueIds.contains($0.techniqueId) }) { rating in
+                        Label(rating.techniqueName, systemImage: "target")
+                            .font(.caption)
+                            .foregroundStyle(PSDTheme.nextSteps)
+                    }
+                }
+            }
+        }
+        .padding()
+        .frame(width: PDFLayout.contentWidth, alignment: .leading)
+        .background(Color.psdSeaFoam)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+}
+
 // MARK: - Next Steps Block
 
 struct PDFNextStepsView: View {

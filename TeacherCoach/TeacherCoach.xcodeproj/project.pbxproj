@@ -59,6 +59,14 @@
 		0047 /* PSDTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1047 /* PSDTheme.swift */; };
 		0048 /* PSDTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1048 /* PSDTypography.swift */; };
 		0049 /* PSDViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1049 /* PSDViewModifiers.swift */; };
+		0054 /* Reflection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1054 /* Reflection.swift */; };
+		0055 /* ChatSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1055 /* ChatSession.swift */; };
+		0056 /* SelfRatingPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1056 /* SelfRatingPicker.swift */; };
+		0057 /* ReflectionFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1057 /* ReflectionFlowView.swift */; };
+		0058 /* ReflectionComparisonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1058 /* ReflectionComparisonView.swift */; };
+		0059 /* ChatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1059 /* ChatService.swift */; };
+		0060 /* ChatPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1060 /* ChatPanelView.swift */; };
+		0061 /* ChatMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1061 /* ChatMessageView.swift */; };
 		0050 /* JosefinSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1050 /* JosefinSans-Bold.ttf */; };
 		0051 /* JosefinSlab-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1051 /* JosefinSlab-Regular.ttf */; };
 		0052 /* JosefinSlab-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1052 /* JosefinSlab-Bold.ttf */; };
@@ -127,6 +135,14 @@
 		1051 /* JosefinSlab-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JosefinSlab-Regular.ttf"; sourceTree = "<group>"; };
 		1052 /* JosefinSlab-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JosefinSlab-Bold.ttf"; sourceTree = "<group>"; };
 		1053 /* psd-logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "psd-logo.png"; sourceTree = "<group>"; };
+		1054 /* Reflection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reflection.swift; sourceTree = "<group>"; };
+		1055 /* ChatSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSession.swift; sourceTree = "<group>"; };
+		1056 /* SelfRatingPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfRatingPicker.swift; sourceTree = "<group>"; };
+		1057 /* ReflectionFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReflectionFlowView.swift; sourceTree = "<group>"; };
+		1058 /* ReflectionComparisonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReflectionComparisonView.swift; sourceTree = "<group>"; };
+		1059 /* ChatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatService.swift; sourceTree = "<group>"; };
+		1060 /* ChatPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPanelView.swift; sourceTree = "<group>"; };
+		1061 /* ChatMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageView.swift; sourceTree = "<group>"; };
 		2001 /* TeacherCoach.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeacherCoach.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -194,6 +210,8 @@
 				5012 /* Techniques */,
 				5013 /* Settings */,
 				5019 /* Export */,
+				5022 /* Reflection */,
+				5023 /* Chat */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -341,6 +359,8 @@
 				1008 /* Technique.swift */,
 				1009 /* UserSettings.swift */,
 				1025 /* TeachingFramework.swift */,
+				1054 /* Reflection.swift */,
+				1055 /* ChatSession.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -380,6 +400,26 @@
 				1052 /* JosefinSlab-Bold.ttf */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		5022 /* Reflection */ = {
+			isa = PBXGroup;
+			children = (
+				1056 /* SelfRatingPicker.swift */,
+				1057 /* ReflectionFlowView.swift */,
+				1058 /* ReflectionComparisonView.swift */,
+			);
+			path = Reflection;
+			sourceTree = "<group>";
+		};
+		5023 /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				1059 /* ChatService.swift */,
+				1060 /* ChatPanelView.swift */,
+				1061 /* ChatMessageView.swift */,
+			);
+			path = Chat;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -518,6 +558,14 @@
 				0047 /* PSDTheme.swift in Sources */,
 				0048 /* PSDTypography.swift in Sources */,
 				0049 /* PSDViewModifiers.swift in Sources */,
+				0054 /* Reflection.swift in Sources */,
+				0055 /* ChatSession.swift in Sources */,
+				0056 /* SelfRatingPicker.swift in Sources */,
+				0057 /* ReflectionFlowView.swift in Sources */,
+				0058 /* ReflectionComparisonView.swift in Sources */,
+				0059 /* ChatService.swift in Sources */,
+				0060 /* ChatPanelView.swift in Sources */,
+				0061 /* ChatMessageView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

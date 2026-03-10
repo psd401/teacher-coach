@@ -347,7 +347,7 @@ struct WelcomeView: View {
                     .font(PSDFonts.largeTitle)
                     .foregroundStyle(PSDTheme.headingText(for: colorScheme))
 
-                Text("Record your teaching sessions to receive AI-powered feedback.")
+                Text("Record, reflect, and grow with AI-powered coaching.")
                     .font(PSDFonts.title3)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)

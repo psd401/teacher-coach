@@ -86,7 +86,22 @@ struct RecordingDetailView: View {
 
                 case .complete:
                     if let analysis = recording.analysis {
-                        AnalysisFeedbackView(analysis: analysis)
+                        if recording.reflection == nil {
+                            // First visit: show reflection flow
+                            ReflectionFlowView(
+                                recording: recording,
+                                analysis: analysis,
+                                onComplete: { },
+                                onSkip: { }
+                            )
+                        } else {
+                            // Reflection done: show comparison (if completed, not skipped) + full feedback
+                            if let reflection = recording.reflection,
+                               reflection.isComplete, !reflection.wasSkipped {
+                                ReflectionComparisonView(reflection: reflection, analysis: analysis)
+                            }
+                            AnalysisFeedbackView(analysis: analysis, recording: recording)
+                        }
                     }
 
                     if let transcript = recording.transcript {
@@ -212,6 +227,10 @@ struct RecordingDetailView: View {
                     includeRatings: includeRatings
                 )
 
+                // Clear stale reflection and chat session on re-analysis
+                recording.reflection = nil
+                recording.chatSession = nil
+
                 // Save analysis
                 recording.analysis = analysis
                 recording.status = .complete
@@ -280,6 +299,10 @@ struct RecordingDetailView: View {
                     sessionToken: session.accessToken,
                     includeRatings: includeRatings
                 )
+
+                // Clear stale reflection and chat session on re-analysis
+                recording.reflection = nil
+                recording.chatSession = nil
 
                 // Save analysis
                 recording.analysis = analysis

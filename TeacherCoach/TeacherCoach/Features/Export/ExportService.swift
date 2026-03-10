@@ -150,6 +150,13 @@ final class ExportService {
             ))
         }
 
+        // Reflection
+        if configuration.includeReflection,
+           let reflection = recording.reflection,
+           reflection.isComplete, !reflection.wasSkipped {
+            blocks.append(.reflection(ReflectionExportData(from: reflection)))
+        }
+
         // Technique cards (each as separate block)
         let selectedTechniques = (analysis.techniqueEvaluations ?? [])
             .filter { configuration.includedTechniqueIds.contains($0.id) }
@@ -236,6 +243,49 @@ final class ExportService {
                 lines.append("- \(area)")
             }
             lines.append("")
+        }
+
+        // Self-Reflection
+        if configuration.includeReflection,
+           let reflection = recording.reflection,
+           reflection.isComplete, !reflection.wasSkipped {
+            lines.append("## Self-Reflection")
+            lines.append("")
+
+            if !reflection.whatWentWell.isEmpty {
+                lines.append("### What Went Well")
+                lines.append("")
+                lines.append(reflection.whatWentWell)
+                lines.append("")
+            }
+
+            if !reflection.whatToChange.isEmpty {
+                lines.append("### What to Change")
+                lines.append("")
+                lines.append(reflection.whatToChange)
+                lines.append("")
+            }
+
+            if !reflection.selfRatings.isEmpty {
+                lines.append("### Self-Ratings")
+                lines.append("")
+                lines.append("| Technique | Self-Rating |")
+                lines.append("|-----------|-------------|")
+                for rating in reflection.selfRatings {
+                    let stars = String(repeating: "\u{2605}", count: rating.rating) + String(repeating: "\u{2606}", count: 5 - rating.rating)
+                    lines.append("| \(rating.techniqueName) | \(stars) |")
+                }
+                lines.append("")
+            }
+
+            if !reflection.focusTechniqueIds.isEmpty {
+                lines.append("### Focus Areas")
+                lines.append("")
+                for rating in reflection.selfRatings where reflection.focusTechniqueIds.contains(rating.techniqueId) {
+                    lines.append("- \(rating.techniqueName)")
+                }
+                lines.append("")
+            }
         }
 
         // Technique Feedback

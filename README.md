@@ -1,6 +1,6 @@
 # Teacher Coach
 
-Native macOS app for Peninsula SD teachers to record teaching sessions, receive local transcription via WhisperKit, and get AI-powered feedback on specific teaching techniques.
+Native macOS app for Peninsula SD teachers to record teaching sessions, receive local transcription via WhisperKit, and get AI-powered feedback on specific teaching techniques. Teachers complete a guided self-reflection before viewing AI analysis, then can dig deeper through interactive coaching chat.
 
 ## Features
 
@@ -11,9 +11,12 @@ Native macOS app for Peninsula SD teachers to record teaching sessions, receive 
 - **Wait Time Detection** - Automatic detection of pauses (3+ seconds) for wait time analysis
 - **AI Analysis** - Gemini-powered feedback on teaching techniques
 - **Video Analysis** - Gemini-powered visual+audio analysis for classroom dynamics
-- **Multiple Frameworks** - Three research-based teaching evaluation frameworks
+- **Guided Self-Reflection** - Multi-step reflection wizard before viewing AI feedback (what went well, what to change, self-rate techniques, pick focus areas)
+- **Self vs AI Comparison** - Side-by-side view of teacher's self-ratings against AI ratings with delta indicators
+- **Interactive Coaching Chat** - Follow-up questions with AI using full transcript + analysis context, with timestamped evidence citations
+- **Multiple Frameworks** - Six research-based teaching evaluation frameworks
 - **Star Ratings** - Optional 1-5 star ratings with visual legend
-- **PDF & Markdown Export** - Export analysis reports with customizable content
+- **PDF & Markdown Export** - Export analysis reports with customizable content, including self-reflection data
 - **Domain-Restricted Auth** - Google SSO limited to @psd401.net accounts
 
 ## Architecture
@@ -24,6 +27,7 @@ Native macOS app for Peninsula SD teachers to record teaching sessions, receive 
 ├─────────────────────────────────────────────────────────────┤
 │  Recording → Transcription (WhisperKit) → Analysis Request  │
 │  Video Import → Direct Upload to Gemini → Video Analysis    │
+│  Self-Reflection → Comparison View → Coaching Chat          │
 │                           ↓                                 │
 │              Local Storage (SwiftData + Media Files)        │
 └─────────────────────────────────────────────────────────────┘
@@ -33,10 +37,11 @@ Native macOS app for Peninsula SD teachers to record teaching sessions, receive 
 │              Cloud Run Backend (Hono.js)                    │
 ├─────────────────────────────────────────────────────────────┤
 │  /auth/validate    │ Google JWT → Domain check              │
-│  /analyze          │ → Gemini API (text analysis)            │
+│  /analyze          │ → Gemini API (text analysis)           │
 │  /analyze/video    │ → Gemini API (video analysis)          │
+│  /chat             │ → Gemini API (coaching conversation)   │
 │  /upload/initiate  │ → Gemini File Upload                   │
-│  Rate Limiting     │ 20 text/hr, 5 video/hr per user        │
+│  Rate Limiting     │ 20 text/hr, 5 video/hr, 50 chat/hr    │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -63,23 +68,44 @@ teacher-coach/
 │   │   │   ├── Recording/        # Audio/video recording & import
 │   │   │   ├── Transcription/    # WhisperKit integration
 │   │   │   ├── Analysis/         # Gemini API integration
+│   │   │   ├── Reflection/       # Guided self-reflection wizard & comparison
+│   │   │   ├── Chat/             # Interactive coaching chat
 │   │   │   ├── Techniques/       # Teaching frameworks & technique library
 │   │   │   ├── Export/           # PDF & Markdown export
 │   │   │   └── Settings/         # User preferences
 │   │   └── Core/
-│   │       ├── Models/           # SwiftData models
+│   │       ├── Models/           # SwiftData models (Recording, Analysis, Reflection, ChatSession, etc.)
 │   │       ├── Views/            # Shared UI components
+│   │       ├── Theme/            # PSD branding (colors, typography, modifiers)
 │   │       └── Services/         # Utility services
 │   └── TeacherCoach.xcodeproj
 ├── CloudRunBackend/              # Primary backend (Google Cloud Run)
-│   └── src/routes/               # API routes
+│   └── src/routes/               # API routes (auth, analyze, chat, upload)
+├── shared/                       # Shared prompt templates (text, video, chat)
+│   └── prompts/
 └── CloudflareWorker/             # Alternative backend (Cloudflare Workers)
     └── src/routes/               # API routes
 ```
 
+## User Flow
+
+1. **Record or Import** — Teacher records a lesson or imports audio/video
+2. **Transcribe** — Audio transcribed locally via WhisperKit (or video sent to Gemini)
+3. **Analyze** — Transcript sent to Gemini for technique evaluation
+4. **Self-Reflect** — Teacher completes guided reflection before viewing AI feedback:
+   - What went well?
+   - What would you change?
+   - Self-rate each technique (1-5 stars)
+   - Pick 1-2 focus techniques
+   - (Can skip to go directly to feedback)
+5. **Compare** — Side-by-side view of self-ratings vs AI ratings with delta indicators
+6. **Review Feedback** — Full AI analysis with strengths, growth areas, technique evaluations, and next steps
+7. **Chat** — Ask follow-up questions with AI referencing timestamped transcript evidence
+8. **Export** — PDF or Markdown report with optional reflection data
+
 ## Teaching Frameworks
 
-The app supports three research-based frameworks for evaluating teaching:
+The app supports six research-based frameworks for evaluating teaching:
 
 ### TLAC (Teach Like a Champion)
 
@@ -114,6 +140,18 @@ The app supports three research-based frameworks for evaluating teaching:
 | Independent Practice | Allow autonomous practice time |
 | Weekly/Monthly Review | Regular review cycles |
 
+### AVID (Advancement Via Individual Determination)
+
+Focuses on WICOR strategies: Writing, Inquiry, Collaboration, Organization, and Reading.
+
+### National Board for Professional Teaching Standards
+
+Based on the Five Core Propositions for accomplished teaching.
+
+### PSD Essentials
+
+Peninsula School District's locally defined essential teaching practices.
+
 Each technique includes:
 - Description
 - Look-fors (observable indicators)
@@ -137,6 +175,15 @@ Each technique includes:
 - Cost: ~$0.15-0.27 per analysis
 - Rate limit: 5 analyses/hour
 
+### Interactive Coaching Chat (Gemini)
+- Follow-up questions after analysis is complete
+- Full context: timestamped transcript, analysis summary, technique evaluations, self-reflection
+- Transcript formatted with `[MM:SS-MM:SS]` timestamps and pause markers for evidence citation
+- Temperature 0.7 for more conversational responses
+- Suggested starter questions generated from analysis data
+- Video-only recordings auto-extract transcript before chat
+- Rate limit: 50 messages/hour
+
 ## Rating Scale
 
 When star ratings are enabled, each technique receives a 1-5 star rating:
@@ -148,6 +195,17 @@ When star ratings are enabled, each technique receives a 1-5 star rating:
 | 3 | Proficient | Solid implementation with room for refinement |
 | 4 | Accomplished | Effective and consistent use of technique |
 | 5 | Exemplary | Masterful implementation that could serve as a model |
+
+## Data Models
+
+### Core Models (SwiftData)
+- **Recording** — Teaching session with audio/video file paths, status, and relationships to Transcript, Analysis, Reflection, and ChatSession
+- **Transcript** — Full text with timestamped segments and detected pauses
+- **Analysis** — AI-generated summary, strengths, growth areas, next steps, and technique evaluations
+- **TechniqueEvaluation** — Per-technique rating, feedback, evidence, and suggestions
+- **Reflection** — Teacher's self-reflection: what went well, what to change, self-ratings, focus techniques
+- **ChatSession** — Coaching conversation container with cascade-deleted messages
+- **ChatMessage** — Individual message (role: user/assistant) with timestamp
 
 ## Setup
 
@@ -201,12 +259,13 @@ DEV_BYPASS_AUTH=1  # Optional: bypass OAuth for local testing
 #### Backend (Cloud Run)
 - `GEMINI_API_KEY` - Google AI API key
 - `GOOGLE_CLIENT_ID` - Google OAuth client ID
-- `JWT_SECRET` - Secret for signing session tokens
+- `JWT_SECRET` - Secret for signing session tokens (min 32 chars)
 - `ALLOWED_DOMAIN` - Email domain restriction (e.g., `psd401.net`)
 - `GEMINI_TEXT_MODEL` - Text analysis model (default: `gemini-3-pro-preview`)
 - `GEMINI_VIDEO_MODEL` - Video analysis model (default: `gemini-3-flash-preview`)
 - `RATE_LIMIT_PER_HOUR` - Text analysis rate limit (default: 20)
 - `VIDEO_RATE_LIMIT_PER_HOUR` - Video analysis rate limit (default: 5)
+- `CHAT_RATE_LIMIT_PER_HOUR` - Chat message rate limit (default: 50)
 
 ## API Endpoints
 
@@ -221,7 +280,14 @@ DEV_BYPASS_AUTH=1  # Optional: bypass OAuth for local testing
 |----------|-------------|
 | `POST /analyze` | Analyze transcript for teaching techniques (Gemini) |
 | `POST /analyze/video` | Analyze uploaded video (Gemini) |
-| `GET /analyze/rate-limit` | Get current rate limit status |
+| `GET /analyze/rate-limit` | Get current text analysis rate limit status |
+| `GET /analyze/video/rate-limit` | Get current video analysis rate limit status |
+
+### Chat
+| Endpoint | Description |
+|----------|-------------|
+| `POST /chat` | Send coaching chat message with session context |
+| `GET /chat/rate-limit` | Get current chat rate limit status |
 
 ### Video Upload
 | Endpoint | Description |
@@ -233,9 +299,11 @@ DEV_BYPASS_AUTH=1  # Optional: bypass OAuth for local testing
 - **Audio stays local** - Recordings stored only on user's device
 - **Transcripts sent for analysis** - Audio transcribed locally, only text sent to Gemini
 - **Videos uploaded to Gemini** - Deleted after analysis completion
+- **Reflections stored locally** - Self-reflection data stays on device, optionally included in chat context
+- **Chat messages stored locally** - Conversation history persisted in SwiftData
 - **Domain-restricted** - Only @psd401.net accounts can sign in
 - **Secure storage** - Session tokens stored in macOS Keychain
-- **Rate limiting** - Per-user hourly limits prevent abuse
+- **Rate limiting** - Per-user hourly limits prevent abuse (separate limits for analysis, video, and chat)
 
 ## Development
 
@@ -270,12 +338,13 @@ Analysis reports can be exported in two formats:
 ### PDF Export
 - Multi-page layout with page numbers
 - Configurable sections (summary, strengths, growth areas, techniques, next steps)
+- Optional self-reflection section (what went well, what to change, self-ratings table, focus areas)
 - Star rating visualization
 - Evidence and suggestions for each technique
 
 ### Markdown Export
 - Plain text format for easy sharing
-- Same section configurability as PDF
+- Same section configurability as PDF, including self-reflection
 - Compatible with note-taking apps and documentation systems
 
 ## Deployment
@@ -290,4 +359,4 @@ Analysis reports can be exported in two formats:
 
 ## License
 
-Copyright 2024-2025 Peninsula School District. Internal use only.
+Copyright 2024-2026 Peninsula School District. Internal use only.
