@@ -7,7 +7,7 @@ struct FrameworkSelectionView: View {
 
     @Environment(\.serviceContainer) private var services
 
-    @State private var isExpanded = false
+    @State private var isExpanded = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -48,6 +48,10 @@ struct FrameworkSelectionView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+
+                Text("Tip: Selecting 3\u{2013}5 techniques provides more focused, actionable feedback")
+                    .font(.caption)
+                    .foregroundStyle(enabledTechniqueIds.count > 8 ? .orange : .secondary)
             }
         }
         .padding(20)

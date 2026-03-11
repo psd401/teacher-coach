@@ -65,6 +65,8 @@ struct RecordingDetailView: View {
                     if let transcript = recording.transcript {
                         TranscriptSection(transcript: transcript)
 
+                        TranscriptQualityWarningView(transcript: transcript)
+
                         ActionPromptView(
                             title: "Ready for Analysis",
                             description: "Analyze this transcript for teaching technique feedback.",
@@ -231,6 +233,7 @@ struct RecordingDetailView: View {
                 recording.chatSessions = []
 
                 // Save analysis
+                analysis.frameworkId = framework.rawValue
                 recording.analysis = analysis
                 recording.status = .complete
                 try modelContext.save()
@@ -309,6 +312,7 @@ struct RecordingDetailView: View {
                 recording.chatSessions = []
 
                 // Save analysis (required) and transcript (best-effort)
+                analysis.frameworkId = framework.rawValue
                 recording.analysis = analysis
                 recording.transcript = transcript
                 recording.status = .complete
@@ -1171,6 +1175,54 @@ struct VideoAnalysisConfigurationSheet: View {
         settings.includeRatingsInAnalysis = includeRatings
 
         try? modelContext.save()
+    }
+}
+
+// MARK: - Transcript Quality Warning View
+
+struct TranscriptQualityWarningView: View {
+    let transcript: Transcript
+
+    private var averageConfidence: Float? {
+        let confidences = transcript.segments.compactMap { $0.confidence }
+        guard !confidences.isEmpty else { return nil }
+        return confidences.reduce(0, +) / Float(confidences.count)
+    }
+
+    private var isShortTranscript: Bool {
+        transcript.wordCount < 100
+    }
+
+    private var isLowConfidence: Bool {
+        guard let avg = averageConfidence else { return false }
+        return avg < 0.5
+    }
+
+    var body: some View {
+        if isShortTranscript || isLowConfidence {
+            VStack(alignment: .leading, spacing: 8) {
+                Label("Transcript Quality", systemImage: "exclamationmark.triangle")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.orange)
+
+                if isShortTranscript {
+                    Text("This transcript has only \(transcript.wordCount) words. Short transcripts may produce vague feedback.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                if isLowConfidence, let avg = averageConfidence {
+                    Text("Average transcription confidence is \(Int(avg * 100))%. Low confidence may indicate poor audio quality.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(.orange.opacity(0.08))
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+        }
     }
 }
 

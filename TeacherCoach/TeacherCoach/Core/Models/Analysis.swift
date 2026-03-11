@@ -10,6 +10,7 @@ final class Analysis {
     var createdAt: Date
     var modelUsed: String  // e.g., "gemini-3-pro-preview"
     var ratingsIncluded: Bool = true  // Whether star ratings were included in this analysis
+    var frameworkId: String = ""  // Framework used for this analysis (TeachingFramework.rawValue)
 
     // MARK: - JSON-stored arrays
     var strengthsData: Data?

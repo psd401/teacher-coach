@@ -45,17 +45,21 @@ struct MainView: View {
     @State private var showingNewRecording = false
     @State private var showingFileImporter = false
     @State private var showingVideoImporter = false
+    @State private var showingGrowthDashboard = false
 
     var body: some View {
         NavigationSplitView {
             SidebarView(
                 recordings: recordings,
                 selectedRecording: $selectedRecording,
-                showingNewRecording: $showingNewRecording
+                showingNewRecording: $showingNewRecording,
+                showingGrowthDashboard: $showingGrowthDashboard
             )
         } detail: {
             if let recording = selectedRecording {
                 RecordingDetailView(recording: recording)
+            } else if showingGrowthDashboard {
+                GrowthDashboardView()
             } else if showingNewRecording {
                 NewRecordingView(
                     isPresented: $showingNewRecording,
@@ -110,6 +114,11 @@ struct MainView: View {
                 showingNewRecording = false
             }
         }
+        .onChange(of: selectedRecording) { _, newValue in
+            if newValue != nil {
+                showingGrowthDashboard = false
+            }
+        }
     }
 
     private func handleFileImport(_ result: Result<[URL], Error>) {
@@ -140,6 +149,7 @@ struct SidebarView: View {
     let recordings: [Recording]
     @Binding var selectedRecording: Recording?
     @Binding var showingNewRecording: Bool
+    @Binding var showingGrowthDashboard: Bool
 
     @EnvironmentObject private var appState: AppState
     @Environment(\.modelContext) private var modelContext
@@ -153,8 +163,21 @@ struct SidebarView: View {
             Button {
                 selectedRecording = nil
                 showingNewRecording = false
+                showingGrowthDashboard = false
             } label: {
                 Label("Home", systemImage: "house")
+                    .font(PSDFonts.headline)
+            }
+            .buttonStyle(.plain)
+            .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+
+            // Growth button
+            Button {
+                selectedRecording = nil
+                showingNewRecording = false
+                showingGrowthDashboard = true
+            } label: {
+                Label("Growth", systemImage: "chart.line.uptrend.xyaxis")
                     .font(PSDFonts.headline)
             }
             .buttonStyle(.plain)

@@ -68,6 +68,7 @@
 		0060 /* ChatPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1060 /* ChatPanelView.swift */; };
 		0061 /* ChatMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1061 /* ChatMessageView.swift */; };
 		0062 /* ChatListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1062 /* ChatListView.swift */; };
+		0063 /* GrowthDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1063 /* GrowthDashboardView.swift */; };
 		0050 /* JosefinSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1050 /* JosefinSans-Bold.ttf */; };
 		0051 /* JosefinSlab-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1051 /* JosefinSlab-Regular.ttf */; };
 		0052 /* JosefinSlab-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1052 /* JosefinSlab-Bold.ttf */; };
@@ -145,6 +146,7 @@
 		1060 /* ChatPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPanelView.swift; sourceTree = "<group>"; };
 		1061 /* ChatMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageView.swift; sourceTree = "<group>"; };
 		1062 /* ChatListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListView.swift; sourceTree = "<group>"; };
+		1063 /* GrowthDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthDashboardView.swift; sourceTree = "<group>"; };
 		2001 /* TeacherCoach.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeacherCoach.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -214,6 +216,7 @@
 				5019 /* Export */,
 				5022 /* Reflection */,
 				5023 /* Chat */,
+				5024 /* Growth */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -425,6 +428,14 @@
 			path = Chat;
 			sourceTree = "<group>";
 		};
+		5024 /* Growth */ = {
+			isa = PBXGroup;
+			children = (
+				1063 /* GrowthDashboardView.swift */,
+			);
+			path = Growth;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -570,6 +581,7 @@
 				0060 /* ChatPanelView.swift in Sources */,
 				0061 /* ChatMessageView.swift in Sources */,
 				0062 /* ChatListView.swift in Sources */,
+				0063 /* GrowthDashboardView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
