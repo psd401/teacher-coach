@@ -50,6 +50,9 @@ struct FrameworkSelectionView: View {
                 }
             }
         }
+        .padding(20)
+        .background(.regularMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
 

@@ -79,9 +79,8 @@ struct RecordingDetailView: View {
                         TranscriptSection(transcript: transcript)
                     }
 
-                    ProcessingView(
-                        title: recording.isVideo && recording.transcript == nil ? "Analyzing Video..." : "Analyzing...",
-                        progress: recording.isVideo && recording.transcript == nil ? services.videoAnalysisService.progress : services.analysisService.progress
+                    AnalyzingTimerView(
+                        title: recording.isVideo && recording.transcript == nil ? "Analyzing Video..." : "Analyzing..."
                     )
 
                 case .complete:
@@ -476,6 +475,44 @@ struct ProcessingView: View {
     }
 }
 
+// MARK: - Analyzing Timer View
+
+struct AnalyzingTimerView: View {
+    let title: String
+
+    @State private var elapsedSeconds: Int = 0
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
+    var body: some View {
+        HStack {
+            ProgressView()
+                .controlSize(.small)
+
+            Text(title)
+                .font(.headline)
+
+            Spacer()
+
+            Text(formattedTime)
+                .font(.subheadline)
+                .monospacedDigit()
+                .foregroundStyle(.secondary)
+        }
+        .padding()
+        .background(.regularMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .onReceive(timer) { _ in
+            elapsedSeconds += 1
+        }
+    }
+
+    private var formattedTime: String {
+        let minutes = elapsedSeconds / 60
+        let seconds = elapsedSeconds % 60
+        return String(format: "%d:%02d", minutes, seconds)
+    }
+}
+
 // MARK: - Transcript Section
 
 struct TranscriptSection: View {
@@ -539,15 +576,38 @@ struct TranscriptContentView: View {
                 // Use flow layout with interleaved pause markers
                 flowLayoutContent
             } else {
-                // Simple text display when no pauses
-                Text(transcript.fullText)
-                    .font(.body)
+                // Segment-based display with timestamps
+                segmentContent
             }
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.background)
         .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+
+    @ViewBuilder
+    private var segmentContent: some View {
+        let segments = transcript.segments.sorted { $0.startTime < $1.startTime }
+
+        if segments.isEmpty {
+            Text(transcript.fullText)
+                .font(.body)
+        } else {
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(segments) { segment in
+                    HStack(alignment: .top, spacing: 8) {
+                        Text(formatStartTime(segment.startTime))
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
+                            .monospacedDigit()
+                            .frame(width: 32, alignment: .trailing)
+                        Text(segment.text)
+                            .font(.body)
+                    }
+                }
+            }
+        }
     }
 
     @ViewBuilder
@@ -558,7 +618,12 @@ struct TranscriptContentView: View {
             ForEach(items) { item in
                 switch item.type {
                 case .segment(let text):
-                    HStack(alignment: .top, spacing: 4) {
+                    HStack(alignment: .top, spacing: 8) {
+                        Text(item.timestamp)
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
+                            .monospacedDigit()
+                            .frame(width: 32, alignment: .trailing)
                         Text(text)
                             .font(.body)
                         if let pause = item.followingPause {
@@ -591,21 +656,30 @@ struct TranscriptContentView: View {
 
             items.append(TranscriptItem(
                 type: .segment(segment.text),
+                timestamp: formatStartTime(segment.startTime),
                 followingPause: followingPause
             ))
         }
 
         return items
     }
+
+    private func formatStartTime(_ time: TimeInterval) -> String {
+        let minutes = Int(time) / 60
+        let seconds = Int(time) % 60
+        return String(format: "%d:%02d", minutes, seconds)
+    }
 }
 
 struct TranscriptItem: Identifiable {
     let id = UUID()
     let type: TranscriptItemType
+    let timestamp: String
     let followingPause: TranscriptPause?
 
-    init(type: TranscriptItemType, followingPause: TranscriptPause? = nil) {
+    init(type: TranscriptItemType, timestamp: String = "0:00", followingPause: TranscriptPause? = nil) {
         self.type = type
+        self.timestamp = timestamp
         self.followingPause = followingPause
     }
 }

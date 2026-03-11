@@ -59,7 +59,7 @@ struct AnalysisConfigurationSheet: View {
                                 .padding(.top, 4)
                         }
                     }
-                    .padding()
+                    .padding(20)
                     .background(.regularMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
