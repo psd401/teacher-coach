@@ -6,6 +6,7 @@ import SwiftData
 final class ChatSession {
     // MARK: - Properties
     @Attribute(.unique) var id: UUID
+    var title: String
     var createdAt: Date
 
     // MARK: - Relationships
@@ -22,9 +23,11 @@ final class ChatSession {
     // MARK: - Initialization
     init(
         id: UUID = UUID(),
+        title: String = "New Chat",
         createdAt: Date = Date()
     ) {
         self.id = id
+        self.title = title
         self.createdAt = createdAt
         self.messages = []
     }

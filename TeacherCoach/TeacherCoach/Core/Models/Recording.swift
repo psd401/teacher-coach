@@ -33,7 +33,7 @@ final class Recording {
     var reflection: Reflection?
 
     @Relationship(deleteRule: .cascade, inverse: \ChatSession.recording)
-    var chatSession: ChatSession?
+    var chatSessions: [ChatSession]?
 
     // MARK: - Computed Properties
     var absoluteAudioPath: URL? {

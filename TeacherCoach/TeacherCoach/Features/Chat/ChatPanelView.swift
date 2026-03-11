@@ -1,11 +1,11 @@
 import SwiftUI
 import SwiftData
 
-/// Chat sheet UI for interactive coaching conversations
+/// Chat view for interactive coaching conversations about a specific session
 struct ChatPanelView: View {
     @Bindable var recording: Recording
+    @Bindable var chatSession: ChatSession
 
-    @Environment(\.dismiss) private var dismiss
     @Environment(\.serviceContainer) private var services
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var appState: AppState
@@ -46,12 +46,8 @@ struct ChatPanelView: View {
         return Array(starters.prefix(3))
     }
 
-    private var chatSession: ChatSession? {
-        recording.chatSession
-    }
-
     private var sortedMessages: [ChatMessage] {
-        chatSession?.sortedMessages ?? []
+        chatSession.sortedMessages
     }
 
     /// Whether this recording needs transcript extraction before chat
@@ -61,11 +57,6 @@ struct ChatPanelView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Header
-            chatHeader
-
-            Divider()
-
             if needsTranscriptExtraction {
                 transcriptExtractionView
             } else {
@@ -139,31 +130,7 @@ struct ChatPanelView: View {
                 chatInput
             }
         }
-        .frame(width: 500, height: 600)
-    }
-
-    // MARK: - Header
-
-    private var chatHeader: some View {
-        HStack {
-            Label("Coaching Chat", systemImage: "bubble.left.and.bubble.right")
-                .font(PSDFonts.headline)
-
-            Spacer()
-
-            if let session = chatSession {
-                Text("\(session.sortedMessages.count) messages")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            Button("Done") {
-                dismiss()
-            }
-            .buttonStyle(.plain)
-        }
-        .padding()
-        .background(.bar)
+        .navigationTitle(chatSession.title)
     }
 
     // MARK: - Suggested Starters
@@ -285,20 +252,16 @@ struct ChatPanelView: View {
         messageText = ""
         errorMessage = nil
 
-        // Ensure chat session exists
-        let chatSess: ChatSession
-        if let existing = recording.chatSession {
-            chatSess = existing
-        } else {
-            chatSess = ChatSession()
-            modelContext.insert(chatSess)
-            recording.chatSession = chatSess
+        // Auto-set title from first user message
+        if chatSession.title == "New Chat" {
+            let truncated = String(userMessage.prefix(40))
+            chatSession.title = truncated.count < userMessage.count ? truncated + "..." : truncated
         }
 
         // Add user message
         let userChatMessage = ChatMessage(role: "user", content: userMessage)
         modelContext.insert(userChatMessage)
-        userChatMessage.session = chatSess
+        userChatMessage.session = chatSession
         try? modelContext.save()
 
         isSending = true
@@ -314,7 +277,7 @@ struct ChatPanelView: View {
                 }
 
                 // Build message history for API
-                let allMessages = chatSess.sortedMessages.map {
+                let allMessages = chatSession.sortedMessages.map {
                     ChatMessagePayload(role: $0.role, content: $0.content)
                 }
 
@@ -341,7 +304,7 @@ struct ChatPanelView: View {
                 // Add assistant message
                 let assistantMessage = ChatMessage(role: "assistant", content: responseText)
                 modelContext.insert(assistantMessage)
-                assistantMessage.session = chatSess
+                assistantMessage.session = chatSession
                 try? modelContext.save()
 
             } catch {

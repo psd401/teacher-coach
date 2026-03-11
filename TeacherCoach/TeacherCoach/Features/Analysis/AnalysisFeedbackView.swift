@@ -30,13 +30,13 @@ struct AnalysisFeedbackView: View {
                 Button {
                     showingChat = true
                 } label: {
-                    Label("Ask a Follow-up Question", systemImage: "bubble.left.and.bubble.right")
+                    Label("Coaching Chats", systemImage: "bubble.left.and.bubble.right")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
                 .tint(PSDTheme.accent)
                 .sheet(isPresented: $showingChat) {
-                    ChatPanelView(recording: recording)
+                    ChatListView(recording: recording)
                 }
             }
         }

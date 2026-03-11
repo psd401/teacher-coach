@@ -228,7 +228,7 @@ struct RecordingDetailView: View {
 
                 // Clear stale reflection and chat session on re-analysis
                 recording.reflection = nil
-                recording.chatSession = nil
+                recording.chatSessions = []
 
                 // Save analysis
                 recording.analysis = analysis
@@ -301,7 +301,7 @@ struct RecordingDetailView: View {
 
                 // Clear stale reflection and chat session on re-analysis
                 recording.reflection = nil
-                recording.chatSession = nil
+                recording.chatSessions = []
 
                 // Save analysis
                 recording.analysis = analysis
