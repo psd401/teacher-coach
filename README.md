@@ -1,4 +1,4 @@
-# Teacher Coach
+# LessonLens
 
 Native macOS app for Peninsula SD teachers to record teaching sessions, receive local transcription via WhisperKit, and get AI-powered feedback on specific teaching techniques. Teachers complete a guided self-reflection before viewing AI analysis, then can dig deeper through interactive coaching chat.
 
@@ -59,7 +59,7 @@ Native macOS app for Peninsula SD teachers to record teaching sessions, receive 
 ## Project Structure
 
 ```
-teacher-coach/
+lessonlens/
 ├── TeacherCoach/                 # macOS App
 │   ├── TeacherCoach/
 │   │   ├── App/                  # Entry point, AppState, ServiceContainer
@@ -215,7 +215,7 @@ When star ratings are enabled, each technique receives a 1-5 star rating:
 2. Create a new project or select existing
 3. Enable Google Sign-In API
 4. Create OAuth 2.0 credentials (macOS application)
-5. Set authorized redirect URI: `com.peninsula.teachercoach:/oauth2callback`
+5. Set authorized redirect URI: `com.peninsula.lessonlens:/oauth2callback`
 6. Note the Client ID
 
 ### 2. Deploy Backend (Cloud Run)
@@ -231,7 +231,7 @@ bun install
 # - ALLOWED_DOMAIN (e.g., psd401.net)
 
 # Deploy
-gcloud run deploy teacher-coach-api --source .
+gcloud run deploy lessonlens-api --source .
 ```
 
 ### 3. Build macOS App

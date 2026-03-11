@@ -1,0 +1,351 @@
+import SwiftUI
+import SwiftData
+
+/// Print-optimized view for PDF export
+/// Simplified version of AnalysisFeedbackView without interactive elements
+struct ExportableAnalysisView: View {
+    let analysis: Analysis
+    let recording: Recording
+    let configuration: ExportConfiguration
+
+    // Letter-size paper dimensions in points (8.5 x 11 inches)
+    static let pageWidth: CGFloat = 612
+    static let pageHeight: CGFloat = 792
+    static let margin: CGFloat = 36
+
+    private var selectedTechniques: [TechniqueEvaluation] {
+        (analysis.techniqueEvaluations ?? []).filter { configuration.includedTechniqueIds.contains($0.id) }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // Header
+            headerSection
+
+            Divider()
+
+            // Summary
+            if configuration.includeSummary {
+                summarySection
+            }
+
+            // Strengths and Growth Areas
+            if configuration.includeStrengths || configuration.includeGrowthAreas {
+                HStack(alignment: .top, spacing: 16) {
+                    if configuration.includeStrengths {
+                        strengthsSection
+                    }
+                    if configuration.includeGrowthAreas {
+                        growthAreasSection
+                    }
+                }
+            }
+
+            // Technique Evaluations
+            if !selectedTechniques.isEmpty {
+                techniquesSection
+            }
+
+            // Next Steps
+            if configuration.includeNextSteps {
+                nextStepsSection
+            }
+
+            Spacer(minLength: 0)
+        }
+        .padding(Self.margin)
+        .frame(width: Self.pageWidth, alignment: .topLeading)
+        .background(Color.white)
+    }
+
+    // MARK: - Header Section
+
+    private var headerSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(recording.title)
+                .font(PSDFonts.title)
+                .foregroundStyle(Color.psdPacific)
+
+            HStack(spacing: 16) {
+                Label(recording.formattedDuration, systemImage: "clock")
+                Label {
+                    Text(recording.createdAt, format: .dateTime.month().day().year())
+                } icon: {
+                    Image(systemName: "calendar")
+                }
+            }
+            .font(.subheadline)
+            .foregroundStyle(.gray)
+        }
+    }
+
+    // MARK: - Summary Section
+
+    private var summarySection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label("Summary", systemImage: "doc.text")
+                .font(PSDFonts.headline)
+                .foregroundStyle(Color.psdPacific)
+
+            Text(analysis.overallSummary)
+                .font(.body)
+                .foregroundStyle(.black)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.psdSeaFoam)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+
+    // MARK: - Strengths Section
+
+    private var strengthsSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label("Strengths", systemImage: "star.fill")
+                .font(PSDFonts.headline)
+                .foregroundStyle(PSDTheme.strength)
+
+            ForEach(analysis.strengths, id: \.self) { strength in
+                HStack(alignment: .top, spacing: 8) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(PSDTheme.strength)
+                        .font(.caption)
+
+                    Text(strength)
+                        .font(.body)
+                        .foregroundStyle(.black)
+                }
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(PSDTheme.strength.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+
+    // MARK: - Growth Areas Section
+
+    private var growthAreasSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label("Growth Areas", systemImage: "arrow.up.right")
+                .font(PSDFonts.headline)
+                .foregroundStyle(PSDTheme.growth)
+
+            ForEach(analysis.growthAreas, id: \.self) { area in
+                HStack(alignment: .top, spacing: 8) {
+                    Image(systemName: "arrow.right.circle")
+                        .foregroundStyle(PSDTheme.growth)
+                        .font(.caption)
+
+                    Text(area)
+                        .font(.body)
+                        .foregroundStyle(.black)
+                }
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(PSDTheme.growth.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+
+    // MARK: - Techniques Section
+
+    private var techniquesSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label("Technique Feedback", systemImage: "list.bullet.clipboard")
+                .font(PSDFonts.headline)
+                .foregroundStyle(Color.psdPacific)
+
+            // Rating legend if ratings are included
+            if analysis.ratingsIncluded {
+                exportRatingLegend
+            }
+
+            ForEach(selectedTechniques) { technique in
+                techniqueCard(technique)
+            }
+        }
+    }
+
+    private var exportRatingLegend: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Rating Scale")
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .foregroundStyle(.black)
+
+            HStack(spacing: 8) {
+                ForEach(RatingLevel.allCases, id: \.rawValue) { level in
+                    VStack(alignment: .center, spacing: 4) {
+                        HStack(spacing: 1) {
+                            ForEach(1...5, id: \.self) { index in
+                                Image(systemName: index <= level.rawValue ? "star.fill" : "star")
+                                    .font(.system(size: 8))
+                                    .foregroundStyle(index <= level.rawValue ? level.swiftUIColor : .gray.opacity(0.3))
+                            }
+                        }
+
+                        Text(level.displayText)
+                            .font(.system(size: 9))
+                            .fontWeight(.medium)
+                            .foregroundStyle(level.swiftUIColor)
+
+                        Text(level.description)
+                            .font(.system(size: 7))
+                            .foregroundStyle(.gray)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: 95)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.psdSeaFoam)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+
+    private func techniqueCard(_ technique: TechniqueEvaluation) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            // Header
+            HStack {
+                Text(technique.techniqueName)
+                    .font(PSDFonts.headline)
+                    .foregroundStyle(Color.psdPacific)
+
+                Spacer()
+
+                if analysis.ratingsIncluded, let rating = technique.rating {
+                    exportRatingBadge(rating: rating)
+                }
+            }
+
+            if !technique.wasObserved {
+                Text("Not observed")
+                    .font(.caption)
+                    .foregroundStyle(.gray)
+            }
+
+            // Feedback
+            Text(technique.feedback)
+                .font(.body)
+                .foregroundStyle(.black)
+
+            // Evidence
+            if !technique.evidence.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Evidence")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.black)
+
+                    ForEach(technique.evidence, id: \.self) { item in
+                        Text("\"\(item)\"")
+                            .font(.callout)
+                            .italic()
+                            .foregroundStyle(.gray)
+                            .padding(.leading, 8)
+                    }
+                }
+            }
+
+            // Suggestions
+            if !technique.suggestions.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Suggestions")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.black)
+
+                    ForEach(technique.suggestions, id: \.self) { suggestion in
+                        HStack(alignment: .top, spacing: 8) {
+                            Image(systemName: "lightbulb")
+                                .foregroundStyle(.yellow)
+                                .font(.caption)
+
+                            Text(suggestion)
+                                .font(.callout)
+                                .foregroundStyle(.black)
+                        }
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(Color.psdSeaFoam)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+
+    private func exportRatingBadge(rating: Int) -> some View {
+        let color = PSDTheme.ratingColor(rating)
+        return HStack(spacing: 2) {
+            ForEach(1...5, id: \.self) { index in
+                Image(systemName: index <= rating ? "star.fill" : "star")
+                    .font(.caption2)
+                    .foregroundStyle(index <= rating ? color : .gray.opacity(0.3))
+            }
+        }
+        .padding(.horizontal, 6)
+        .padding(.vertical, 2)
+        .background(color.opacity(0.1))
+        .clipShape(Capsule())
+    }
+
+    // MARK: - Next Steps Section
+
+    private var nextStepsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label("Next Steps", systemImage: "arrow.right.circle.fill")
+                .font(PSDFonts.headline)
+                .foregroundStyle(PSDTheme.nextSteps)
+
+            ForEach(Array(analysis.actionableNextSteps.enumerated()), id: \.offset) { index, step in
+                HStack(alignment: .top, spacing: 12) {
+                    Text("\(index + 1)")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .frame(width: 20, height: 20)
+                        .background(PSDTheme.nextSteps)
+                        .foregroundStyle(.white)
+                        .clipShape(Circle())
+
+                    Text(step)
+                        .font(.body)
+                        .foregroundStyle(.black)
+                }
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(PSDTheme.nextSteps.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+#Preview {
+    let analysis = Analysis(
+        overallSummary: "This was an engaging math lesson with strong use of questioning techniques.",
+        modelUsed: "gemini-3-pro-preview",
+        strengths: ["Consistent use of wait time", "Effective positive framing"],
+        growthAreas: ["More higher-order questioning", "Add check for understanding"],
+        actionableNextSteps: ["Plan 2-3 higher-order questions", "Use exit tickets"]
+    )
+
+    let recording = Recording(
+        title: "Math Lesson",
+        duration: 1800,
+        audioFilePath: "test.m4a",
+        status: .complete
+    )
+
+    var config = ExportConfiguration()
+    config.includedTechniqueIds = []
+
+    return ExportableAnalysisView(
+        analysis: analysis,
+        recording: recording,
+        configuration: config
+    )
+}

@@ -1,0 +1,814 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 70;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0001 /* LessonLensApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1001 /* LessonLensApp.swift */; };
+		0002 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1002 /* AppState.swift */; };
+		0003 /* ServiceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1003 /* ServiceContainer.swift */; };
+		0004 /* Recording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1004 /* Recording.swift */; };
+		0005 /* Transcript.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1005 /* Transcript.swift */; };
+		0006 /* Analysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1006 /* Analysis.swift */; };
+		0007 /* TechniqueEvaluation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1007 /* TechniqueEvaluation.swift */; };
+		0008 /* Technique.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1008 /* Technique.swift */; };
+		0009 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1009 /* UserSettings.swift */; };
+		0010 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1010 /* KeychainService.swift */; };
+		0011 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1011 /* ContentView.swift */; };
+		0012 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1012 /* AuthService.swift */; };
+		0013 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1013 /* LoginView.swift */; };
+		0014 /* RecordingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1014 /* RecordingService.swift */; };
+		0015 /* NewRecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1015 /* NewRecordingView.swift */; };
+		0016 /* RecordingDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1016 /* RecordingDetailView.swift */; };
+		0017 /* TranscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1017 /* TranscriptionService.swift */; };
+		0018 /* AnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1018 /* AnalysisService.swift */; };
+		0019 /* AnalysisFeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1019 /* AnalysisFeedbackView.swift */; };
+		0020 /* TechniqueService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1020 /* TechniqueService.swift */; };
+		0021 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1021 /* SettingsView.swift */; };
+		0025 /* AudioImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1024 /* AudioImportService.swift */; };
+		0026 /* TeachingFramework.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1025 /* TeachingFramework.swift */; };
+		0027 /* FrameworkRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1026 /* FrameworkRegistry.swift */; };
+		0028 /* TLACTechniques.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1027 /* TLACTechniques.swift */; };
+		0029 /* DanielsonTechniques.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1028 /* DanielsonTechniques.swift */; };
+		0037 /* RosenshineTechniques.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1036 /* RosenshineTechniques.swift */; };
+		0038 /* AVIDTechniques.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1037 /* AVIDTechniques.swift */; };
+		0039 /* NationalBoardTechniques.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1038 /* NationalBoardTechniques.swift */; };
+		0045 /* PSDEssentialsTechniques.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1045 /* PSDEssentialsTechniques.swift */; };
+		0030 /* FrameworkSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1029 /* FrameworkSelectionView.swift */; };
+		0031 /* TechniqueChecklistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1030 /* TechniqueChecklistView.swift */; };
+		0032 /* AnalysisConfigurationSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1031 /* AnalysisConfigurationSheet.swift */; };
+		0033 /* ExportConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1032 /* ExportConfiguration.swift */; };
+		0034 /* ExportConfigurationSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1033 /* ExportConfigurationSheet.swift */; };
+		0035 /* ExportableAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1034 /* ExportableAnalysisView.swift */; };
+		0036 /* ExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1035 /* ExportService.swift */; };
+		8166 /* PDFLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6351 /* PDFLayout.swift */; };
+		6333 /* PDFContentBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6745 /* PDFContentBlock.swift */; };
+		8105 /* PDFBlockViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7815 /* PDFBlockViews.swift */; };
+		6024 /* PDFBlockMeasurer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9252 /* PDFBlockMeasurer.swift */; };
+		6834 /* PDFPagePacker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8581 /* PDFPagePacker.swift */; };
+		8630 /* PDFPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8657 /* PDFPageView.swift */; };
+		0040 /* VideoImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1040 /* VideoImportService.swift */; };
+		0041 /* VideoAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1041 /* VideoAnalysisService.swift */; };
+		0042 /* AudioExtractionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1042 /* AudioExtractionService.swift */; };
+		0043 /* VideoImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1043 /* VideoImportView.swift */; };
+		0044 /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1044 /* VideoPlayerView.swift */; };
+		0046 /* PSDColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1046 /* PSDColors.swift */; };
+		0047 /* PSDTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1047 /* PSDTheme.swift */; };
+		0048 /* PSDTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1048 /* PSDTypography.swift */; };
+		0049 /* PSDViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1049 /* PSDViewModifiers.swift */; };
+		0054 /* Reflection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1054 /* Reflection.swift */; };
+		0055 /* ChatSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1055 /* ChatSession.swift */; };
+		0056 /* SelfRatingPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1056 /* SelfRatingPicker.swift */; };
+		0057 /* ReflectionFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1057 /* ReflectionFlowView.swift */; };
+		0058 /* ReflectionComparisonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1058 /* ReflectionComparisonView.swift */; };
+		0059 /* ChatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1059 /* ChatService.swift */; };
+		0060 /* ChatPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1060 /* ChatPanelView.swift */; };
+		0061 /* ChatMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1061 /* ChatMessageView.swift */; };
+		0062 /* ChatListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1062 /* ChatListView.swift */; };
+		0063 /* GrowthDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1063 /* GrowthDashboardView.swift */; };
+		0050 /* JosefinSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1050 /* JosefinSans-Bold.ttf */; };
+		0051 /* JosefinSlab-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1051 /* JosefinSlab-Regular.ttf */; };
+		0052 /* JosefinSlab-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1052 /* JosefinSlab-Bold.ttf */; };
+		0053 /* psd-logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 1053 /* psd-logo.png */; };
+		0064 /* lessonlens-logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 1064 /* lessonlens-logo.png */; };
+		0065 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1065 /* Assets.xcassets */; };
+		0022 /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3001 /* WhisperKit */; };
+		0024 /* Models in Resources */ = {isa = PBXBuildFile; fileRef = 29C274B02F1C7E6D00B3F6F3 /* Models */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1001 /* LessonLensApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonLensApp.swift; sourceTree = "<group>"; };
+		1002 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		1003 /* ServiceContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceContainer.swift; sourceTree = "<group>"; };
+		1004 /* Recording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recording.swift; sourceTree = "<group>"; };
+		1005 /* Transcript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transcript.swift; sourceTree = "<group>"; };
+		1006 /* Analysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analysis.swift; sourceTree = "<group>"; };
+		1007 /* TechniqueEvaluation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TechniqueEvaluation.swift; sourceTree = "<group>"; };
+		1008 /* Technique.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Technique.swift; sourceTree = "<group>"; };
+		1009 /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
+		1010 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		1011 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		1012 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		1013 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		1014 /* RecordingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingService.swift; sourceTree = "<group>"; };
+		1015 /* NewRecordingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewRecordingView.swift; sourceTree = "<group>"; };
+		1016 /* RecordingDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingDetailView.swift; sourceTree = "<group>"; };
+		1017 /* TranscriptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionService.swift; sourceTree = "<group>"; };
+		1018 /* AnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisService.swift; sourceTree = "<group>"; };
+		1019 /* AnalysisFeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisFeedbackView.swift; sourceTree = "<group>"; };
+		1020 /* TechniqueService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TechniqueService.swift; sourceTree = "<group>"; };
+		1021 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		1024 /* AudioImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioImportService.swift; sourceTree = "<group>"; };
+		1022 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1023 /* LessonLens.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LessonLens.entitlements; sourceTree = "<group>"; };
+		1025 /* TeachingFramework.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeachingFramework.swift; sourceTree = "<group>"; };
+		1026 /* FrameworkRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameworkRegistry.swift; sourceTree = "<group>"; };
+		1027 /* TLACTechniques.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLACTechniques.swift; sourceTree = "<group>"; };
+		1028 /* DanielsonTechniques.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DanielsonTechniques.swift; sourceTree = "<group>"; };
+		1036 /* RosenshineTechniques.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RosenshineTechniques.swift; sourceTree = "<group>"; };
+		1037 /* AVIDTechniques.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVIDTechniques.swift; sourceTree = "<group>"; };
+		1038 /* NationalBoardTechniques.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NationalBoardTechniques.swift; sourceTree = "<group>"; };
+		1045 /* PSDEssentialsTechniques.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PSDEssentialsTechniques.swift; sourceTree = "<group>"; };
+		1029 /* FrameworkSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameworkSelectionView.swift; sourceTree = "<group>"; };
+		1030 /* TechniqueChecklistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TechniqueChecklistView.swift; sourceTree = "<group>"; };
+		1031 /* AnalysisConfigurationSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisConfigurationSheet.swift; sourceTree = "<group>"; };
+		1032 /* ExportConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportConfiguration.swift; sourceTree = "<group>"; };
+		1033 /* ExportConfigurationSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportConfigurationSheet.swift; sourceTree = "<group>"; };
+		1034 /* ExportableAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportableAnalysisView.swift; sourceTree = "<group>"; };
+		1035 /* ExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportService.swift; sourceTree = "<group>"; };
+		6351 /* PDFLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFLayout.swift; sourceTree = "<group>"; };
+		6745 /* PDFContentBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFContentBlock.swift; sourceTree = "<group>"; };
+		7815 /* PDFBlockViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFBlockViews.swift; sourceTree = "<group>"; };
+		9252 /* PDFBlockMeasurer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFBlockMeasurer.swift; sourceTree = "<group>"; };
+		8581 /* PDFPagePacker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFPagePacker.swift; sourceTree = "<group>"; };
+		8657 /* PDFPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFPageView.swift; sourceTree = "<group>"; };
+		1040 /* VideoImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoImportService.swift; sourceTree = "<group>"; };
+		1041 /* VideoAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAnalysisService.swift; sourceTree = "<group>"; };
+		1042 /* AudioExtractionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioExtractionService.swift; sourceTree = "<group>"; };
+		1043 /* VideoImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoImportView.swift; sourceTree = "<group>"; };
+		1044 /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
+		1046 /* PSDColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PSDColors.swift; sourceTree = "<group>"; };
+		1047 /* PSDTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PSDTheme.swift; sourceTree = "<group>"; };
+		1048 /* PSDTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PSDTypography.swift; sourceTree = "<group>"; };
+		1049 /* PSDViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PSDViewModifiers.swift; sourceTree = "<group>"; };
+		1050 /* JosefinSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JosefinSans-Bold.ttf"; sourceTree = "<group>"; };
+		1051 /* JosefinSlab-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JosefinSlab-Regular.ttf"; sourceTree = "<group>"; };
+		1052 /* JosefinSlab-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JosefinSlab-Bold.ttf"; sourceTree = "<group>"; };
+		1053 /* psd-logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "psd-logo.png"; sourceTree = "<group>"; };
+		1064 /* lessonlens-logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "lessonlens-logo.png"; sourceTree = "<group>"; };
+		1065 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1054 /* Reflection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reflection.swift; sourceTree = "<group>"; };
+		1055 /* ChatSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSession.swift; sourceTree = "<group>"; };
+		1056 /* SelfRatingPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfRatingPicker.swift; sourceTree = "<group>"; };
+		1057 /* ReflectionFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReflectionFlowView.swift; sourceTree = "<group>"; };
+		1058 /* ReflectionComparisonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReflectionComparisonView.swift; sourceTree = "<group>"; };
+		1059 /* ChatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatService.swift; sourceTree = "<group>"; };
+		1060 /* ChatPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPanelView.swift; sourceTree = "<group>"; };
+		1061 /* ChatMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageView.swift; sourceTree = "<group>"; };
+		1062 /* ChatListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListView.swift; sourceTree = "<group>"; };
+		1063 /* GrowthDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthDashboardView.swift; sourceTree = "<group>"; };
+		2001 /* LessonLens.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LessonLens.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		29C274B02F1C7E6D00B3F6F3 /* Models */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Models; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0022 /* WhisperKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5001 = {
+			isa = PBXGroup;
+			children = (
+				5002 /* LessonLens */,
+				5003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5002 /* LessonLens */ = {
+			isa = PBXGroup;
+			children = (
+				5004 /* App */,
+				5005 /* Features */,
+				5006 /* Core */,
+				5007 /* Resources */,
+			);
+			path = LessonLens;
+			sourceTree = "<group>";
+		};
+		5003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2001 /* LessonLens.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5004 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				1001 /* LessonLensApp.swift */,
+				1002 /* AppState.swift */,
+				1003 /* ServiceContainer.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		5005 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				5008 /* Authentication */,
+				5009 /* Recording */,
+				5010 /* Transcription */,
+				5011 /* Analysis */,
+				5012 /* Techniques */,
+				5013 /* Settings */,
+				5019 /* Export */,
+				5022 /* Reflection */,
+				5023 /* Chat */,
+				5024 /* Growth */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		5006 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				5014 /* Models */,
+				5015 /* Views */,
+				5016 /* Services */,
+				5020 /* Theme */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		5007 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1065 /* Assets.xcassets */,
+				29C274B02F1C7E6D00B3F6F3 /* Models */,
+				5021 /* Fonts */,
+				1053 /* psd-logo.png */,
+				1064 /* lessonlens-logo.png */,
+				1022 /* Info.plist */,
+				1023 /* LessonLens.entitlements */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		5008 /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				1012 /* AuthService.swift */,
+				1013 /* LoginView.swift */,
+			);
+			path = Authentication;
+			sourceTree = "<group>";
+		};
+		5009 /* Recording */ = {
+			isa = PBXGroup;
+			children = (
+				1014 /* RecordingService.swift */,
+				1024 /* AudioImportService.swift */,
+				1040 /* VideoImportService.swift */,
+				1042 /* AudioExtractionService.swift */,
+				1015 /* NewRecordingView.swift */,
+				1016 /* RecordingDetailView.swift */,
+				1043 /* VideoImportView.swift */,
+				1044 /* VideoPlayerView.swift */,
+			);
+			path = Recording;
+			sourceTree = "<group>";
+		};
+		5010 /* Transcription */ = {
+			isa = PBXGroup;
+			children = (
+				1017 /* TranscriptionService.swift */,
+			);
+			path = Transcription;
+			sourceTree = "<group>";
+		};
+		5011 /* Analysis */ = {
+			isa = PBXGroup;
+			children = (
+				1018 /* AnalysisService.swift */,
+				1041 /* VideoAnalysisService.swift */,
+				1019 /* AnalysisFeedbackView.swift */,
+				1031 /* AnalysisConfigurationSheet.swift */,
+			);
+			path = Analysis;
+			sourceTree = "<group>";
+		};
+		5012 /* Techniques */ = {
+			isa = PBXGroup;
+			children = (
+				1020 /* TechniqueService.swift */,
+				1026 /* FrameworkRegistry.swift */,
+				5017 /* Frameworks */,
+				5018 /* Views */,
+			);
+			path = Techniques;
+			sourceTree = "<group>";
+		};
+		5017 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1027 /* TLACTechniques.swift */,
+				1028 /* DanielsonTechniques.swift */,
+				1036 /* RosenshineTechniques.swift */,
+				1037 /* AVIDTechniques.swift */,
+				1038 /* NationalBoardTechniques.swift */,
+				1045 /* PSDEssentialsTechniques.swift */,
+			);
+			path = Frameworks;
+			sourceTree = "<group>";
+		};
+		5018 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1029 /* FrameworkSelectionView.swift */,
+				1030 /* TechniqueChecklistView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		5013 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				1021 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		5019 /* Export */ = {
+			isa = PBXGroup;
+			children = (
+				1032 /* ExportConfiguration.swift */,
+				1033 /* ExportConfigurationSheet.swift */,
+				1034 /* ExportableAnalysisView.swift */,
+				1035 /* ExportService.swift */,
+				7472 /* PDF */,
+			);
+			path = Export;
+			sourceTree = "<group>";
+		};
+		7472 /* PDF */ = {
+			isa = PBXGroup;
+			children = (
+				6351 /* PDFLayout.swift */,
+				6745 /* PDFContentBlock.swift */,
+				7815 /* PDFBlockViews.swift */,
+				9252 /* PDFBlockMeasurer.swift */,
+				8581 /* PDFPagePacker.swift */,
+				8657 /* PDFPageView.swift */,
+			);
+			path = PDF;
+			sourceTree = "<group>";
+		};
+
+		5014 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				1004 /* Recording.swift */,
+				1005 /* Transcript.swift */,
+				1006 /* Analysis.swift */,
+				1007 /* TechniqueEvaluation.swift */,
+				1008 /* Technique.swift */,
+				1009 /* UserSettings.swift */,
+				1025 /* TeachingFramework.swift */,
+				1054 /* Reflection.swift */,
+				1055 /* ChatSession.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		5015 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1011 /* ContentView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		5016 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				1010 /* KeychainService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		5020 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				1046 /* PSDColors.swift */,
+				1047 /* PSDTheme.swift */,
+				1048 /* PSDTypography.swift */,
+				1049 /* PSDViewModifiers.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		5021 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				1050 /* JosefinSans-Bold.ttf */,
+				1051 /* JosefinSlab-Regular.ttf */,
+				1052 /* JosefinSlab-Bold.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		5022 /* Reflection */ = {
+			isa = PBXGroup;
+			children = (
+				1056 /* SelfRatingPicker.swift */,
+				1057 /* ReflectionFlowView.swift */,
+				1058 /* ReflectionComparisonView.swift */,
+			);
+			path = Reflection;
+			sourceTree = "<group>";
+		};
+		5023 /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				1059 /* ChatService.swift */,
+				1060 /* ChatPanelView.swift */,
+				1061 /* ChatMessageView.swift */,
+				1062 /* ChatListView.swift */,
+			);
+			path = Chat;
+			sourceTree = "<group>";
+		};
+		5024 /* Growth */ = {
+			isa = PBXGroup;
+			children = (
+				1063 /* GrowthDashboardView.swift */,
+			);
+			path = Growth;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6001 /* LessonLens */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7001 /* Build configuration list for PBXNativeTarget "LessonLens" */;
+			buildPhases = (
+				6002 /* Sources */,
+				4001 /* Frameworks */,
+				6003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				29C274B02F1C7E6D00B3F6F3 /* Models */,
+			);
+			name = LessonLens;
+			packageProductDependencies = (
+				3001 /* WhisperKit */,
+			);
+			productName = LessonLens;
+			productReference = 2001 /* LessonLens.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1520;
+				LastUpgradeCheck = 1520;
+				TargetAttributes = {
+					6001 = {
+						CreatedOnToolsVersion = 15.2;
+					};
+				};
+			};
+			buildConfigurationList = 7002 /* Build configuration list for PBXProject "LessonLens" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5001;
+			packageReferences = (
+				9001 /* XCRemoteSwiftPackageReference "WhisperKit" */,
+			);
+			productRefGroup = 5003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6001 /* LessonLens */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0024 /* Models in Resources */,
+				0050 /* JosefinSans-Bold.ttf in Resources */,
+				0051 /* JosefinSlab-Regular.ttf in Resources */,
+				0052 /* JosefinSlab-Bold.ttf in Resources */,
+				0053 /* psd-logo.png in Resources */,
+				0064 /* lessonlens-logo.png in Resources */,
+				0065 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0001 /* LessonLensApp.swift in Sources */,
+				0002 /* AppState.swift in Sources */,
+				0003 /* ServiceContainer.swift in Sources */,
+				0004 /* Recording.swift in Sources */,
+				0005 /* Transcript.swift in Sources */,
+				0006 /* Analysis.swift in Sources */,
+				0007 /* TechniqueEvaluation.swift in Sources */,
+				0008 /* Technique.swift in Sources */,
+				0009 /* UserSettings.swift in Sources */,
+				0010 /* KeychainService.swift in Sources */,
+				0011 /* ContentView.swift in Sources */,
+				0012 /* AuthService.swift in Sources */,
+				0013 /* LoginView.swift in Sources */,
+				0014 /* RecordingService.swift in Sources */,
+				0015 /* NewRecordingView.swift in Sources */,
+				0016 /* RecordingDetailView.swift in Sources */,
+				0017 /* TranscriptionService.swift in Sources */,
+				0018 /* AnalysisService.swift in Sources */,
+				0019 /* AnalysisFeedbackView.swift in Sources */,
+				0020 /* TechniqueService.swift in Sources */,
+				0021 /* SettingsView.swift in Sources */,
+				0025 /* AudioImportService.swift in Sources */,
+				0026 /* TeachingFramework.swift in Sources */,
+				0027 /* FrameworkRegistry.swift in Sources */,
+				0028 /* TLACTechniques.swift in Sources */,
+				0029 /* DanielsonTechniques.swift in Sources */,
+				0037 /* RosenshineTechniques.swift in Sources */,
+				0038 /* AVIDTechniques.swift in Sources */,
+				0039 /* NationalBoardTechniques.swift in Sources */,
+				0045 /* PSDEssentialsTechniques.swift in Sources */,
+				0030 /* FrameworkSelectionView.swift in Sources */,
+				0031 /* TechniqueChecklistView.swift in Sources */,
+				0032 /* AnalysisConfigurationSheet.swift in Sources */,
+				0033 /* ExportConfiguration.swift in Sources */,
+				0034 /* ExportConfigurationSheet.swift in Sources */,
+				0035 /* ExportableAnalysisView.swift in Sources */,
+				0036 /* ExportService.swift in Sources */,
+				8166 /* PDFLayout.swift in Sources */,
+				6333 /* PDFContentBlock.swift in Sources */,
+				8105 /* PDFBlockViews.swift in Sources */,
+				6024 /* PDFBlockMeasurer.swift in Sources */,
+				6834 /* PDFPagePacker.swift in Sources */,
+				8630 /* PDFPageView.swift in Sources */,
+				0040 /* VideoImportService.swift in Sources */,
+				0041 /* VideoAnalysisService.swift in Sources */,
+				0042 /* AudioExtractionService.swift in Sources */,
+				0043 /* VideoImportView.swift in Sources */,
+				0044 /* VideoPlayerView.swift in Sources */,
+				0046 /* PSDColors.swift in Sources */,
+				0047 /* PSDTheme.swift in Sources */,
+				0048 /* PSDTypography.swift in Sources */,
+				0049 /* PSDViewModifiers.swift in Sources */,
+				0054 /* Reflection.swift in Sources */,
+				0055 /* ChatSession.swift in Sources */,
+				0056 /* SelfRatingPicker.swift in Sources */,
+				0057 /* ReflectionFlowView.swift in Sources */,
+				0058 /* ReflectionComparisonView.swift in Sources */,
+				0059 /* ChatService.swift in Sources */,
+				0060 /* ChatPanelView.swift in Sources */,
+				0061 /* ChatMessageView.swift in Sources */,
+				0062 /* ChatListView.swift in Sources */,
+				0063 /* GrowthDashboardView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		8002 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		8003 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		8004 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = LessonLens/Resources/LessonLens.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LessonLens/Resources/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Peninsula School District. All rights reserved.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "LessonLens needs access to your microphone to record teaching sessions for feedback analysis.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.peninsula.lessonlens;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		8005 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = LessonLens/Resources/LessonLens.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LessonLens/Resources/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Peninsula School District. All rights reserved.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "LessonLens needs access to your microphone to record teaching sessions for feedback analysis.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.peninsula.lessonlens;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7001 /* Build configuration list for PBXNativeTarget "LessonLens" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8004 /* Debug */,
+				8005 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7002 /* Build configuration list for PBXProject "LessonLens" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8002 /* Debug */,
+				8003 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9001 /* XCRemoteSwiftPackageReference "WhisperKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/argmaxinc/WhisperKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3001 /* WhisperKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9001 /* XCRemoteSwiftPackageReference "WhisperKit" */;
+			productName = WhisperKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 8001 /* Project object */;
+}

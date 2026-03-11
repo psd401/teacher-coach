@@ -104,7 +104,7 @@ app.use('*', async (c, next) => {
 // Health check
 app.get('/', (c) => {
   return c.json({
-    name: 'Teacher Coach API',
+    name: 'LessonLens API',
     version: '1.0.0',
     status: 'healthy',
     runtime: 'Cloud Run'

@@ -1,6 +1,6 @@
-# Teacher Coach API (Cloud Run)
+# LessonLens API (Cloud Run)
 
-Backend API for Teacher Coach macOS app. Handles authentication, text analysis, and video analysis via Gemini.
+Backend API for LessonLens macOS app. Handles authentication, text analysis, and video analysis via Gemini.
 
 ## Stack
 
@@ -62,14 +62,14 @@ gcloud auth login
 gcloud config set project YOUR_PROJECT_ID
 
 # Deploy
-gcloud run deploy teacher-coach-api \
+gcloud run deploy lessonlens-api \
   --source . \
   --region us-central1 \
   --allow-unauthenticated \
   --set-env-vars="ALLOWED_DOMAIN=psd401.net"
 
 # Set secrets (recommended for API keys)
-gcloud run services update teacher-coach-api \
+gcloud run services update lessonlens-api \
   --set-secrets="GEMINI_API_KEY=gemini-api-key:latest,JWT_SECRET=jwt-secret:latest,GOOGLE_CLIENT_ID=google-client-id:latest"
 ```
 
