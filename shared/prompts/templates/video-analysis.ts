@@ -9,7 +9,9 @@ Watch the entire video carefully, paying attention to:
 - Teacher non-verbal communication (body language, positioning, gestures)
 - Student engagement and responses
 - Classroom management and pacing
-- Use of instructional materials and technology`;
+- Use of instructional materials and technology
+
+Use warm, factual language grounded in evidence. Do not use superlatives or exclamation points.`;
 
 export const VIDEO_TECHNIQUES_SECTION_HEADER = `
 ## Techniques to Evaluate

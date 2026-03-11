@@ -108,7 +108,7 @@ struct PDFStrengthsGrowthView: View {
 
     private var growthAreasSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("Growth Areas", systemImage: "arrow.up.right")
+            Label("Potential Growth Areas", systemImage: "arrow.up.right")
                 .font(PSDFonts.headline)
                 .foregroundStyle(PSDTheme.growth)
 
@@ -263,6 +263,10 @@ struct PDFTechniqueCardView: View {
         .padding(.horizontal, 6)
         .padding(.vertical, 2)
         .background(color.opacity(0.1))
+        .overlay(
+            Capsule()
+                .stroke(color.opacity(0.6), lineWidth: PSDTheme.ratingNeedsBorder(rating) ? 1.5 : 0)
+        )
         .clipShape(Capsule())
     }
 }
@@ -450,7 +454,7 @@ struct PDFNextStepsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Label("Next Steps", systemImage: "arrow.right.circle.fill")
+            Label("Next Steps to Consider", systemImage: "arrow.right.circle.fill")
                 .font(PSDFonts.headline)
                 .foregroundStyle(PSDTheme.nextSteps)
 

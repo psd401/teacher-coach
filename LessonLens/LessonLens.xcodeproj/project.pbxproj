@@ -77,6 +77,8 @@
 		8105 /* PDFBlockViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7815 /* PDFBlockViews.swift */; };
 		8166 /* PDFLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6351 /* PDFLayout.swift */; };
 		8630 /* PDFPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8657 /* PDFPageView.swift */; };
+		8700 /* BehaviorSupportTechniques.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9300 /* BehaviorSupportTechniques.swift */; };
+		8701 /* FrameworkExplorerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9301 /* FrameworkExplorerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -151,6 +153,8 @@
 		8581 /* PDFPagePacker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFPagePacker.swift; sourceTree = "<group>"; };
 		8657 /* PDFPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFPageView.swift; sourceTree = "<group>"; };
 		9252 /* PDFBlockMeasurer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFBlockMeasurer.swift; sourceTree = "<group>"; };
+		9300 /* BehaviorSupportTechniques.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BehaviorSupportTechniques.swift; sourceTree = "<group>"; };
+		9301 /* FrameworkExplorerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameworkExplorerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -351,6 +355,7 @@
 				1037 /* AVIDTechniques.swift */,
 				1038 /* NationalBoardTechniques.swift */,
 				1045 /* PSDEssentialsTechniques.swift */,
+				9300 /* BehaviorSupportTechniques.swift */,
 			);
 			path = Frameworks;
 			sourceTree = "<group>";
@@ -359,6 +364,7 @@
 			isa = PBXGroup;
 			children = (
 				1029 /* FrameworkSelectionView.swift */,
+				9301 /* FrameworkExplorerView.swift */,
 				1030 /* TechniqueChecklistView.swift */,
 			);
 			path = Views;
@@ -553,7 +559,9 @@
 				0038 /* AVIDTechniques.swift in Sources */,
 				0039 /* NationalBoardTechniques.swift in Sources */,
 				0045 /* PSDEssentialsTechniques.swift in Sources */,
+				8700 /* BehaviorSupportTechniques.swift in Sources */,
 				0030 /* FrameworkSelectionView.swift in Sources */,
+				8701 /* FrameworkExplorerView.swift in Sources */,
 				0031 /* TechniqueChecklistView.swift in Sources */,
 				0032 /* AnalysisConfigurationSheet.swift in Sources */,
 				0033 /* ExportConfiguration.swift in Sources */,

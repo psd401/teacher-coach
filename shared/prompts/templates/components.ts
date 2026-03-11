@@ -8,7 +8,7 @@ export const RATING_SCALE = `
 2 - Emerging: Beginning to implement technique with inconsistent results
 3 - Proficient: Solid implementation of technique with room for refinement
 4 - Accomplished: Effective and consistent use of technique
-5 - Exemplary: Masterful implementation that could serve as a model
+5 - Exemplary: Strong, consistent implementation that could serve as a model
 `;
 
 export const RESPONSE_SCHEMA_WITH_RATINGS = `
@@ -60,6 +60,7 @@ export const GUIDELINES_BASE = `
 - Balance recognition of strengths with constructive suggestions
 {{ratingGuideline}}
 - Focus on patterns rather than isolated instances
+- Use warm, factual language grounded in evidence. Avoid superlatives (masterful, wonderful, amazing, incredible, fantastic, outstanding, brilliant, exceptional, perfect, extraordinary). Do not use exclamation points.
 
 Respond ONLY with the JSON object, no additional text.`;
 
@@ -73,6 +74,7 @@ export const GUIDELINES_VIDEO_BASE = `
 - Balance recognition of strengths with constructive suggestions
 {{ratingGuideline}}
 - Focus on patterns rather than isolated instances
+- Use warm, factual language grounded in evidence. Avoid superlatives (masterful, wonderful, amazing, incredible, fantastic, outstanding, brilliant, exceptional, perfect, extraordinary). Do not use exclamation points.
 
 Respond ONLY with the JSON object, no additional text.`;
 

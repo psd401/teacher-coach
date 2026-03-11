@@ -17,6 +17,8 @@ struct FrameworkRegistry {
             return NationalBoardTechniques.createTechniques()
         case .psdEssentials:
             return PSDEssentialsTechniques.createTechniques()
+        case .behaviorSupport:
+            return BehaviorSupportTechniques.createTechniques()
         }
     }
 

@@ -46,6 +46,7 @@ struct MainView: View {
     @State private var showingFileImporter = false
     @State private var showingVideoImporter = false
     @State private var showingGrowthDashboard = false
+    @State private var showingFrameworkExplorer = false
 
     var body: some View {
         NavigationSplitView {
@@ -53,11 +54,14 @@ struct MainView: View {
                 recordings: recordings,
                 selectedRecording: $selectedRecording,
                 showingNewRecording: $showingNewRecording,
-                showingGrowthDashboard: $showingGrowthDashboard
+                showingGrowthDashboard: $showingGrowthDashboard,
+                showingFrameworkExplorer: $showingFrameworkExplorer
             )
         } detail: {
             if let recording = selectedRecording {
                 RecordingDetailView(recording: recording)
+            } else if showingFrameworkExplorer {
+                FrameworkExplorerView()
             } else if showingGrowthDashboard {
                 GrowthDashboardView()
             } else if showingNewRecording {
@@ -117,6 +121,7 @@ struct MainView: View {
         .onChange(of: selectedRecording) { _, newValue in
             if newValue != nil {
                 showingGrowthDashboard = false
+                showingFrameworkExplorer = false
             }
         }
     }
@@ -150,6 +155,7 @@ struct SidebarView: View {
     @Binding var selectedRecording: Recording?
     @Binding var showingNewRecording: Bool
     @Binding var showingGrowthDashboard: Bool
+    @Binding var showingFrameworkExplorer: Bool
 
     @EnvironmentObject private var appState: AppState
     @Environment(\.modelContext) private var modelContext
@@ -164,6 +170,7 @@ struct SidebarView: View {
                 selectedRecording = nil
                 showingNewRecording = false
                 showingGrowthDashboard = false
+                showingFrameworkExplorer = false
             } label: {
                 Label("Home", systemImage: "house")
                     .font(PSDFonts.headline)
@@ -175,9 +182,23 @@ struct SidebarView: View {
             Button {
                 selectedRecording = nil
                 showingNewRecording = false
+                showingFrameworkExplorer = false
                 showingGrowthDashboard = true
             } label: {
                 Label("Growth", systemImage: "chart.line.uptrend.xyaxis")
+                    .font(PSDFonts.headline)
+            }
+            .buttonStyle(.plain)
+            .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+
+            // Frameworks button
+            Button {
+                selectedRecording = nil
+                showingNewRecording = false
+                showingGrowthDashboard = false
+                showingFrameworkExplorer = true
+            } label: {
+                Label("Frameworks", systemImage: "book.pages")
                     .font(PSDFonts.headline)
             }
             .buttonStyle(.plain)

@@ -203,7 +203,7 @@ final class AnalysisService: ObservableObject {
         2 - Emerging: Beginning to implement technique with inconsistent results
         3 - Proficient: Solid implementation of technique with room for refinement
         4 - Accomplished: Effective and consistent use of technique
-        5 - Exemplary: Masterful implementation that could serve as a model
+        5 - Exemplary: Strong, consistent implementation that could serve as a model
 
         ## Guidelines
         - Be specific and cite evidence from the transcript

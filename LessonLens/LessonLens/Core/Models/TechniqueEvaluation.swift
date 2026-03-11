@@ -108,7 +108,7 @@ enum RatingLevel: Int, CaseIterable {
         case .accomplished:
             return "Effective and consistent use of technique"
         case .exemplary:
-            return "Masterful implementation that could serve as a model"
+            return "Strong, consistent implementation that could serve as a model"
         }
     }
 

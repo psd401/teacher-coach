@@ -125,7 +125,7 @@ struct GrowthAreasSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("Growth Areas", systemImage: "arrow.up.right")
+            Label("Potential Growth Areas", systemImage: "arrow.up.right")
                 .font(PSDFonts.headline)
                 .foregroundStyle(PSDTheme.growth)
 
@@ -236,6 +236,11 @@ struct RatingLegendItem: View {
                     .frame(maxWidth: 120)
             }
         }
+        .padding(4)
+        .overlay(
+            RoundedRectangle(cornerRadius: 6)
+                .stroke(level.swiftUIColor.opacity(0.5), lineWidth: PSDTheme.ratingNeedsBorder(level.rawValue) ? 1.5 : 0)
+        )
         .frame(maxWidth: .infinity)
     }
 }
@@ -354,6 +359,10 @@ struct RatingBadge: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
         .background(ratingColor.opacity(0.1))
+        .overlay(
+            Capsule()
+                .stroke(ratingColor.opacity(0.6), lineWidth: PSDTheme.ratingNeedsBorder(rating) ? 1.5 : 0)
+        )
         .clipShape(Capsule())
     }
 }
@@ -365,7 +374,7 @@ struct NextStepsSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Label("Next Steps", systemImage: "arrow.right.circle.fill")
+            Label("Next Steps to Consider", systemImage: "arrow.right.circle.fill")
                 .font(PSDFonts.headline)
                 .foregroundStyle(PSDTheme.nextSteps)
 

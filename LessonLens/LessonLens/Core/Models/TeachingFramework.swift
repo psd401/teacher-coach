@@ -8,6 +8,7 @@ enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
     case avid = "avid"
     case nationalBoard = "nationalBoard"
     case psdEssentials = "psdEssentials"
+    case behaviorSupport = "behaviorSupport"
 
     var id: String { rawValue }
 
@@ -25,6 +26,8 @@ enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
             return "National Board Standards"
         case .psdEssentials:
             return "PSD Instructional Essentials"
+        case .behaviorSupport:
+            return "Behavior Support Strategies"
         }
     }
 
@@ -42,6 +45,8 @@ enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
             return "NBPTS"
         case .psdEssentials:
             return "PSD"
+        case .behaviorSupport:
+            return "Behavior"
         }
     }
 
@@ -59,6 +64,27 @@ enum TeachingFramework: String, Codable, CaseIterable, Identifiable {
             return "National Board for Professional Teaching Standards' Five Core Propositions for accomplished teaching practice."
         case .psdEssentials:
             return "Peninsula School District's Tier 1 instructional practices supporting rigorous, inclusive, and future-focused learning."
+        case .behaviorSupport:
+            return "Focused on proactive and responsive strategies teachers can implement immediately to support student behavior and classroom management."
+        }
+    }
+
+    var learnMoreURL: URL? {
+        switch self {
+        case .tlac:
+            return URL(string: "https://teachlikeachampion.org")
+        case .danielson:
+            return URL(string: "https://danielsongroup.org")
+        case .rosenshine:
+            return URL(string: "https://www.teachertoolkit.co.uk/2020/01/07/rosenshine-principles")
+        case .avid:
+            return URL(string: "https://www.avid.org")
+        case .nationalBoard:
+            return URL(string: "https://www.nbpts.org")
+        case .psdEssentials:
+            return URL(string: "https://www.psd401.net")
+        case .behaviorSupport:
+            return URL(string: "https://www.pbis.org")
         }
     }
 }

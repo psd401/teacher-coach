@@ -105,7 +105,7 @@ lessonlens/
 
 ## Teaching Frameworks
 
-The app supports six research-based frameworks for evaluating teaching:
+The app supports seven research-based frameworks for evaluating teaching:
 
 ### TLAC (Teach Like a Champion)
 
@@ -152,6 +152,10 @@ Based on the Five Core Propositions for accomplished teaching.
 
 Peninsula School District's locally defined essential teaching practices.
 
+### Behavior Support Strategies
+
+Proactive and responsive strategies teachers can implement immediately to support student behavior and classroom management. Includes routines & expectations, environmental arrangement, greeting & connection, specific behavioral praise, calm redirection, de-escalation language, choice & autonomy, group momentum, restorative check-ins, and next-day reset.
+
 Each technique includes:
 - Description
 - Look-fors (observable indicators)
@@ -194,7 +198,7 @@ When star ratings are enabled, each technique receives a 1-5 star rating:
 | 2 | Emerging | Beginning to implement technique with inconsistent results |
 | 3 | Proficient | Solid implementation with room for refinement |
 | 4 | Accomplished | Effective and consistent use of technique |
-| 5 | Exemplary | Masterful implementation that could serve as a model |
+| 5 | Exemplary | Strong, consistent implementation that could serve as a model |
 
 ## Data Models
 

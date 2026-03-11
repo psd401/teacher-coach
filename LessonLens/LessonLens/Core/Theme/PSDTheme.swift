@@ -78,4 +78,9 @@ enum PSDTheme {
         default: return .gray
         }
     }
+
+    /// Whether a rating level needs a border to be visible against the page background
+    static func ratingNeedsBorder(_ rating: Int) -> Bool {
+        rating == 3
+    }
 }
