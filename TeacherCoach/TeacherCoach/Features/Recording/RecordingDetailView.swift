@@ -292,19 +292,25 @@ struct RecordingDetailView: View {
                 recording.status = .analyzing
                 try modelContext.save()
 
-                let analysis = try await services.videoAnalysisService.analyzeVideo(
+                // Run video analysis and transcript extraction in parallel
+                async let analysisResult = services.videoAnalysisService.analyzeVideo(
                     videoURL: videoURL,
                     techniques: techniques,
                     sessionToken: session.accessToken,
                     includeRatings: includeRatings
                 )
+                async let transcriptResult = extractAndTranscribe(videoURL: videoURL)
+
+                let analysis = try await analysisResult
+                let transcript = try? await transcriptResult  // Don't fail if transcription fails
 
                 // Clear stale reflection and chat session on re-analysis
                 recording.reflection = nil
                 recording.chatSessions = []
 
-                // Save analysis
+                // Save analysis (required) and transcript (best-effort)
                 recording.analysis = analysis
+                recording.transcript = transcript
                 recording.status = .complete
                 try modelContext.save()
 
@@ -315,6 +321,13 @@ struct RecordingDetailView: View {
 
             isProcessing = false
         }
+    }
+
+    /// Extract audio from video and transcribe it, returning the transcript
+    private func extractAndTranscribe(videoURL: URL) async throws -> Transcript {
+        let audioURL = try await services.audioExtractionService.extractAudio(from: videoURL)
+        recording.audioFilePath = audioURL.lastPathComponent
+        return try await services.transcriptionService.transcribe(recording: recording)
     }
 
     private func startAudioExtractionAndTranscription() {

@@ -395,6 +395,54 @@ struct PDFReflectionView: View {
     }
 }
 
+// MARK: - Transcript Block
+
+struct PDFTranscriptView: View {
+    let data: TranscriptExportData
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            if data.chunkIndex == 0 {
+                HStack {
+                    Label("Transcript", systemImage: "doc.text")
+                        .font(PSDFonts.headline)
+                        .foregroundStyle(Color.psdPacific)
+
+                    Spacer()
+
+                    Text("\(data.wordCount) words")
+                        .font(.caption)
+                        .foregroundStyle(.gray)
+                }
+            } else {
+                Text("Transcript (continued)")
+                    .font(PSDFonts.headline)
+                    .foregroundStyle(Color.psdPacific)
+            }
+
+            ForEach(Array(data.segments.enumerated()), id: \.offset) { _, segment in
+                HStack(alignment: .top, spacing: 8) {
+                    if !segment.timestamp.isEmpty {
+                        Text(segment.timestamp)
+                            .font(.caption2)
+                            .foregroundStyle(.gray)
+                            .monospacedDigit()
+                            .frame(width: 70, alignment: .trailing)
+                    }
+
+                    Text(segment.text)
+                        .font(.body)
+                        .foregroundStyle(.black)
+                }
+            }
+        }
+        .padding()
+        .frame(width: PDFLayout.contentWidth, alignment: .leading)
+        .background(Color.psdSeaFoam)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+}
+
 // MARK: - Next Steps Block
 
 struct PDFNextStepsView: View {

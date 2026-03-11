@@ -46,6 +46,9 @@ struct PDFBlockMeasurer {
 
         case .nextSteps(let steps):
             PDFNextStepsView(steps: steps)
+
+        case .transcript(let data):
+            PDFTranscriptView(data: data)
         }
     }
 

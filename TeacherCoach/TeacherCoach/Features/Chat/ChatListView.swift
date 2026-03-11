@@ -44,6 +44,15 @@ struct ChatListView: View {
 
     private var sessionList: some View {
         List {
+            Button {
+                createNewSession()
+            } label: {
+                Label("New Chat", systemImage: "plus.circle.fill")
+                    .font(PSDFonts.headline)
+                    .foregroundStyle(PSDTheme.accent)
+            }
+            .buttonStyle(.plain)
+
             ForEach(sortedSessions) { session in
                 NavigationLink {
                     ChatPanelView(recording: recording, chatSession: session)

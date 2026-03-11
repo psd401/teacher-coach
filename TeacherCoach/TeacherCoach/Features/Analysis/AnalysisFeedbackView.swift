@@ -25,20 +25,48 @@ struct AnalysisFeedbackView: View {
             // Actionable Next Steps
             NextStepsSection(steps: analysis.actionableNextSteps)
 
-            // Chat follow-up button
+            // Coaching Chats card
             if let recording = recording {
                 Button {
                     showingChat = true
                 } label: {
-                    Label("Coaching Chats", systemImage: "bubble.left.and.bubble.right")
-                        .frame(maxWidth: .infinity)
+                    HStack(spacing: 12) {
+                        Image(systemName: "bubble.left.and.bubble.right")
+                            .font(.title2)
+                            .foregroundStyle(PSDTheme.accent)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Coaching Chats")
+                                .font(PSDFonts.headline)
+
+                            Text(chatSubtitle(for: recording))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Spacer()
+
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(.secondary)
+                    }
                 }
-                .buttonStyle(.bordered)
-                .tint(PSDTheme.accent)
+                .buttonStyle(.plain)
+                .psdCard()
                 .sheet(isPresented: $showingChat) {
                     ChatListView(recording: recording)
                 }
             }
+        }
+    }
+
+    private func chatSubtitle(for recording: Recording) -> String {
+        let count = recording.chatSessions?.count ?? 0
+        if count == 0 {
+            return "Start a conversation"
+        } else if count == 1 {
+            return "1 chat"
+        } else {
+            return "\(count) chats"
         }
     }
 }

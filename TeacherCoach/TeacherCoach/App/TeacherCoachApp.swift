@@ -27,7 +27,22 @@ struct TeacherCoachApp: App {
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            // Schema mismatch — delete the incompatible store and retry
+            print("ModelContainer failed: \(error). Deleting store and retrying...")
+
+            if let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+                let storeFiles = ["default.store", "default.store-shm", "default.store-wal"]
+                for file in storeFiles {
+                    let url = appSupport.appendingPathComponent(file)
+                    try? FileManager.default.removeItem(at: url)
+                }
+            }
+
+            do {
+                return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            } catch {
+                fatalError("Could not create ModelContainer after store reset: \(error)")
+            }
         }
     }()
 

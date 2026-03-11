@@ -176,6 +176,14 @@ final class ExportService {
             blocks.append(.nextSteps(analysis.actionableNextSteps))
         }
 
+        // Transcript (chunked into ~20-segment blocks for pagination)
+        if configuration.includeTranscript, let transcript = recording.transcript {
+            let chunks = TranscriptExportData.chunks(from: transcript)
+            for chunk in chunks {
+                blocks.append(.transcript(chunk))
+            }
+        }
+
         return blocks
     }
 
@@ -352,6 +360,21 @@ final class ExportService {
             lines.append("")
             for (index, step) in analysis.actionableNextSteps.enumerated() {
                 lines.append("\(index + 1). \(step)")
+            }
+            lines.append("")
+        }
+
+        // Transcript
+        if configuration.includeTranscript, let transcript = recording.transcript {
+            lines.append("## Transcript")
+            lines.append("")
+            let sortedSegments = transcript.segments.sorted { $0.startTime < $1.startTime }
+            if sortedSegments.isEmpty {
+                lines.append(transcript.fullText)
+            } else {
+                for segment in sortedSegments {
+                    lines.append("**[\(segment.formattedTimeRange)]** \(segment.text)")
+                }
             }
             lines.append("")
         }

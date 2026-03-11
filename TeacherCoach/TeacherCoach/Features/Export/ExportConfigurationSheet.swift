@@ -134,6 +134,10 @@ struct ExportConfigurationSheet: View {
             if recording.reflection != nil && recording.reflection?.isComplete == true {
                 Toggle("Self-Reflection", isOn: $configuration.includeReflection)
             }
+
+            if recording.transcript != nil {
+                Toggle("Transcript", isOn: $configuration.includeTranscript)
+            }
         }
         .padding()
         .background(.regularMaterial)

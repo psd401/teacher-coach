@@ -12,6 +12,7 @@ enum PDFContentBlock: Identifiable {
     case techniqueSuggestionsContinued(techniqueName: String, suggestions: [String])
     case reflection(ReflectionExportData)
     case nextSteps([String])
+    case transcript(TranscriptExportData)
 
     var id: String {
         switch self {
@@ -31,6 +32,8 @@ enum PDFContentBlock: Identifiable {
             return "reflection"
         case .nextSteps:
             return "next-steps"
+        case .transcript(let data):
+            return "transcript-\(data.chunkIndex)"
         }
     }
 }
@@ -89,6 +92,40 @@ struct TechniqueCardData: Identifiable {
         self.feedback = feedback
         self.evidence = evidence
         self.suggestions = suggestions
+    }
+}
+
+/// Data for a transcript export block (decoupled from SwiftData model for rendering)
+struct TranscriptExportData {
+    let segments: [(timestamp: String, text: String)]
+    let wordCount: Int
+    let chunkIndex: Int
+
+    /// Create chunked transcript blocks from a Transcript model (~20 segments per chunk)
+    static func chunks(from transcript: Transcript) -> [TranscriptExportData] {
+        let sortedSegments = transcript.segments.sorted { $0.startTime < $1.startTime }
+        let chunkSize = 20
+        var chunks: [TranscriptExportData] = []
+
+        for (index, chunk) in stride(from: 0, to: sortedSegments.count, by: chunkSize).enumerated() {
+            let end = min(chunk + chunkSize, sortedSegments.count)
+            let segmentSlice = sortedSegments[chunk..<end]
+            let segments = segmentSlice.map { (timestamp: $0.formattedTimeRange, text: $0.text) }
+            let wordCount = segmentSlice.reduce(0) { $0 + $1.text.split(separator: " ").count }
+            chunks.append(TranscriptExportData(segments: segments, wordCount: wordCount, chunkIndex: index))
+        }
+
+        // Fallback: if no segments, create a single block from fullText
+        if chunks.isEmpty {
+            let wordCount = transcript.fullText.split(separator: " ").count
+            chunks.append(TranscriptExportData(
+                segments: [(timestamp: "", text: transcript.fullText)],
+                wordCount: wordCount,
+                chunkIndex: 0
+            ))
+        }
+
+        return chunks
     }
 }
 
