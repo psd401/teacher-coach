@@ -17,9 +17,12 @@ Backend API for LessonLens macOS app. Handles authentication, text analysis, and
 | POST | `/auth/validate` | Validate Google ID token, return JWT |
 | POST | `/auth/refresh` | Refresh expired session |
 | POST | `/analyze` | Analyze transcript (Gemini) |
-| GET | `/analyze/rate-limit` | Get rate limit status |
+| GET | `/analyze/rate-limit` | Get text analysis rate limit status |
 | POST | `/analyze/video` | Analyze video (Gemini) |
+| GET | `/analyze/video/rate-limit` | Get video analysis rate limit status |
 | POST | `/upload/initiate` | Initiate Gemini file upload |
+| POST | `/chat` | Coaching chat message with session context |
+| GET | `/chat/rate-limit` | Get chat rate limit status |
 
 ## Environment Variables
 
@@ -33,6 +36,7 @@ Backend API for LessonLens macOS app. Handles authentication, text analysis, and
 | `GEMINI_VIDEO_MODEL` | No | `gemini-3-flash-preview` | Video analysis model |
 | `RATE_LIMIT_PER_HOUR` | No | `20` | Text analysis rate limit |
 | `VIDEO_RATE_LIMIT_PER_HOUR` | No | `5` | Video analysis rate limit |
+| `CHAT_RATE_LIMIT_PER_HOUR` | No | `50` | Chat message rate limit |
 | `PORT` | No | `8080` | Server port |
 
 ## Local Development
@@ -64,7 +68,7 @@ gcloud config set project YOUR_PROJECT_ID
 # Deploy
 gcloud run deploy lessonlens-api \
   --source . \
-  --region us-central1 \
+  --region us-west1 \
   --allow-unauthenticated \
   --set-env-vars="ALLOWED_DOMAIN=psd401.net"
 
@@ -78,6 +82,7 @@ gcloud run services update lessonlens-api \
 Uses in-memory rate limiting (resets on container restart):
 - **Text analysis**: 20 requests/hour per user
 - **Video analysis**: 5 requests/hour per user
+- **Chat**: 50 messages/hour per user
 
 Rate limit headers are included in responses:
 - `X-RateLimit-Limit`
@@ -93,6 +98,7 @@ src/
     ├── auth.ts           # JWT validation, Google token verification
     ├── analyze.ts        # Text analysis with Gemini
     ├── analyze-video.ts  # Video analysis with Gemini
+    ├── chat.ts           # Interactive coaching chat with Gemini
     └── upload.ts         # Gemini file upload initiation
 ```
 

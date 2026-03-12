@@ -14,7 +14,7 @@ Native macOS app for Peninsula SD teachers to record teaching sessions, receive 
 - **Guided Self-Reflection** - Multi-step reflection wizard before viewing AI feedback (what went well, what to change, self-rate techniques, pick focus areas)
 - **Self vs AI Comparison** - Side-by-side view of teacher's self-ratings against AI ratings with delta indicators
 - **Interactive Coaching Chat** - Follow-up questions with AI using full transcript + analysis context, with timestamped evidence citations
-- **Multiple Frameworks** - Six research-based teaching evaluation frameworks
+- **Multiple Frameworks** - Seven research-based teaching evaluation frameworks
 - **Star Ratings** - Optional 1-5 star ratings with visual legend
 - **PDF & Markdown Export** - Export analysis reports with customizable content, including self-reflection data
 - **Domain-Restricted Auth** - Google OAuth (ASWebAuthenticationSession) limited to @psd401.net accounts
@@ -72,6 +72,9 @@ lessonlens/
 │   │   │   ├── Chat/             # Interactive coaching chat
 │   │   │   ├── Techniques/       # Teaching frameworks & technique library
 │   │   │   ├── Export/           # PDF & Markdown export
+│   │   │   ├── Growth/           # Growth tracking dashboard
+│   │   │   ├── HowItWorks/       # How It Works explainer page
+│   │   │   ├── Legal/            # Terms & Privacy views
 │   │   │   └── Settings/         # User preferences
 │   │   └── Core/
 │   │       ├── Models/           # SwiftData models (Recording, Analysis, Reflection, ChatSession, etc.)
@@ -83,6 +86,12 @@ lessonlens/
 │   └── src/routes/               # API routes (auth, analyze, chat, upload)
 ├── shared/                       # Shared prompt templates (text, video, chat)
 │   └── prompts/
+├── scripts/                      # Deployment automation scripts
+│   ├── setup.sh                  # Backend setup wizard (GCP + Cloud Run)
+│   └── configure-app.sh          # App configuration script (bundle ID, URLs)
+├── docs/                         # Documentation
+│   ├── DEPLOYMENT.md             # District deployment guide
+│   └── DEPLOYMENT_CHECKLIST.md   # Printable deployment checklist
 └── CloudflareWorker/             # Alternative backend (Cloudflare Workers)
     └── src/routes/               # API routes
 ```
@@ -105,7 +114,7 @@ lessonlens/
 
 ## Teaching Frameworks
 
-The app supports seven research-based frameworks for evaluating teaching:
+The app ships with seven research-based frameworks for evaluating teaching:
 
 ### TLAC (Teach Like a Champion)
 
@@ -213,45 +222,39 @@ When star ratings are enabled, each technique receives a 1-5 star rating:
 
 ## Setup
 
-### 1. Configure Google OAuth
+> **Deploying for another district?** See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for the full deployment guide with automated setup scripts.
+
+### Quick Start (PSD Development)
+
+#### 1. Configure Google OAuth
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Create a new project or select existing
 3. Enable Google Sign-In API
-4. Create OAuth 2.0 credentials (macOS application)
-5. Set authorized redirect URI: `com.peninsula.lessonlens:/oauth2callback`
-6. Note the Client ID
+4. Create OAuth 2.0 credentials (iOS application type, bundle ID: `com.peninsula.lessonlens`)
+5. Note the Client ID
 
-### 2. Deploy Backend (Cloud Run)
+#### 2. Deploy Backend (Cloud Run)
 
 ```bash
+# Automated (recommended)
+bash scripts/setup.sh
+
+# Or manually:
 cd CloudRunBackend
 bun install
-
-# Set environment variables in Cloud Run console or via gcloud:
-# - GEMINI_API_KEY
-# - GOOGLE_CLIENT_ID
-# - JWT_SECRET
-# - ALLOWED_DOMAIN (e.g., psd401.net)
-
-# Deploy
 gcloud run deploy lessonlens-api --source .
 ```
 
-### 3. Build macOS App
+#### 3. Build macOS App
 
 ```bash
 cd LessonLens
-
-# Open in Xcode
 open LessonLens.xcodeproj
-
-# In Xcode:
-# 1. Build and run (⌘R)
-# 2. Google Client ID is configured in ServiceContainer.swift
+# Build and run (⌘R) — Google Client ID is configured in ServiceContainer.swift
 ```
 
-### 4. Environment Variables
+### Environment Variables
 
 #### macOS App (Xcode Scheme)
 ```
@@ -352,13 +355,15 @@ Analysis reports can be exported in two formats:
 
 ## Deployment
 
-### Jamf MDM Distribution
+For full multi-district deployment instructions, see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) and the [printable checklist](docs/DEPLOYMENT_CHECKLIST.md).
+
+### MDM Distribution
 
 1. Archive the app in Xcode (Product → Archive)
 2. Export with Developer ID signing
 3. Notarize the app
-4. Create DMG or PKG installer
-5. Upload to Jamf for distribution
+4. Package as `.pkg`: `pkgbuild --component LessonLens.app --install-location /Applications LessonLens.pkg`
+5. Upload to your MDM (Jamf, Mosyle, Kandji, etc.) for distribution
 
 ## License
 
