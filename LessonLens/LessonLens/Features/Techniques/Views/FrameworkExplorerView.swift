@@ -2,11 +2,15 @@ import SwiftUI
 
 /// Browse all teaching frameworks and their techniques
 struct FrameworkExplorerView: View {
-    @State private var selectedFramework: TeachingFramework = TeachingFramework.allCases.first!
+    @State private var selectedFramework: TeachingFramework = .psdEssentials
+
+    static var sortedFrameworks: [TeachingFramework] {
+        TeachingFramework.allCases.sorted { $0.displayOrder < $1.displayOrder }
+    }
 
     var body: some View {
         NavigationSplitView {
-            List(TeachingFramework.allCases, selection: $selectedFramework) { framework in
+            List(Self.sortedFrameworks, selection: $selectedFramework) { framework in
                 VStack(alignment: .leading, spacing: 4) {
                     Text(framework.shortName)
                         .font(PSDFonts.headline)
@@ -36,7 +40,7 @@ struct FrameworkDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: 16) {
                 // Header
                 VStack(alignment: .leading, spacing: 8) {
                     Text(framework.displayName)
@@ -53,7 +57,6 @@ struct FrameworkDetailView: View {
                         }
                     }
                 }
-                .padding(.bottom, 8)
 
                 // Techniques grouped by category
                 ForEach(groupedTechniques, id: \.category) { group in
@@ -68,7 +71,7 @@ struct FrameworkDetailView: View {
                     }
                 }
             }
-            .padding(24)
+            .padding(16)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .psdPageBackground()

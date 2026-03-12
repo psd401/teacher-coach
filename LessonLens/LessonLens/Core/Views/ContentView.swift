@@ -47,6 +47,8 @@ struct MainView: View {
     @State private var showingVideoImporter = false
     @State private var showingGrowthDashboard = false
     @State private var showingFrameworkExplorer = false
+    @State private var showingHowItWorks = false
+    @State private var showingTermsAndPrivacy = false
 
     var body: some View {
         NavigationSplitView {
@@ -55,11 +57,17 @@ struct MainView: View {
                 selectedRecording: $selectedRecording,
                 showingNewRecording: $showingNewRecording,
                 showingGrowthDashboard: $showingGrowthDashboard,
-                showingFrameworkExplorer: $showingFrameworkExplorer
+                showingFrameworkExplorer: $showingFrameworkExplorer,
+                showingHowItWorks: $showingHowItWorks,
+                showingTermsAndPrivacy: $showingTermsAndPrivacy
             )
         } detail: {
             if let recording = selectedRecording {
                 RecordingDetailView(recording: recording)
+            } else if showingTermsAndPrivacy {
+                TermsAndPrivacyView()
+            } else if showingHowItWorks {
+                HowItWorksView()
             } else if showingFrameworkExplorer {
                 FrameworkExplorerView()
             } else if showingGrowthDashboard {
@@ -122,6 +130,8 @@ struct MainView: View {
             if newValue != nil {
                 showingGrowthDashboard = false
                 showingFrameworkExplorer = false
+                showingHowItWorks = false
+                showingTermsAndPrivacy = false
             }
         }
     }
@@ -156,6 +166,8 @@ struct SidebarView: View {
     @Binding var showingNewRecording: Bool
     @Binding var showingGrowthDashboard: Bool
     @Binding var showingFrameworkExplorer: Bool
+    @Binding var showingHowItWorks: Bool
+    @Binding var showingTermsAndPrivacy: Bool
 
     @EnvironmentObject private var appState: AppState
     @Environment(\.modelContext) private var modelContext
@@ -171,6 +183,8 @@ struct SidebarView: View {
                 showingNewRecording = false
                 showingGrowthDashboard = false
                 showingFrameworkExplorer = false
+                showingHowItWorks = false
+                showingTermsAndPrivacy = false
             } label: {
                 Label("Home", systemImage: "house")
                     .font(PSDFonts.headline)
@@ -183,6 +197,8 @@ struct SidebarView: View {
                 selectedRecording = nil
                 showingNewRecording = false
                 showingFrameworkExplorer = false
+                showingHowItWorks = false
+                showingTermsAndPrivacy = false
                 showingGrowthDashboard = true
             } label: {
                 Label("Growth", systemImage: "chart.line.uptrend.xyaxis")
@@ -196,9 +212,26 @@ struct SidebarView: View {
                 selectedRecording = nil
                 showingNewRecording = false
                 showingGrowthDashboard = false
+                showingHowItWorks = false
+                showingTermsAndPrivacy = false
                 showingFrameworkExplorer = true
             } label: {
                 Label("Frameworks", systemImage: "book.pages")
+                    .font(PSDFonts.headline)
+            }
+            .buttonStyle(.plain)
+            .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+
+            // How It Works button
+            Button {
+                selectedRecording = nil
+                showingNewRecording = false
+                showingGrowthDashboard = false
+                showingFrameworkExplorer = false
+                showingTermsAndPrivacy = false
+                showingHowItWorks = true
+            } label: {
+                Label("How It Works", systemImage: "questionmark.circle")
                     .font(PSDFonts.headline)
             }
             .buttonStyle(.plain)
@@ -221,6 +254,24 @@ struct SidebarView: View {
         }
         .listStyle(.sidebar)
         .frame(minWidth: 250)
+        .safeAreaInset(edge: .bottom) {
+            Button {
+                selectedRecording = nil
+                showingNewRecording = false
+                showingGrowthDashboard = false
+                showingFrameworkExplorer = false
+                showingHowItWorks = false
+                showingTermsAndPrivacy = true
+            } label: {
+                Label("Terms & Privacy", systemImage: "doc.text")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
         .toolbar {
             ToolbarItem(placement: .automatic) {
                 Menu {

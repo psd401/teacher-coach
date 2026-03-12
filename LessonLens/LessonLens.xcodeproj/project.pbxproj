@@ -69,6 +69,8 @@
 		0061 /* ChatMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1061 /* ChatMessageView.swift */; };
 		0062 /* ChatListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1062 /* ChatListView.swift */; };
 		0063 /* GrowthDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1063 /* GrowthDashboardView.swift */; };
+		0070 /* HowItWorksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1070 /* HowItWorksView.swift */; };
+		0071 /* TermsAndPrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1071 /* TermsAndPrivacyView.swift */; };
 		0064 /* lessonlens-logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 1064 /* lessonlens-logo.png */; };
 		0065 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1065 /* Assets.xcassets */; };
 		6024 /* PDFBlockMeasurer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9252 /* PDFBlockMeasurer.swift */; };
@@ -144,6 +146,8 @@
 		1061 /* ChatMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageView.swift; sourceTree = "<group>"; };
 		1062 /* ChatListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListView.swift; sourceTree = "<group>"; };
 		1063 /* GrowthDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthDashboardView.swift; sourceTree = "<group>"; };
+		1070 /* HowItWorksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HowItWorksView.swift; sourceTree = "<group>"; };
+		1071 /* TermsAndPrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndPrivacyView.swift; sourceTree = "<group>"; };
 		1064 /* lessonlens-logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "lessonlens-logo.png"; sourceTree = "<group>"; };
 		1065 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2001 /* LessonLens.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LessonLens.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -223,6 +227,8 @@
 				5022 /* Reflection */,
 				5023 /* Chat */,
 				5024 /* Growth */,
+				5030 /* HowItWorks */,
+				5031 /* Legal */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -432,6 +438,22 @@
 			path = Growth;
 			sourceTree = "<group>";
 		};
+		5030 /* HowItWorks */ = {
+			isa = PBXGroup;
+			children = (
+				1070 /* HowItWorksView.swift */,
+			);
+			path = HowItWorks;
+			sourceTree = "<group>";
+		};
+		5031 /* Legal */ = {
+			isa = PBXGroup;
+			children = (
+				1071 /* TermsAndPrivacyView.swift */,
+			);
+			path = Legal;
+			sourceTree = "<group>";
+		};
 		7472 /* PDF */ = {
 			isa = PBXGroup;
 			children = (
@@ -593,6 +615,8 @@
 				0061 /* ChatMessageView.swift in Sources */,
 				0062 /* ChatListView.swift in Sources */,
 				0063 /* GrowthDashboardView.swift in Sources */,
+				0070 /* HowItWorksView.swift in Sources */,
+				0071 /* TermsAndPrivacyView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
