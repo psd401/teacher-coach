@@ -86,7 +86,7 @@ final class ExportService {
             }
 
             // Scale image to fit page dimensions
-            var mediaBox = pageRect
+            let mediaBox = pageRect
             pdfContext.beginPDFPage([kCGPDFContextMediaBox as String: NSValue(rect: mediaBox)] as CFDictionary)
             pdfContext.draw(cgImage, in: pageRect)
             pdfContext.endPDFPage()
